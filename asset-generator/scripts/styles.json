@@ -1,0 +1,152 @@
+{
+  "icon": {
+    "name": "App Icon",
+    "description": "Clean flat design app icons",
+    "aesthetic": "Clean flat design app icon with bold, simple geometry",
+    "qualities": ["centered composition", "simple geometric shapes", "modern minimalist", "high contrast", "crisp edges", "scalable at small sizes"],
+    "default_framing": "Centered, full subject visible, square format",
+    "default_constraints": ["No text or words in the image", "Suitable for display at small sizes (64px)", "Single cohesive subject"],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": true
+  },
+  "illustration": {
+    "name": "Flat Illustration",
+    "description": "Modern flat vector-style illustrations",
+    "aesthetic": "Modern flat vector illustration with clean digital art aesthetic",
+    "qualities": ["clean lines", "vibrant modern color palette", "simple shapes", "professional digital art", "consistent stroke weight"],
+    "default_framing": "Centered, balanced composition with clear visual hierarchy",
+    "default_constraints": ["No text or words unless specified"],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": false
+  },
+  "photo": {
+    "name": "Photorealistic",
+    "description": "Photorealistic images for web/app backgrounds and hero sections",
+    "aesthetic": "Professional high-quality photograph, commercial photography standard",
+    "qualities": ["sharp focus", "natural lighting", "professional photography", "high resolution", "commercial quality", "realistic textures and materials"],
+    "default_framing": "Natural composition following rule of thirds",
+    "default_constraints": [],
+    "recommended_aspect_ratio": "16:9",
+    "recommended_transparent": false
+  },
+  "logo": {
+    "name": "Logo Mark",
+    "description": "Clean logo marks and brand symbols",
+    "aesthetic": "Clean minimalist logo mark with professional brand identity feel",
+    "qualities": ["simple geometric design", "bold distinctive shapes", "professional brand identity", "scalable vector-like quality", "balanced weight"],
+    "default_framing": "Centered, isolated on background",
+    "default_constraints": ["No text", "No words", "Single cohesive mark"],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": true
+  },
+  "ui-element": {
+    "name": "UI Element",
+    "description": "UI components, badges, buttons, and interface elements",
+    "aesthetic": "Clean modern UI design element matching contemporary design systems",
+    "qualities": ["flat design", "crisp edges", "modern design system aesthetic", "suitable for web or mobile interface", "pixel-perfect alignment"],
+    "default_framing": "Centered, isolated with consistent padding",
+    "default_constraints": ["No text unless specified", "Consistent padding"],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": true
+  },
+  "background": {
+    "name": "Background Pattern",
+    "description": "Background patterns, textures, and gradients",
+    "aesthetic": "Seamless background pattern or texture with subtle visual rhythm",
+    "qualities": ["tileable", "subtle", "professional", "suitable for web or mobile app background", "not distracting"],
+    "default_framing": "Full coverage, no focal point, edge-to-edge",
+    "default_constraints": ["Seamlessly tileable", "Not distracting from foreground content"],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": false
+  },
+  "hero": {
+    "name": "Hero Image",
+    "description": "Large hero/banner images for landing pages",
+    "aesthetic": "Professional hero banner image with dramatic visual impact",
+    "qualities": ["wide cinematic composition", "dramatic lighting", "visually striking", "modern aesthetic", "high quality", "editorial feel"],
+    "default_framing": "Wide panoramic, room for text overlay on one side with negative space",
+    "default_constraints": ["Leave negative space for text overlay"],
+    "recommended_aspect_ratio": "21:9",
+    "recommended_transparent": false
+  },
+  "mascot": {
+    "name": "Mascot / Character",
+    "description": "Friendly character mascots for brands and apps",
+    "aesthetic": "Friendly cartoon mascot character with appealing personality",
+    "qualities": ["cute appealing design", "expressive face and body language", "simple rounded shapes", "consistent style", "full body visible", "charming personality"],
+    "default_framing": "Centered, full body visible, slight 3/4 angle for depth",
+    "default_constraints": ["Suitable for brand mascot", "Appealing to broad audience"],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": true
+  },
+  "3d-render": {
+    "name": "3D Render",
+    "description": "3D rendered objects with clean studio lighting",
+    "aesthetic": "Professional 3D render with studio lighting and clean shadows",
+    "qualities": ["studio lighting with soft shadows", "high-quality 3D rendering", "smooth surfaces with subtle reflections", "product visualization style"],
+    "default_framing": "Centered, slight angle for depth, studio backdrop",
+    "default_constraints": [],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": true
+  },
+  "pixel-art": {
+    "name": "Pixel Art",
+    "description": "Retro pixel art style assets",
+    "aesthetic": "Pixel art sprite in retro 16-bit video game style",
+    "qualities": ["clean pixel grid alignment", "limited color palette", "game asset quality", "crisp pixels with no anti-aliasing"],
+    "default_framing": "Centered, pixel-aligned on grid",
+    "default_constraints": ["Strict pixel grid", "No anti-aliasing", "No sub-pixel rendering"],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": true
+  },
+  "emoji": {
+    "name": "Emoji / Sticker",
+    "description": "Emoji-style stickers and reaction icons",
+    "aesthetic": "Cute emoji sticker with bold expressive design",
+    "qualities": ["round friendly design", "bold outlines", "vibrant saturated colors", "expressive and instantly readable"],
+    "default_framing": "Centered, circular composition, fills the frame",
+    "default_constraints": ["Suitable for chat sticker or emoji", "Simple recognizable shape"],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": true
+  },
+  "splash": {
+    "name": "Splash Screen",
+    "description": "Mobile app splash/loading screen artwork",
+    "aesthetic": "Beautiful mobile app splash screen illustration with modern gradient background",
+    "qualities": ["vertical composition", "centered subject", "modern gradient background", "clean professional aesthetic", "brand-worthy quality"],
+    "default_framing": "Vertical, centered subject, gradient background, space for text at top/bottom",
+    "default_constraints": ["Leave space for app name at top/bottom"],
+    "recommended_aspect_ratio": "9:16",
+    "recommended_transparent": false
+  },
+  "decorative": {
+    "name": "Decorative Asset",
+    "description": "Abstract decorative elements for compositions (patterns, textures, accents)",
+    "aesthetic": "Abstract decorative graphic element, elegant and versatile",
+    "qualities": ["elegant", "subtle", "professional", "suitable as accent or texture overlay", "works at various scales"],
+    "default_framing": "Fills the frame, no margins",
+    "default_constraints": ["No text", "No recognizable objects unless specified", "Works as overlay or accent element"],
+    "recommended_aspect_ratio": "1:1",
+    "recommended_transparent": true
+  },
+  "marketing": {
+    "name": "Marketing Asset",
+    "description": "Marketing materials with accurate text rendering",
+    "aesthetic": "Professional marketing visual with commercial polish",
+    "qualities": ["commercial grade", "attention-grabbing", "brand-ready", "balanced layout with text space", "high production value"],
+    "default_framing": "Balanced layout with clear visual hierarchy",
+    "default_constraints": ["Text must be perfectly legible and correctly spelled"],
+    "recommended_aspect_ratio": "16:9",
+    "recommended_transparent": false
+  },
+  "infographic": {
+    "name": "Infographic",
+    "description": "Data visualizations and informational graphics",
+    "aesthetic": "Clean informational graphic with accurate data presentation",
+    "qualities": ["clear visual hierarchy", "accurate text rendering", "clean vector art", "professional data visualization", "logical flow"],
+    "default_framing": "Vertical or horizontal depending on content, structured layout",
+    "default_constraints": ["All text must be legible and correctly spelled", "Labels must be accurate"],
+    "recommended_aspect_ratio": "2:3",
+    "recommended_transparent": false
+  }
+}

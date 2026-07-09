@@ -59,9 +59,9 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
 
 | Variable | Used by |
 |---|---|
-| `REPLICATE_API_TOKEN` | talking-head, B-roll, voice-clone, bg-music-hq, sound-effects, video-bg-replace, reel-composer, gpt-image-2, audio-theater (WhisperX), … |
+| `REPLICATE_API_TOKEN` | talking-head, B-roll, voice-clone, bg-music-hq, bg-music, sound-effects, video-bg-replace, reel-composer, gpt-image-2, audio-theater (WhisperX), … |
 | `ELEVENLABS_API_KEY` | avatar-invent (voice design), avatar-ambient-sfx, audio-theater (SFX) |
-| `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) | audio-theater (Gemini TTS), optional image generator, video-compose vision |
+| `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) | asset-generator (image gen), audio-theater (Gemini TTS), video-compose vision |
 | `YT_API_KEY` | reel-discovery, broll-finder (YouTube Data API) |
 | `APIFY_TOKEN` | optional paid upgrade for reel-discovery (TikTok/IG/FB) |
 
@@ -156,6 +156,12 @@ so the set is self-contained (they read their own token; no keys are committed):
 - **audio-theater** — multi-character audio (dramatized radio play / lipsync
   clips / podcast) with Gemini TTS, realistic SFX and instrumental score. Powers
   `avatar-ambient-sfx` and produces lipsync/voiceover tracks for the reel skills.
+- **asset-generator** — generate and edit image assets with Google Gemini
+  (styles, transparent PNGs via background removal, resizing). Used as the
+  optional Gemini image generator and by the `repo-banner` header art.
+- **bg-music** — quick instrumental background-music tracks (MiniMax on
+  Replicate). The lighter "fast" music backend for `audio-theater`
+  (`audio-theater`'s default `hq` backend also reuses its mood library).
 
 ## Skill composition
 
@@ -170,12 +176,11 @@ avatar-reel-composer                        →  narrate → talking-head + B-ro
    └─ bg-music-hq / avatar-ambient-sfx       (music + spatial SFX)
 ```
 
-The shared generation engines these skills call — `gpt-image-2`, `seedance-2` and
-`audio-theater` — are **bundled** in this repo (see *Generation engines* above). A
-couple of optional externals are still auto-discovered when installed alongside,
-but are **not required**: `asset-generator` (an alternative Gemini image generator)
-and `bg-music` (a faster instrumental-music backend for `audio-theater`; its
-default `hq` backend needs no extra skill).
+All the shared generation engines these skills call — `gpt-image-2`, `seedance-2`,
+`audio-theater`, `asset-generator` and `bg-music` — are **bundled** in this repo
+(see *Generation engines* above), so the set is fully self-contained. Skills still
+auto-discover any matching skill already installed globally, but nothing here
+depends on a skill that isn't in the repo.
 
 ## Repo layout
 

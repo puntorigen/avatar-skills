@@ -1,0 +1,137 @@
+{
+  "uplifting": {
+    "label": "Uplifting",
+    "description": "Success stories, achievements, celebrations, positive news",
+    "default_duration": 30,
+    "bpm_range": "110-130",
+    "style_keywords": "bright, optimistic, uplifting, major key, feel-good, joyful, energetic, warm harmonies",
+    "instruments": "acoustic guitar, piano, light percussion, claps, strings",
+    "prompt_suffix": "uplifting background music, instrumental, positive and bright, well-mixed, professional production, radio-ready"
+  },
+  "calm": {
+    "label": "Calm",
+    "description": "Wellness tips, mindful moments, care routines, relaxation content",
+    "default_duration": 30,
+    "bpm_range": "60-80",
+    "style_keywords": "gentle, ambient, soothing, peaceful, minimal, airy, spacious, soft dynamics",
+    "instruments": "soft piano, pads, gentle strings, ambient textures, light bells",
+    "prompt_suffix": "calm ambient background music, instrumental, peaceful and soothing, minimal arrangement, professional mix"
+  },
+  "playful": {
+    "label": "Playful",
+    "description": "Fun pet content, games, lighthearted posts, humorous moments",
+    "default_duration": 20,
+    "bpm_range": "115-135",
+    "style_keywords": "bouncy, cheerful, quirky, fun, lighthearted, whimsical, carefree, staccato",
+    "instruments": "ukulele, pizzicato strings, xylophone, light drums, whistling",
+    "prompt_suffix": "playful background music, instrumental, fun and bouncy, lighthearted feel, clean production"
+  },
+  "heartfelt": {
+    "label": "Heartfelt",
+    "description": "Adoption stories, emotional bonds, touching moments, gratitude",
+    "default_duration": 30,
+    "bpm_range": "70-90",
+    "style_keywords": "warm, acoustic, intimate, emotional, tender, sincere, gentle build, touching",
+    "instruments": "acoustic guitar, piano, soft strings, cello, fingerpicking",
+    "prompt_suffix": "heartfelt acoustic background music, instrumental, warm and emotional, intimate feel, professional mix"
+  },
+  "dramatic": {
+    "label": "Dramatic",
+    "description": "Transformations, reveals, before/after, surprising moments",
+    "default_duration": 20,
+    "bpm_range": "90-110",
+    "style_keywords": "building tension, cinematic, suspenseful, dynamic, rising action, impactful, powerful drops",
+    "instruments": "orchestral strings, deep percussion, brass hits, risers, impacts",
+    "prompt_suffix": "dramatic cinematic background music, instrumental, tension-building, powerful, film score quality"
+  },
+  "confident": {
+    "label": "Confident",
+    "description": "Tips, expertise, professional advice, how-to content",
+    "default_duration": 25,
+    "bpm_range": "95-115",
+    "style_keywords": "steady, assured, modern, polished, groove, cool, sleek, composed",
+    "instruments": "electric piano, clean guitar, subtle bass, modern drums, synth pads",
+    "prompt_suffix": "confident modern background music, instrumental, sleek and polished, steady groove, professional production"
+  },
+  "nostalgic": {
+    "label": "Nostalgic",
+    "description": "Memories, throwbacks, reflection, anniversary content",
+    "default_duration": 30,
+    "bpm_range": "75-95",
+    "style_keywords": "warm, vintage, soft, wistful, dreamy, analog, retro warmth, bittersweet",
+    "instruments": "warm piano, vintage electric piano, soft tape saturation, gentle strings, mellow guitar",
+    "prompt_suffix": "nostalgic background music, instrumental, warm vintage feel, dreamy and wistful, analog warmth, professional mix"
+  },
+  "energetic": {
+    "label": "Energetic",
+    "description": "Fitness, active pets, outdoor adventures, action content",
+    "default_duration": 25,
+    "bpm_range": "120-145",
+    "style_keywords": "driving, uptempo, powerful, dynamic, high-energy, punchy, motivating, strong beat",
+    "instruments": "electric guitar, driving drums, bass, synths, powerful percussion",
+    "prompt_suffix": "energetic background music, instrumental, driving and powerful, uptempo, high-energy production"
+  },
+  "mysterious": {
+    "label": "Mysterious",
+    "description": "Teasers, coming soon, curiosity hooks, suspense content",
+    "default_duration": 20,
+    "bpm_range": "70-90",
+    "style_keywords": "suspenseful, textural, dark, enigmatic, atmospheric, eerie, tension, intrigue",
+    "instruments": "dark pads, reversed textures, sub bass, metallic percussion, whispers, detuned piano",
+    "prompt_suffix": "mysterious atmospheric background music, instrumental, suspenseful and dark, textural, cinematic quality"
+  },
+  "inspiring": {
+    "label": "Inspiring",
+    "description": "Milestones, growth, motivational content, success journeys",
+    "default_duration": 30,
+    "bpm_range": "85-105",
+    "style_keywords": "soaring, orchestral, hopeful, building, expansive, triumphant, emotional crescendo",
+    "instruments": "strings, piano, brass, choir, timpani, building percussion",
+    "prompt_suffix": "inspiring orchestral background music, instrumental, soaring and hopeful, emotional build, cinematic production"
+  },
+  "cozy": {
+    "label": "Cozy",
+    "description": "Home life, comfort, seasonal content, indoor moments",
+    "default_duration": 30,
+    "bpm_range": "70-85",
+    "style_keywords": "lo-fi, warm, intimate, comfortable, soft, hazy, vinyl crackle, relaxed",
+    "instruments": "lo-fi piano, warm bass, tape-saturated drums, jazz guitar, soft pads",
+    "prompt_suffix": "cozy lo-fi background music, instrumental, warm and intimate, soft textures, lo-fi hip hop feel, professional mix"
+  },
+  "epic": {
+    "label": "Epic",
+    "description": "Big announcements, launches, hero moments, grand reveals",
+    "default_duration": 25,
+    "bpm_range": "100-130",
+    "style_keywords": "cinematic, powerful, layered, grandiose, anthemic, massive, triumphant, explosive",
+    "instruments": "full orchestra, epic percussion, brass fanfare, choir, trailer impacts, synth layers",
+    "prompt_suffix": "epic cinematic background music, instrumental, powerful and grandiose, trailer music quality, massive production"
+  },
+  "tender": {
+    "label": "Tender",
+    "description": "Gentle care, lullabies, quiet moments, soft content",
+    "default_duration": 30,
+    "bpm_range": "55-75",
+    "style_keywords": "delicate, soft, lullaby-like, gentle, feather-light, hushed, intimate, fragile",
+    "instruments": "solo piano, soft strings, music box, harp, celesta, gentle fingerpicking",
+    "prompt_suffix": "tender delicate background music, instrumental, soft and gentle, lullaby quality, intimate production"
+  },
+  "corporate": {
+    "label": "Corporate",
+    "description": "Presentations, pitch decks, demos, professional content",
+    "default_duration": 30,
+    "bpm_range": "90-110",
+    "style_keywords": "clean, modern, understated, professional, neutral, motivational, smooth, polished",
+    "instruments": "clean piano, subtle synths, light percussion, soft bass, ambient pads",
+    "prompt_suffix": "corporate background music, instrumental, clean and modern, professional presentation music, understated, well-produced"
+  },
+  "generic": {
+    "label": "Generic",
+    "description": "General purpose background music",
+    "default_duration": 30,
+    "bpm_range": "90-110",
+    "style_keywords": "versatile, balanced, pleasant, professional, clean, neutral",
+    "instruments": "mixed instrumentation, balanced arrangement",
+    "prompt_suffix": "background music, instrumental, professional quality, well-mixed, versatile, 44.1kHz"
+  }
+}
