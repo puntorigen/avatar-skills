@@ -1,0 +1,6 @@
+# broll-story orchestrator has no direct Python deps (stdlib only).
+# It shells out to sibling skills and system tools:
+#   - gpt-image-2  : ~/.cursor/skills/gpt-image-2  (its own requirements / Replicate token)
+#   - seedance-2   : higgsfield CLI (authenticated, with credits)  -> `pip install higgsfield` / brew
+#   - ffmpeg       : system binary on PATH (mutes the clip, `ffmpeg -an`)
+#   - curl         : system binary on PATH (downloads the seedance result)

@@ -1,0 +1,9 @@
+# Voice isolation skill. Requires ffmpeg on PATH (brew install ffmpeg).
+# IMPORTANT: torch and torchaudio MUST share the same version
+# (e.g. torch==2.5.1 + torchaudio==2.5.1), or torchaudio fails to load and
+# Demucs cannot run.
+demucs>=4.0.1
+faster-whisper>=1.0.0
+soundfile>=0.12.0
+scipy>=1.10.0
+numpy

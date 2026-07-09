@@ -1,0 +1,78 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "groupings": [
+    {
+      "title": "Avatar creation & identity",
+      "description": "Invent or clone a presenter and vary its look — hero stills, camera angles, wardrobe/location variants, and clean reference frames.",
+      "skills": [
+        "avatar-invent",
+        "avatar-camera-angles",
+        "avatar-location",
+        "avatar-frames"
+      ]
+    },
+    {
+      "title": "Talking-head & reels",
+      "description": "Turn a script + an avatar into finished vertical reels — lip-synced talking-head scenes, style transfer, story reels, and ambient sound design.",
+      "skills": [
+        "avatar-talking-video",
+        "avatar-reel-composer",
+        "reel-restyle",
+        "cuento-reel",
+        "avatar-ambient-sfx"
+      ]
+    },
+    {
+      "title": "B-roll",
+      "description": "Generate or find complementary B-roll — hyper-real clips, avatar action shots, real YouTube footage, website/terminal captures.",
+      "skills": [
+        "broll-generator",
+        "broll-story",
+        "broll-avatar-camera",
+        "broll-finder",
+        "broll-web-capture",
+        "broll-terminal",
+        "broll-core"
+      ]
+    },
+    {
+      "title": "Voice & audio",
+      "description": "Clone voices, isolate clean samples, and generate music and sound effects for reels.",
+      "skills": [
+        "voice-clone",
+        "voice-isolate",
+        "bg-music-hq",
+        "sound-effects"
+      ]
+    },
+    {
+      "title": "Video editing & analysis",
+      "description": "Compose reels, analyze scene structure, replace backgrounds, and transcribe video.",
+      "skills": [
+        "video-compose",
+        "video-scene-analysis",
+        "video-bg-replace",
+        "video-transcribe"
+      ]
+    },
+    {
+      "title": "Discovery & downloaders",
+      "description": "Find top-performing public reels by topic or brand, and batch-download videos from YouTube, TikTok, Instagram and Facebook.",
+      "skills": [
+        "reel-discovery",
+        "youtube-videos",
+        "tiktok-videos",
+        "instagram-videos",
+        "facebook-videos"
+      ]
+    },
+    {
+      "title": "Strategy & scripting",
+      "description": "Plan a content/channel strategy and write viral short-form scripts ready to feed the reel pipeline.",
+      "skills": [
+        "brand-content-strategy",
+        "viral-video-script"
+      ]
+    }
+  ]
+}

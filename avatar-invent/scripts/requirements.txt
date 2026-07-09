@@ -1,0 +1,7 @@
+# avatar-invent's own dependency: Pillow for the 9:16 / 16:9 center-crop.
+# The heavy lifting is delegated to sibling skills, which bring their own deps:
+#   - gpt-image-2 / asset-generator  (hero still)        -> their requirements.txt
+#   - avatar-camera-angles           (camera angles)     -> Pillow (shared)
+#   - voice-clone                    (MiniMax clone)     -> replicate, langid
+# ElevenLabs voice design uses only the Python standard library (urllib).
+Pillow>=10.0.0

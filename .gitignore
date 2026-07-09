@@ -1,0 +1,54 @@
+# Secrets & local config — never commit. Skills read the token at runtime from an
+# env var (e.g. REPLICATE_API_TOKEN) or a git-ignored config.json written by each
+# skill's scripts/setup_key.py.
+config.json
+.env
+.env.*
+*.key
+*.pem
+credentials*.json
+
+# Support model weights live OUTSIDE the repo (downloaded by each skill's setup
+# script into ~/.avatar-skills/models — override with AVATAR_SKILLS_HOME).
+*.tflite
+**/models/
+
+# Generated avatars & their assets (created under ./avatares/ by the creator skills)
+/avatares/
+
+# Sensitive web-session artifacts
+*.har
+
+# Generated media & model outputs
+*.mp4
+*.webm
+*.mov
+*.mp3
+*.wav
+*.m4a
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+
+# Dependencies (installed on first run by setup scripts)
+node_modules/
+.pnpm-store/
+
+# Python / OS cruft
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.eggs/
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Build output
+dist/
+build/

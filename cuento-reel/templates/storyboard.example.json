@@ -1,0 +1,38 @@
+{
+  "_comment": "One scene per plan segment, SAME order. REGLA DURA: motion 'none' en TODAS las escenas (movimiento real siempre, nunca Ken Burns) y SIN emphasis en escenas guest. broll = beat de narración (clip animado mudo, voz del narrador encima). guest = línea de personaje lip-sync (su propia voz, ya tejida en narration.mp3 por assemble). El composer fija los límites a los offsets exactos de assemble (frame-exact).",
+  "avatar_dir": "<serie>/cast/narrador",
+  "slug": "<slug>",
+  "format": "reel",
+  "resolution": "720p",
+  "fps": 30,
+  "voice": {"voice_id": "<NARRADOR_VOICE_ID>", "emotion": "calm", "language_boost": "None"},
+  "script": "<narración corrida completa del narrador, beats N en orden, verbatim>",
+  "scenes": [
+    {"id": "s1", "type": "broll", "broll_source": "existing", "motion": "none",
+     "broll_clip": "<libro>/<NN_slug>/broll/anim/anim_beat1.mp4",
+     "text": "<narración original del beat 1>"},
+
+    {"id": "s2", "type": "guest", "motion": "none",
+     "broll_clip": "<serie>/cast/<charA>/generated-videos/<dlg_clip_1>.mp4",
+     "text": "<línea original del personaje A>"},
+
+    {"id": "s3", "type": "guest", "motion": "none",
+     "broll_clip": "<serie>/cast/<charB>/generated-videos/guest_d_b_1.mp4",
+     "text": "<línea original del personaje B>"},
+
+    {"id": "s4", "type": "broll", "broll_source": "existing", "motion": "none",
+     "broll_clip": "<libro>/<NN_slug>/broll/anim/anim_beat2.mp4",
+     "text": "<narración original del beat 2>"}
+  ],
+  "finish": {
+    "enabled": true,
+    "subtitles": true,
+    "music": true,
+    "music_mood": "cinematic",
+    "music_prompt": "<colchón instrumental a medida del tono del cuento; suave, sin batería, bajo la voz>",
+    "music_vocals": "wordless",
+    "max_words": 6,
+    "emphasis": true,
+    "casing": "subtitle"
+  }
+}

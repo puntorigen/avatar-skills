@@ -1,0 +1,93 @@
+{
+  "ui": {
+    "label": "UI Sounds",
+    "description": "Interface interactions: clicks, toggles, swipes, taps",
+    "default_duration": 3,
+    "style_keywords": "clean, digital, minimal, crisp, subtle, polished, high-fidelity",
+    "prompt_suffix": "short UI sound effect, clean production, no reverb, isolated sound"
+  },
+  "notification": {
+    "label": "Notifications",
+    "description": "Alerts, badges, incoming messages",
+    "default_duration": 3,
+    "style_keywords": "tonal, melodic, clear, pleasant, attention-grabbing, distinct",
+    "prompt_suffix": "notification sound, clear and pleasant tone, clean mix, isolated"
+  },
+  "success": {
+    "label": "Success",
+    "description": "Completions, achievements, confirmations",
+    "default_duration": 3,
+    "style_keywords": "bright, positive, uplifting, resolved, cheerful, satisfying",
+    "prompt_suffix": "success sound effect, positive resolution, bright tone, clean production"
+  },
+  "error": {
+    "label": "Error",
+    "description": "Failures, warnings, invalid actions",
+    "default_duration": 3,
+    "style_keywords": "discordant, negative, attention-grabbing, cautionary, sharp",
+    "prompt_suffix": "error sound effect, negative tone, alert, distinct, clean production"
+  },
+  "transition": {
+    "label": "Transitions",
+    "description": "Screen changes, modals, reveals, navigation",
+    "default_duration": 3,
+    "style_keywords": "smooth, swoosh, fluid, dynamic, clean sweep",
+    "prompt_suffix": "transition sound effect, smooth motion, clean production, isolated"
+  },
+  "ambient": {
+    "label": "Ambient",
+    "description": "Background atmosphere, environmental loops",
+    "default_duration": 20,
+    "style_keywords": "atmospheric, textural, immersive, continuous, environmental, loopable",
+    "prompt_suffix": "ambient background atmosphere, seamless, immersive, continuous texture"
+  },
+  "game": {
+    "label": "Game SFX",
+    "description": "Power-ups, collectibles, impacts, actions",
+    "default_duration": 3,
+    "style_keywords": "dynamic, punchy, satisfying, retro-inspired, playful, impactful",
+    "prompt_suffix": "game sound effect, punchy, dynamic, satisfying impact, clean production"
+  },
+  "voice": {
+    "label": "Vocal",
+    "description": "Vocal textures, vocalizations, vocal FX",
+    "default_duration": 3,
+    "style_keywords": "human, vocal, processed, textural, expressive",
+    "prompt_suffix": "vocal sound design, human voice texture, processed, clean production"
+  },
+  "nature": {
+    "label": "Nature",
+    "description": "Rain, wind, birds, water, organic environments",
+    "default_duration": 15,
+    "style_keywords": "organic, natural, realistic, environmental, soothing",
+    "prompt_suffix": "nature sound, realistic, organic, high-fidelity field recording style"
+  },
+  "mechanical": {
+    "label": "Mechanical",
+    "description": "Motors, gears, machinery, industrial",
+    "default_duration": 3,
+    "style_keywords": "industrial, metallic, mechanical, raw, textured",
+    "prompt_suffix": "mechanical sound effect, industrial, metallic, clean recording"
+  },
+  "musical": {
+    "label": "Musical",
+    "description": "Jingles, stingers, short intros, musical motifs",
+    "default_duration": 5,
+    "style_keywords": "melodic, composed, musical, harmonic, well-arranged",
+    "prompt_suffix": "short musical piece, well-composed, clean production, professional mix"
+  },
+  "foley": {
+    "label": "Foley",
+    "description": "Footsteps, doors, objects, physical interactions",
+    "default_duration": 3,
+    "style_keywords": "realistic, physical, tactile, grounded, authentic",
+    "prompt_suffix": "foley sound effect, realistic, physical, isolated, studio quality"
+  },
+  "generic": {
+    "label": "Generic",
+    "description": "General purpose sound effects",
+    "default_duration": 3,
+    "style_keywords": "clean, professional, high-fidelity, versatile",
+    "prompt_suffix": "sound effect, clean production, professional quality, 44.1kHz"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "_comment": "Baked-in defaults for avatar-invent. Edit freely. styles[].preamble sets the render look (photoreal is the default); framing/camera/delivery/constraints are the UGC talking-head reel rules; settings[] map a --setting keyword to a default scene + wardrobe; voice[] holds the ElevenLabs voice-design suffix and the per-language preview/sample text used to design + sample the invented voice.",
+  "styles": {
+    "photoreal": {
+      "preamble": "Ultra-photorealistic candid talking-head video still, as if a single frame captured from a high-end modern smartphone front-camera reel. Real human skin with natural texture, pores and subtle imperfections, authentic UGC look, natural color science, true-to-life contrast, not over-retouched, no beauty-filter plastic skin.",
+      "negative_extra": "illustration, cartoon, anime, 3d render, cgi, painting, plastic or waxy skin, over-smoothed, airbrushed"
+    },
+    "soft3d": {
+      "preamble": "Soft 3D animated character in a modern Pixar/Disney-feature style: appealing slightly stylized proportions, large expressive eyes, smooth subsurface-scattering skin, warm cinematic global illumination, high-end CG feature-film render.",
+      "negative_extra": "photoreal, real skin pores, photograph, gritty realism, harsh lighting"
+    },
+    "anime": {
+      "preamble": "High-quality modern anime key frame: clean cel-shaded rendering, expressive eyes, soft color gradients, cinematic lighting, premium theatrical-anime look.",
+      "negative_extra": "photoreal, 3d render, photograph, real skin texture"
+    },
+    "stylized_real": {
+      "preamble": "Polished editorial portrait look: photorealistic but slightly stylized and cinematic, premium commercial-grade color grade, crisp yet warm.",
+      "negative_extra": "cartoon, anime, flat illustration, plastic skin"
+    }
+  },
+  "framing": {
+    "default": "Seated, medium shot framed from roughly the waist or mid-chest up, subject roughly centered with comfortable headroom and clean negative space on one side of the frame reserved for on-screen captions, camera at eye level and straight-on (down the barrel), the subject looking directly into the lens and leaning in just slightly as if speaking to one person.",
+    "vertical_note": "Vertical 9:16 social-reel composition (TikTok/Reels/Shorts).",
+    "horizontal_note": "Horizontal 16:9 composition."
+  },
+  "camera": "Shot on a modern smartphone main camera, roughly 35-50mm equivalent, the subject in crisp focus with a gently blurred background (shallow depth of field), steady eye-level handheld feel, true-to-life color and contrast.",
+  "delivery": "Neutral, friendly mid-sentence expression with lips slightly parted as if mid-word (so the still animates well for lip-sync), warm and direct eye contact, relaxed shoulders, calm confident presenter energy.",
+  "constraints": "Exactly one person in the frame. No on-screen text, captions, subtitles, watermarks, logos, timestamps or UI overlays. No extra people in the background foreground. Hands relaxed and natural if visible. Eyes open, looking at the lens.",
+  "default_light": "Soft key light from the left at about 45 degrees, a gentle soft rim / back light separating the subject from the background, soft ambient fill so the shadow side stays open and flattering, even natural exposure with no harsh hotspots or blown highlights.",
+  "default_moves": ["push_in", "pull_out", "low_angle", "three_quarter", "negative_space_left"],
+  "settings": {
+    "office": {
+      "scene": "a bright modern office: a tidy desk just out of focus, a shelf with a few books and a small potted plant softly blurred in the background, large window letting in soft daylight",
+      "wardrobe": "smart-casual: a well-fitted shirt or light knit in a solid color, tidy and professional but approachable"
+    },
+    "home": {
+      "scene": "a cozy warm living room: a sofa, soft table lamps and a couple of plants gently blurred in the background, homey and inviting",
+      "wardrobe": "relaxed smart-casual everyday clothing in soft solid colors"
+    },
+    "studio": {
+      "scene": "a clean content-creator studio with a softly lit solid-color backdrop and a couple of subtle bokeh accent lights in the deep background",
+      "wardrobe": "modern minimalist outfit in a solid color that stands out against the backdrop"
+    },
+    "street": {
+      "scene": "an urban street during golden hour, softly blurred buildings, shopfronts and warm city bokeh in the deep background",
+      "wardrobe": "stylish casual street outfit, a jacket or layered top"
+    },
+    "outdoors": {
+      "scene": "an outdoor natural setting with greenery and soft directional sunlight, foliage and landscape gently blurred behind the subject",
+      "wardrobe": "casual outdoor clothing, light layers"
+    },
+    "kitchen": {
+      "scene": "a warm modern kitchen with soft-focus counters, hanging utensils and warm practical lighting blurred in the background",
+      "wardrobe": "casual home clothing, optionally an apron over a simple top"
+    },
+    "cafe": {
+      "scene": "a cozy cafe with warm ambient light, blurred wooden shelves, plants and a few patrons far in the background",
+      "wardrobe": "casual cozy outfit, a sweater or relaxed shirt"
+    },
+    "gym": {
+      "scene": "a modern gym with soft-focus equipment and warm directional light, energetic but uncluttered background bokeh",
+      "wardrobe": "clean athletic wear in solid colors"
+    },
+    "clinic": {
+      "scene": "a calm, bright wellness clinic or consulting room: a soft neutral wall, a plant and a framed neutral artwork gently blurred behind the subject",
+      "wardrobe": "approachable professional attire, a soft knit or button-up in a calm color"
+    }
+  },
+  "default_setting": {
+    "scene": "a tasteful, softly-lit interior appropriate to the topic, with simple uncluttered decor gently blurred in the background",
+    "wardrobe": "clean smart-casual outfit in solid colors"
+  },
+  "delivery_profile": {
+    "video_prompt": "A calm, warm presenter looks directly into the camera at eye level and leans in very slightly, as if confiding to one person. Subtle natural head nods and small tilts for emphasis, gentle expressive eyebrows, steady warm eye contact, relaxed and measured mouth movements. Grounded and sincere, minimal body movement, an engaging social-media presenter energy.",
+    "negative_prompt": "exaggerated gestures, big toothy grin, looking away from the camera, jittery or fast head movement, multiple people, subtitles, text, watermark, logo",
+    "mannerisms_summary": "Presentador cálido y cercano: contacto visual directo y firme, leve inclinación hacia el lente, pequeños asentimientos y ladeos de cabeza, cejas expresivas sutiles, movimientos de boca medidos, muy poco movimiento corporal."
+  },
+  "voice": {
+    "default_suffix": "Clear, warm, conversational delivery suited to a social-media presenter speaking directly to one viewer; natural pacing, engaging and trustworthy, recorded studio-clean with no background noise or music.",
+    "model_id": "eleven_multilingual_ttv_v2",
+    "preview_text": {
+      "es": "Hola, te quiero contar algo que de verdad puede cambiarte el día. Quédate conmigo un momento, porque esto te va a servir más de lo que crees, y quiero que lo escuches con calma.",
+      "en": "Hey, I want to share something with you that can genuinely change your day. Stick with me for a moment, because this is going to help you more than you think, so listen closely."
+    },
+    "sample_text": {
+      "es": "Hola, ¿cómo estás? Quiero contarte algo importante, así que respira y quédate conmigo un momento. A veces sentimos que todo va demasiado rápido, que no alcanzamos, que algo nos falta. Y está bien sentirse así, no estás solo en esto. Hoy te voy a compartir tres ideas simples que puedes empezar a usar desde ahora mismo, sin complicarte la vida. La primera es la más sencilla, pero también la que más cuesta sostener. La segunda probablemente te sorprenda. Y la tercera, créeme, la vas a querer compartir con alguien que quieres. Vamos juntos, paso a paso, con tranquilidad.",
+      "en": "Hi, how are you? I want to tell you something important, so take a breath and stay with me for a moment. Sometimes it feels like everything moves too fast, like we can't keep up, like something is missing. And it's okay to feel that way, you are not alone in this. Today I'll share three simple ideas you can start using right now, without overcomplicating your life. The first one is the simplest, but also the hardest to keep up. The second one will probably surprise you. And the third, trust me, you'll want to share it with someone you love. Let's go through them together, step by step, calmly."
+    }
+  }
+}

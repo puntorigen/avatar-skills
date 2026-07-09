@@ -1,0 +1,81 @@
+{
+  "_default_anchor": "FRAMING ANCHOR (important): keep the SAME tight chest-up medium framing as the source image - the subject fills the frame with the head near the top third. Do NOT widen the shot, do NOT zoom out, and do NOT add empty space around the subject. Only the camera move described above changes.",
+  "moves": {
+    "eye_level": {
+      "label": "Eye level (neutral straight-on)",
+      "validated": true,
+      "tags": ["neutral", "safe", "direct"],
+      "camera": "Place the camera exactly at the subject's eye height, perfectly square and straight-on to the face, with NO upward tilt, NO downward tilt and NO roll - a clean, neutral eye-level perspective. The subject looks directly down the lens with relaxed, level, head-on eye contact. Keep the same medium chest-up distance, lens and background as the source; the only thing to guarantee is a level, head-on eye-level view (no contrapicado, no picado, no Dutch tilt, no three-quarter rotation)."
+    },
+    "push_in": {
+      "label": "Push-in / tighter close-up",
+      "validated": true,
+      "tags": ["safe", "intimate", "emphasis"],
+      "camera": "Push the camera in for a tighter medium close-up: the subject's face and the top of the shoulders fill the frame (roughly from mid-chest up to just above the hair), as if the camera physically moved about 25 cm closer. Keep the subject near eye level and centered, same lens - just a closer, more intimate framing. The background stays identical but naturally shows a little less of the room."
+    },
+    "pip": {
+      "label": "PiP circle close-up (centered, locked)",
+      "validated": false,
+      "tags": ["pip", "closeup", "centered", "locked"],
+      "camera": "Frame a tight, perfectly CENTERED close-up made for a small circular picture-in-picture badge: the face is centered and fills most of the frame, from roughly the collarbones up to a little above the top of the head, with EVEN margin on all four sides so a circular crop never clips the face, the hair or the chin. Camera exactly at eye level, perfectly straight-on and centered - no tilt, no roll, no three-quarter rotation. This is a STATIC, LOCKED framing intended to be lip-synced with a locked camera: the subject only talks with natural micro head movement; there must be NO push-in, pull-out, zoom or dolly. Same person, lens and lighting as the source.",
+      "anchor": "FRAMING ANCHOR: this is a TIGHT, CENTERED face close-up (not the chest-up source framing, not off-center). Keep the head centered with equal headroom and side margin so the whole face sits safely inside a circle. Do NOT place the subject off-center, do NOT add negative space, and do NOT crop the top of the head or the chin. Best generated at a 1:1 aspect ratio for the circular crop."
+    },
+    "pull_out": {
+      "label": "Pull-out / wider medium shot",
+      "validated": true,
+      "tags": ["establishing", "breather"],
+      "camera": "Pull the camera back to a wider medium shot, as if it physically moved about 40 cm away. Reveal more of the subject's torso down to roughly waist level and the edge of the desk or surface in front of them, plus a little more of the room on both sides. Keep the subject centered and at eye level; the lens and perspective are the same, only the distance increases.",
+      "anchor": "FRAMING ANCHOR: this shot INTENTIONALLY shows more of the scene than the source - frame the subject from roughly the waist up with comfortable headroom. Keep it a natural, believable medium-wide selfie distance (still an arm's-length phone shot), NOT an extreme wide or a full-room view."
+    },
+    "low_angle": {
+      "label": "Low angle (subtle hero / contrapicado)",
+      "validated": true,
+      "tags": ["authority", "subtle"],
+      "camera": "Lower the camera to roughly chest height and tilt it clearly upward about 16 degrees - a noticeable but still natural low-angle hero perspective. We look up at the subject, the jawline reads slightly more prominent, and a bit more of the upper wall and the top of the background comes into view, with less floor or desk showing. Keep the same shooting distance. Only the camera height and upward tilt change."
+    },
+    "high_angle": {
+      "label": "High angle (soft intimate / picado)",
+      "validated": true,
+      "tags": ["intimate", "subtle"],
+      "camera": "Raise the camera to slightly above the subject's eye line and tilt it gently downward about 14 degrees - a soft, intimate high-angle look as if someone slightly taller is holding the phone. We look a touch down at the subject, the top of the head reads fuller, the eyes angle up to meet the lens, and less ceiling shows behind them. Keep the same shooting distance. Only the camera height and downward tilt change."
+    },
+    "three_quarter": {
+      "label": "Three-quarter (camera to frame-right / subject's left)",
+      "validated": true,
+      "tags": ["cinematic", "dynamic"],
+      "camera": "Move the camera about 30 degrees around to the right side of the frame (the subject's left) for a clear three-quarter view of the face. More of the background on that side opens up behind them, the far side of the face turns gently away from us, and the subject rotates the head just enough to keep the eyes and speech locked straight into the lens. Keep the same eye level - only the horizontal camera position changes."
+    },
+    "three_quarter_mirror": {
+      "label": "Three-quarter mirrored (camera to frame-left / subject's right)",
+      "validated": false,
+      "tags": ["cinematic", "dynamic"],
+      "camera": "Move the camera about 30 degrees around to the left side of the frame (the subject's right) for a clear three-quarter view of the face. More of the background on that side opens up behind them, the far side of the face turns gently away from us, and the subject rotates the head just enough to keep the eyes and speech locked straight into the lens. Keep the same eye level - only the horizontal camera position changes."
+    },
+    "profile": {
+      "label": "Near-profile / strong side angle (experimental)",
+      "validated": false,
+      "tags": ["cinematic", "strong", "experimental"],
+      "camera": "Swing the camera around to about 50 degrees to the subject's side for a strong near-profile view; we see mostly one side of the face and the line of the nose and brow, while the subject keeps the eyes toward the lens out of the corner. Keep eye level and the same medium distance. Only the horizontal camera position changes."
+    },
+    "dutch_tilt": {
+      "label": "Dutch tilt / canted angle",
+      "validated": true,
+      "tags": ["editorial", "dynamic"],
+      "camera": "Keep the same eye level and shooting distance, but cant (roll) the whole camera so the horizon tilts about 9 degrees clockwise - a subtle Dutch / canted angle that gives the shot a dynamic, editorial reel feel. The background and the subject's body all tilt together as one rigid scene (this is a camera roll, not the subject leaning). Everything else is identical."
+    },
+    "negative_space_left": {
+      "label": "Negative space on LEFT (subject on right)",
+      "validated": true,
+      "tags": ["captions", "text-room", "composition"],
+      "camera": "Reframe the composition so the subject sits on the RIGHT side of the vertical frame, with the head in the upper-right third (rule-of-thirds, off-center), turned slightly so the eyes and speech still aim straight into the lens. This leaves the calmer side of the background on the LEFT as clean, uncluttered open negative space - intended to hold on-screen reel captions later. Do not add any actual text - just leave the empty space.",
+      "anchor": "FRAMING ANCHOR: keep the subject at the SAME chest-up scale as the source image; the only change is the off-center placement that opens clean negative space on one side. Do NOT zoom out or shrink the subject."
+    },
+    "negative_space_right": {
+      "label": "Negative space on RIGHT (subject on left)",
+      "validated": false,
+      "tags": ["captions", "text-room", "composition"],
+      "camera": "Reframe the composition so the subject sits on the LEFT side of the vertical frame, with the head in the upper-left third (rule-of-thirds, off-center), turned slightly so the eyes and speech still aim straight into the lens. This leaves the calmer side of the background on the RIGHT as clean, uncluttered open negative space - intended to hold on-screen reel captions later. Do not add any actual text - just leave the empty space.",
+      "anchor": "FRAMING ANCHOR: keep the subject at the SAME chest-up scale as the source image; the only change is the off-center placement that opens clean negative space on one side. Do NOT zoom out or shrink the subject."
+    }
+  }
+}

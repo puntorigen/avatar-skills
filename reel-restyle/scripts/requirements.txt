@@ -1,0 +1,9 @@
+# reel-restyle orchestrates sibling skills and needs no direct Python deps of
+# its own (stdlib only). The heavy lifting lives in the skills it delegates to;
+# install THEIR requirements so the pipeline can run end-to-end:
+#
+#   pip3 install -r .cursor/skills/avatar-camera-angles/scripts/requirements.txt
+#   pip3 install -r .cursor/skills/gpt-image-2/scripts/requirements.txt
+#   pip3 install -r .cursor/skills/voice-clone/scripts/requirements.txt
+#   pip3 install -r .cursor/skills/avatar-reel-composer/scripts/requirements.txt
+#   pip3 install -r .cursor/skills/video-scene-analysis/scripts/requirements.txt

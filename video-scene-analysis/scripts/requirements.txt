@@ -1,0 +1,6 @@
+opencv-python
+numpy
+mediapipe
+scenedetect>=0.6.4
+faster-whisper>=1.0.0
+scipy>=1.10.0

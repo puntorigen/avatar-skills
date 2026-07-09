@@ -1,0 +1,113 @@
+{
+  "_comment": "Storyboard for avatar-reel-composer. The agent WRITES this by reading the avatar's <video>.analysis.json and mirroring its rhythm. PACING (see SKILL.md): open with a ~2-3s hook, cut every ~3-6s, never let a shot linger (split long sentences across scenes at commas/colons and change the framing/zoom), and sprinkle B-roll. A 30s reel usually wants ~6-8 scenes, not 3-4. HARD RULE: the concatenation of every scene.text (joined with single spaces) must equal `script` verbatim — it is narrated as ONE take, then cut per scene. Paths resolve relative to where you run compose_reel.py (use --base-dir).",
+
+  "avatar_dir": "avatares/lolo",
+  "slug": "contacto-cero",
+  "reference_analysis": "2026-06-08_15-02-03.analysis.json",
+
+  "format": "reel",
+  "resolution": "720p",
+  "fps": 30,
+
+  "voice": {
+    "_note": "Narration is synthesized ONE sentence at a time (cached per sentence in narration_parts/, so a mispronounced segment can be re-rolled with compose_reel.py --reroll N without redoing the rest) and joined with a small silence gap (speech-2.8-hd degrades on long single takes). language_boost defaults to 'None' so the CLONED voice keeps its own accent — boosting a language (e.g. 'Spanish') can drag a neutral/Chilean clone toward another regional accent (e.g. Argentinian voseo). You MAY sprinkle MiniMax expressive interjections in `script` — (sighs), (exhales), (laughs softly), etc. — and manual pauses <#0.5#>; they are spoken by the TTS and ignored by alignment/captions.",
+    "name": null,
+    "voice_id": null,
+    "emotion": "calm",
+    "speed": 0.95,
+    "language_boost": "None",
+    "sentence_gap": 0.12
+  },
+
+  "script": "¿Cuántas veces hoy abriste su perfil esperando una señal que en el fondo sabes que no va a llegar? Cada vez que revisas su última conexión, no buscas información: buscas calmar la ansiedad de no poder soltar. El contacto cero no es un castigo para el otro; es el espacio que tu sistema nervioso necesita para volver a calmarse. Y sí, al principio el silencio duele, pero ese mismo silencio es lo primero que empieza a devolverte a ti.",
+
+  "scenes": [
+    {
+      "id": "s1",
+      "type": "talking_head",
+      "text": "¿Cuántas veces hoy abriste su perfil",
+      "image": "avatares/lolo/angles/lolo_eye_level_916.png",
+      "motion": "zoom_center",
+      "emphasis": false,
+      "_note": "HOOK ~2-3s, eye-level — like the reference scene #0 (2.97s). The first sentence is split here and continues over B-roll in s2."
+    },
+    {
+      "id": "s2",
+      "type": "broll",
+      "text": "esperando una señal que en el fondo sabes que no va a llegar?",
+      "broll_description": "primer plano de unas manos sosteniendo un smartphone en la penumbra de un dormitorio de noche, la cara apenas iluminada por la luz azul de la pantalla mostrando un chat",
+      "broll_camera": "push_in",
+      "broll_action": "los dedos se deslizan lenta y pausadamente por la pantalla, la persona respira y cambia ligeramente de postura; movimientos pequeños, calmados y realistas",
+      "motion": "none",
+      "_note": "Cut to B-roll immediately after the hook (reference pattern #0 -> #1). B-roll already carries its camera move, so motion=none."
+    },
+    {
+      "id": "s3",
+      "type": "broll",
+      "text": "Cada vez que revisas su última conexión, no buscas información:",
+      "broll_description": "primerísimo plano de la pantalla de un smartphone que muestra la hora de 'última conexión' de un chat y una foto de perfil difusa, el pulgar a punto de tocar, luz tenue nocturna, fondo desenfocado",
+      "broll_camera": "push_in",
+      "broll_action": "el pulgar se acerca despacio a la pantalla y duda sin llegar a tocar; micro-movimientos lentos, contenidos y realistas",
+      "motion": "none",
+      "_note": "Tighter second phone insert to keep the rhythm; this sentence is split at the colon, with the payoff returning to the presenter in s4."
+    },
+    {
+      "id": "s4",
+      "type": "talking_head",
+      "text": "buscas calmar la ansiedad de no poder soltar.",
+      "image": "avatares/lolo/angles/skill_test/lolo_push_in_916.png",
+      "motion": "push_in",
+      "emphasis": true,
+      "_note": "Presenter returns with an emphasis zoom-in (zoom_in)."
+    },
+    {
+      "id": "s5",
+      "type": "talking_head",
+      "text": "El contacto cero no es un castigo para el otro;",
+      "image": "avatares/lolo/angles/test_pull_out_916.png",
+      "motion": "push_out",
+      "emphasis": false,
+      "_note": "Different angle + zoom-OUT so consecutive talking-heads read as distinct cuts (reference alternates zoom_in/zoom_out)."
+    },
+    {
+      "id": "s6",
+      "type": "talking_head",
+      "text": "es el espacio que tu sistema nervioso necesita para volver a calmarse.",
+      "image": "avatares/lolo/angles/skill_test/lolo_push_in_916.png",
+      "motion": "push_in",
+      "emphasis": true,
+      "_note": "Key line: marked zoom-in."
+    },
+    {
+      "id": "s7",
+      "type": "broll",
+      "text": "Y sí, al principio el silencio duele, pero ese mismo silencio es lo primero que empieza a devolverte a ti.",
+      "broll_description": "una mujer pensativa de unos 40 años mira por la ventana de su casa al atardecer, luz cálida de contraluz, plano medio, atmósfera melancólica y serena",
+      "broll_camera": "handheld",
+      "broll_action": "respira hondo, parpadea lento y baja un poco la mirada; gestos mínimos, melancólicos y contenidos, sin hablar",
+      "motion": "none",
+      "_note": "Emotional B-roll outro — the one shot allowed to breathe a little longer (~7-8s)."
+    }
+  ],
+
+  "finish": {
+    "_note": "Finishing pass: serif phrase-unit captions that REPLACE each other (no stale stacking), with a bold-italic PAYOFF highlight on each breath group's completion — matching the analyzed reels — plus a FIXED-volume, light instrumental bed in the reel's emotional tone. Runs automatically (enabled=true) or via compose_reel.py --finish. TAILOR music_prompt to the script + B-roll (here: heartbreak / no-contact / healing -> tender, melancholic-but-hopeful piano). style_from points to a subtitle_style.json captured by avatar-frames from the ORIGINAL reels; it drives caption position/size/casing (font stays serif + bold-italic emphasis).",
+    "enabled": true,
+    "subtitles": true,
+    "music": true,
+    "music_mood": "ambient",
+    "music_prompt": "sparse, intimate solo piano for an emotional reflection on heartbreak and letting go, tender and a little melancholic turning gently hopeful, very minimal and slow, soft sustained pad underneath, no drums, no beat, no vocals, quiet unobtrusive bed",
+    "music_volume": 0.12,
+    "max_words": 6,
+    "emphasis": true,
+    "casing": "subtitle",
+    "style_from": "avatares/lolo/subtitle_style.json",
+    "fx": {
+      "_note": "Polish pass (stage 4), applied OVER the finished video; keeps final-without-sfx.mp4. The transition look (golden/white flash, dip, or none; duration; strength; which boundary types) comes from the avatar's MEASURED transition_style.json — run profile_transitions.py once per avatar on its *.analysis.json files. Omit transition_style here to use that profile; set it only to override. Always duration-preserving — never a crossfade. SFX: soft whoosh leading each B-roll cut + soft low boom under emphasis scenes, sparse (~1/15s) and very quiet. guide = a voice-isolate voice.json of an ORIGINAL reel; its measured sfx_intervals set the density.",
+      "enabled": true,
+      "sfx": true,
+      "sfx_volume": 0.18,
+      "guide": "avatares/lolo/videos/2026-06-08_15-02-03_voice/voice.json"
+    }
+  }
+}

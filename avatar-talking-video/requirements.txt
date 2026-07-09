@@ -1,0 +1,3 @@
+# Avatar talking-head video generation (prunaai/p-video-avatar on Replicate).
+# TTS is delegated to the voice-clone skill (its own requirements apply).
+replicate>=0.32.0

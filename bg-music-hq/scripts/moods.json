@@ -1,0 +1,273 @@
+{
+  "presentation": {
+    "label": "Presentation",
+    "description": "Clean backing track for slide decks, pitch decks, keynotes",
+    "default_duration": 60,
+    "bpm_range": "90-110",
+    "style_keywords": "Corporate pop, clean, modern, understated, motivational, polished, wide soundstage",
+    "instruments": "clean piano, subtle synth pads, light percussion, soft bass, ambient textures",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Soft piano, building slowly)\n\n[Inst]\n(Gentle build with pads and light percussion)\n\n[Inst]\n(Full arrangement, motivational feel)\n\n[Outro]\n(Fading gently)"
+  },
+  "podcast-intro": {
+    "label": "Podcast Intro",
+    "description": "Punchy short jingle for podcast episode openers",
+    "default_duration": 15,
+    "bpm_range": "100-120",
+    "style_keywords": "Upbeat, catchy, bright, modern production, punchy, confident, radio-ready",
+    "instruments": "electric guitar, snappy drums, bass groove, synth stabs, claps",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Bright hit, attention-grabbing)\n\n[Hook]\n(Catchy instrumental riff, memorable)\n\n[Outro]\n(Quick clean ending)"
+  },
+  "podcast-outro": {
+    "label": "Podcast Outro",
+    "description": "Warm wrap-up jingle for podcast episode endings",
+    "default_duration": 15,
+    "bpm_range": "85-100",
+    "style_keywords": "Warm, friendly, smooth, gentle fade, satisfying resolution, professional",
+    "instruments": "warm electric piano, soft bass, brushed drums, gentle strings, ambient pads",
+    "vocal_style": null,
+    "structure": "[Inst]\n(Warm melody, friendly feel)\n\n[Outro]\n(Gentle fade, satisfying ending)"
+  },
+  "podcast-bed": {
+    "label": "Podcast Bed",
+    "description": "Low-key underscore for podcast narration and interview segments",
+    "default_duration": 90,
+    "bpm_range": "70-85",
+    "style_keywords": "Ambient, minimal, unobtrusive, warm, subtle, lo-fi, intimate studio feel",
+    "instruments": "soft ambient pads, gentle piano notes, minimal percussion, warm bass hum",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Barely there, atmospheric)\n\n[Inst]\n(Minimal texture, stays in background)\n\n[Inst]\n(Subtle variation, same energy)\n\n[Outro]\n(Gentle fade to silence)"
+  },
+  "keynote": {
+    "label": "Keynote",
+    "description": "Cinematic build for keynote openings and product reveals",
+    "default_duration": 45,
+    "bpm_range": "95-115",
+    "style_keywords": "Cinematic, building, inspiring, modern, anthemic, wide soundstage, crisp production",
+    "instruments": "orchestral strings, piano, synth layers, building percussion, risers, brass accents",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Atmospheric opening, sparse)\n\n[Build Up]\n(Rising intensity, adding layers)\n\n[Inst]\n(Full cinematic arrangement, powerful)\n\n[Outro]\n(Resolving, triumphant close)"
+  },
+  "pitch-deck": {
+    "label": "Pitch Deck",
+    "description": "Confident modern track for startup pitches and investor demos",
+    "default_duration": 60,
+    "bpm_range": "100-115",
+    "style_keywords": "Tech-forward, confident, sleek, modern, driving, innovative, crisp transients",
+    "instruments": "synth bass, clean electronic drums, atmospheric pads, subtle arpeggios, filtered leads",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Clean synth hit, modern)\n\n[Inst]\n(Driving beat, tech-forward energy)\n\n[Inst]\n(Variation with added layers)\n\n[Outro]\n(Clean resolution)"
+  },
+  "workshop": {
+    "label": "Workshop",
+    "description": "Friendly background for tutorials, workshops, and educational content",
+    "default_duration": 60,
+    "bpm_range": "85-100",
+    "style_keywords": "Friendly, approachable, light, positive, casual, warm midrange, clean mix",
+    "instruments": "acoustic guitar, soft piano, light shaker, gentle bass, subtle marimba",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Light and welcoming)\n\n[Inst]\n(Friendly groove, easy-going)\n\n[Inst]\n(Gentle variation)\n\n[Outro]\n(Warm fade)"
+  },
+  "cinematic": {
+    "label": "Cinematic",
+    "description": "Epic orchestral piece for dramatic reveals, trailers, announcements",
+    "default_duration": 45,
+    "bpm_range": "80-100",
+    "style_keywords": "Epic, orchestral, dramatic, powerful, layered, concert hall reverb, natural dynamics",
+    "instruments": "full orchestra, timpani, brass fanfare, choir, sweeping strings, deep percussion, trailer impacts",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Dark, atmospheric opening)\n\n[Build Up]\n(Strings rising, tension building)\n\n[Inst]\n(Full orchestral power, massive)\n\n[Bridge]\n(Brief respite, emotional)\n\n[Inst]\n(Climactic reprise)\n\n[Outro]\n(Triumphant resolution, fading)"
+  },
+  "ambient": {
+    "label": "Ambient",
+    "description": "Atmospheric soundscape for focus, deep work, meditation segments",
+    "default_duration": 120,
+    "bpm_range": "60-75",
+    "style_keywords": "Ambient, atmospheric, ethereal, spacious, meditative, wide reverb, gentle",
+    "instruments": "ambient pads, soft drones, distant piano, reversed textures, subtle bells, field recordings",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Slow emergence from silence)\n\n[Inst]\n(Evolving textures, breathing atmosphere)\n\n[Inst]\n(Gentle shift, new colors)\n\n[Outro]\n(Dissolving back to silence)"
+  },
+  "uplifting": {
+    "label": "Uplifting",
+    "description": "Bright positive energy for success stories, celebrations, wins",
+    "default_duration": 30,
+    "bpm_range": "110-130",
+    "style_keywords": "Bright, optimistic, uplifting, feel-good, warm harmonies, major key, joyful",
+    "instruments": "acoustic guitar, piano, claps, strings, light percussion, bright synths",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Bright opening, immediate positivity)\n\n[Inst]\n(Full uplifting arrangement)\n\n[Outro]\n(Joyful resolution)"
+  },
+  "dramatic": {
+    "label": "Dramatic",
+    "description": "Tension-building piece for reveals, transformations, before/after",
+    "default_duration": 30,
+    "bpm_range": "85-105",
+    "style_keywords": "Suspenseful, cinematic, building tension, dynamic, impactful drops, powerful",
+    "instruments": "deep strings, percussion builds, brass stabs, risers, impacts, sub bass",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Sparse, tense)\n\n[Build Up]\n(Rising intensity)\n\n[Drop]\n(Impact, full power)\n\n[Outro]\n(Resolving tension)"
+  },
+  "lofi": {
+    "label": "Lo-fi",
+    "description": "Chill lo-fi hip-hop for casual content, study vibes, relaxed segments",
+    "default_duration": 60,
+    "bpm_range": "70-85",
+    "style_keywords": "Lo-fi hip-hop, chill, vinyl texture, warm midrange, lo-fi compression, relaxed",
+    "instruments": "lo-fi piano, warm bass, tape-saturated drums, jazz guitar, soft pads, vinyl crackle",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Vinyl crackle, soft entry)\n\n[Inst]\n(Chill beat, warm textures)\n\n[Inst]\n(Subtle variation, same vibe)\n\n[Outro]\n(Fading into warmth)"
+  },
+  "inspiring": {
+    "label": "Inspiring",
+    "description": "Soaring hopeful track for milestones, growth stories, motivational content",
+    "default_duration": 45,
+    "bpm_range": "85-105",
+    "style_keywords": "Soaring, hopeful, building, expansive, triumphant, emotional crescendo, orchestral warmth",
+    "instruments": "piano, strings, brass, choir, building percussion, atmospheric pads",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Simple piano, hopeful)\n\n[Inst]\n(Adding strings, building)\n\n[Inst]\n(Full arrangement, soaring)\n\n[Outro]\n(Triumphant, resolving)"
+  },
+  "news": {
+    "label": "News",
+    "description": "Professional broadcast-style bed for news segments, reports, updates",
+    "default_duration": 30,
+    "bpm_range": "95-110",
+    "style_keywords": "Broadcast, professional, urgent yet composed, modern, authoritative, crisp",
+    "instruments": "electronic drums, synth bass, clean piano hits, atmospheric pads, news-style stingers",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Sharp attention-grabbing hit)\n\n[Inst]\n(Professional pulse, authoritative)\n\n[Outro]\n(Clean stinger ending)"
+  },
+  "jazz": {
+    "label": "Jazz",
+    "description": "Smooth jazz for sophisticated segments, interviews, culture content",
+    "default_duration": 60,
+    "bpm_range": "80-100",
+    "style_keywords": "Vocal Jazz and Swing, smooth, sophisticated, warm, relaxed, spatial depth, instrument separation",
+    "instruments": "walking upright bass, brushed drums, piano chords, muted trumpet, saxophone",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Piano chords, setting the mood)\n\n[Inst]\n(Full jazz combo, relaxed groove)\n\n[Solo]\n(Piano or saxophone solo)\n\n[Outro]\n(Gentle resolution, last chord ringing)"
+  },
+  "generic": {
+    "label": "Generic",
+    "description": "Versatile all-purpose background music",
+    "default_duration": 45,
+    "bpm_range": "90-110",
+    "style_keywords": "Versatile, balanced, pleasant, professional, clean, neutral, modern",
+    "instruments": "piano, light synths, subtle drums, balanced arrangement",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Clean opening)\n\n[Inst]\n(Balanced arrangement)\n\n[Outro]\n(Clean fade)"
+  },
+
+  "pet-playful": {
+    "label": "Pet Playful",
+    "description": "Bouncy fun track for playful pet reels — zoomies, fetch, silly moments",
+    "default_duration": 20,
+    "bpm_range": "120-140",
+    "style_keywords": "Bouncy, cheerful, quirky, fun, carefree, whimsical, staccato, bright, catchy hook, social-media-ready",
+    "instruments": "ukulele, pizzicato strings, xylophone, light snappy drums, whistling, claps, marimba",
+    "vocal_style": null,
+    "structure": "[Hook]\n(Immediately catchy, bouncy riff — attention-grabbing from first beat)\n\n[Inst]\n(Full playful arrangement, fun energy)\n\n[Outro]\n(Quick fun ending, clean stop)"
+  },
+  "pet-heartfelt": {
+    "label": "Pet Heartfelt",
+    "description": "Warm emotional track for adoption stories, bonds, rescue journeys, memorials",
+    "default_duration": 30,
+    "bpm_range": "70-90",
+    "style_keywords": "Warm, acoustic, intimate, emotional, tender, sincere, touching, gentle build, heartstring-pulling",
+    "instruments": "fingerpicked acoustic guitar, soft piano, cello, gentle strings, music box, warm pads",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Gentle fingerpicked guitar, intimate)\n\n[Inst]\n(Adding piano and soft strings, emotional warmth building)\n\n[Inst]\n(Full gentle arrangement, touching and sincere)\n\n[Outro]\n(Tender fade, last piano notes ringing)"
+  },
+  "pet-adventure": {
+    "label": "Pet Adventure",
+    "description": "Energetic outdoor track for hikes, beach days, road trips with pets",
+    "default_duration": 25,
+    "bpm_range": "115-135",
+    "style_keywords": "Driving, adventurous, upbeat, dynamic, feel-good, sunny, open road energy, confident",
+    "instruments": "electric guitar, driving drums, bass groove, bright synths, handclaps, tambourine",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Driving guitar riff, instant energy)\n\n[Inst]\n(Full band energy, adventurous and sunny)\n\n[Hook]\n(Catchy riff reprise, memorable)\n\n[Outro]\n(Energetic ending, satisfying close)"
+  },
+  "pet-chill": {
+    "label": "Pet Chill",
+    "description": "Relaxed cozy track for napping pets, lazy afternoons, cuddle moments",
+    "default_duration": 30,
+    "bpm_range": "65-80",
+    "style_keywords": "Lo-fi, cozy, warm, dreamy, intimate, soft, vinyl warmth, lazy Sunday feel, gentle",
+    "instruments": "lo-fi piano, warm bass, tape-saturated drums, jazz guitar, soft pads, subtle vinyl crackle",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Soft warm entry, cozy atmosphere)\n\n[Inst]\n(Gentle lo-fi groove, dreamy and relaxed)\n\n[Inst]\n(Subtle variation, same warmth)\n\n[Outro]\n(Fading softly, like falling asleep)"
+  },
+  "pet-regal": {
+    "label": "Pet Regal",
+    "description": "Elegant sophisticated track for majestic pets — show cats, proud breeds, glamour shots",
+    "default_duration": 25,
+    "bpm_range": "80-100",
+    "style_keywords": "Elegant, sophisticated, regal, graceful, poised, luxurious, refined, classical influence",
+    "instruments": "piano, harp, soft strings, cello, gentle harpsichord, flute, light orchestral arrangement",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Elegant piano or harp, graceful opening)\n\n[Inst]\n(Refined arrangement, strings and piano, regal poise)\n\n[Outro]\n(Graceful resolution, dignified ending)"
+  },
+  "pet-goofy": {
+    "label": "Pet Goofy",
+    "description": "Comedy track for derpy moments, fails, funny reactions, meme-worthy clips",
+    "default_duration": 15,
+    "bpm_range": "125-150",
+    "style_keywords": "Comical, quirky, bouncy, cartoon-like, slapstick, fun, surprise elements, mischievous",
+    "instruments": "tuba, slide whistle effect, pizzicato strings, xylophone, woodblock, snare rim shots, kazoo-like synths",
+    "vocal_style": null,
+    "structure": "[Hook]\n(Immediately funny, cartoon-bouncy riff)\n\n[Inst]\n(Quirky arrangement with comedic timing)\n\n[Outro]\n(Comic ending, quick stop or silly flourish)"
+  },
+  "pet-transformation": {
+    "label": "Pet Transform",
+    "description": "Before/after reveal track — grooming glow-ups, rescue transformations, training progress",
+    "default_duration": 20,
+    "bpm_range": "90-110",
+    "style_keywords": "Building tension, cinematic reveal, transformation, dramatic contrast, impactful drop, satisfying payoff",
+    "instruments": "deep strings, building percussion, risers, synth pads, impact hits, bright piano reveal",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Sparse, moody, tension building)\n\n[Build Up]\n(Rising intensity, adding layers, anticipation)\n\n[Drop]\n(Impact hit — bright, triumphant reveal)\n\n[Inst]\n(Full uplifting payoff, celebratory)\n\n[Outro]\n(Satisfying close)"
+  },
+  "pet-daily": {
+    "label": "Pet Daily",
+    "description": "Day-in-the-life montage track for routine reels, morning walks, feeding time",
+    "default_duration": 25,
+    "bpm_range": "95-110",
+    "style_keywords": "Easygoing, warm, feel-good, modern pop, light groove, relatable, everyday joy, positive",
+    "instruments": "acoustic guitar, soft piano, light drums, bass, gentle synths, subtle claps",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Warm, inviting, slice-of-life feel)\n\n[Inst]\n(Easy groove, positive daily energy)\n\n[Hook]\n(Catchy melodic moment, memorable)\n\n[Outro]\n(Warm fade, satisfying)"
+  },
+  "pet-epic": {
+    "label": "Pet Epic",
+    "description": "Grand heroic track for dramatic slow-mo, obstacle courses, talent showcases",
+    "default_duration": 25,
+    "bpm_range": "90-115",
+    "style_keywords": "Epic, cinematic, heroic, powerful, anthemic, slow-motion worthy, grandiose, triumph",
+    "instruments": "orchestral strings, brass, timpani, choir, epic percussion, synth layers, impacts",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Atmospheric, building anticipation)\n\n[Build Up]\n(Strings and percussion rising)\n\n[Inst]\n(Full epic power, heroic and triumphant)\n\n[Outro]\n(Powerful resolution, last impact)"
+  },
+  "pet-lullaby": {
+    "label": "Pet Lullaby",
+    "description": "Ultra-soft gentle track for sleeping pets, puppy bedtime, quiet ASMR-like moments",
+    "default_duration": 30,
+    "bpm_range": "50-65",
+    "style_keywords": "Delicate, lullaby, hushed, feather-light, intimate, soothing, nursery-like, fragile beauty",
+    "instruments": "music box, soft piano, gentle harp, celesta, whisper-soft strings, minimal arrangement",
+    "vocal_style": null,
+    "structure": "[Intro]\n(Music box or celesta, barely there)\n\n[Inst]\n(Soft piano joins, lullaby melody)\n\n[Inst]\n(Gentle strings, warmth)\n\n[Outro]\n(Dissolving to silence, last music box notes)"
+  },
+  "pet-trendy": {
+    "label": "Pet Trendy",
+    "description": "TikTok/Reels-ready trendy beat for viral pet content, transitions, trend formats",
+    "default_duration": 20,
+    "bpm_range": "110-130",
+    "style_keywords": "Trendy, modern pop, catchy, hook-first, viral-ready, punchy, clean production, social media optimized",
+    "instruments": "synth bass, clean electronic drums, filtered vocal chops, arpeggiated synths, claps, bright leads",
+    "vocal_style": null,
+    "structure": "[Hook]\n(Instantly catchy beat, hook-first — no slow intro)\n\n[Inst]\n(Full trendy arrangement, social-media-ready energy)\n\n[Hook]\n(Hook reprise, earworm)\n\n[Outro]\n(Clean punchy ending)"
+  }
+}

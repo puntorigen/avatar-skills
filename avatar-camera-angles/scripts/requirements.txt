@@ -1,0 +1,4 @@
+# avatar-camera-angles shells out to the gpt-image-2 skill for generation
+# (which brings replicate + Pillow). This skill itself only needs Pillow for
+# the optional 9:16 center-crop.
+Pillow>=10.0.0

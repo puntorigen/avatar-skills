@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>broll-terminal</title>
+<style>
+  /* ---- themes -------------------------------------------------------- */
+  :root{
+    --radius: 16px;
+    --font: "JetBrains Mono","Cascadia Code","Fira Code","SF Mono",Menlo,Consolas,monospace;
+  }
+  [data-theme="warp-dark"]{
+    --page1:#0b1020; --page2:#161a2e;
+    --win:#11131c; --winbar:#171a25; --fg:#cdd6f4; --muted:#7c84a6; --cursor:#cdd6f4;
+    --c-g:#9ece6a; --c-r:#f7768e; --c-y:#e0af68; --c-b:#7aa2f7; --c-c:#7dcfff; --c-m:#bb9af7; --c-w:#c0caf5;
+  }
+  [data-theme="one-dark"]{
+    --page1:#13151a; --page2:#21252b;
+    --win:#282c34; --winbar:#21252b; --fg:#abb2bf; --muted:#5c6370; --cursor:#61afef;
+    --c-g:#98c379; --c-r:#e06c75; --c-y:#e5c07b; --c-b:#61afef; --c-c:#56b6c2; --c-m:#c678dd; --c-w:#d7dae0;
+  }
+  [data-theme="mono-light"]{
+    --page1:#e9ecf2; --page2:#f6f7fb;
+    --win:#fbfbfd; --winbar:#eef0f4; --fg:#2e3440; --muted:#9aa1ad; --cursor:#2e3440;
+    --c-g:#2e7d32; --c-r:#c62828; --c-y:#a16207; --c-b:#1565c0; --c-c:#00838f; --c-m:#6a1b9a; --c-w:#2e3440;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; width:100%; height:100%; }
+  body{
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(120% 90% at 50% 0%, var(--page2) 0%, var(--page1) 70%);
+    font-family:var(--font);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow:hidden;
+  }
+
+  #kicker{
+    position:absolute; top:5%; left:0; right:0; text-align:center;
+    color:var(--muted); font-weight:700; letter-spacing:0.18em;
+    text-transform:uppercase; font-size:0.78em; opacity:.9;
+  }
+
+  .window{
+    width:92vw; height:74vh; max-width:none;
+    display:flex; flex-direction:column;
+    background:var(--win); border-radius:var(--radius);
+    box-shadow:0 40px 90px rgba(0,0,0,.55), 0 6px 18px rgba(0,0,0,.35),
+               inset 0 1px 0 rgba(255,255,255,.06);
+    overflow:hidden;
+  }
+  .titlebar{
+    flex:0 0 auto; height:2.6em; display:flex; align-items:center;
+    padding:0 1em; background:var(--winbar);
+    border-bottom:1px solid rgba(255,255,255,.05);
+  }
+  .dots{ display:flex; gap:.55em; }
+  .dot{ width:.78em; height:.78em; border-radius:50%; }
+  .dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+  .title{ flex:1; text-align:center; color:var(--muted); font-size:.82em;
+    margin-right:3.4em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  #screen{ position:relative; flex:1 1 auto; overflow:hidden; }
+  #content{
+    padding:1em 1.15em; color:var(--fg);
+    line-height:1.55; white-space:pre-wrap; word-break:break-word;
+    will-change:transform;
+  }
+  .ln{ min-height:1.55em; }
+  .pr{ color:var(--fg); }
+
+  .c-g{color:var(--c-g);} .c-r{color:var(--c-r);} .c-y{color:var(--c-y);}
+  .c-b{color:var(--c-b);} .c-c{color:var(--c-c);} .c-m{color:var(--c-m);}
+  .c-w{color:var(--c-w);} .dim{color:var(--muted);} .bold{font-weight:700;}
+
+  .cur{ display:inline-block; width:.55em; height:1.12em; background:var(--cursor);
+    vertical-align:-0.18em; margin-left:1px; border-radius:1px; }
+  .cur.off{ opacity:0; }
+</style>
+</head>
+<body data-theme="warp-dark">
+  <div id="kicker"></div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <div class="title" id="title"></div>
+    </div>
+    <div id="screen"><div id="content"></div></div>
+  </div>
+
+<script>
+  function esc(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  const SPIN = ["\u280b","\u2819","\u2839","\u2838","\u283c","\u2834","\u2826","\u2827","\u2807","\u280f"];
+
+  window.__INIT__ = function(data){
+    window.__DATA__ = data;
+    document.body.setAttribute("data-theme", data.theme || "warp-dark");
+    document.getElementById("title").textContent = data.title || "";
+    const k = document.getElementById("kicker");
+    k.textContent = data.kicker || "";
+    k.style.display = data.kicker ? "block" : "none";
+    const screen = document.getElementById("content");
+    if (data.font) screen.style.fontFamily =
+      '"' + data.font + '","SF Mono",Menlo,Consolas,monospace';
+    if (data.fontSize) screen.style.fontSize = data.fontSize + "px";
+    window.seekTo(0);
+    return true;
+  };
+
+  window.seekTo = function(tMs){
+    const D = window.__DATA__;
+    if (!D) return false;
+    const blinkOn = Math.floor(tMs / 530) % 2 === 0;
+    let html = "";
+    for (const ln of D.lines){
+      if (ln.kind === "cmd"){
+        if (tMs < ln.start) continue;
+        let s = "";
+        for (const k of ln.keys){
+          if (k.t > tMs) break;
+          if (k.bs) s = s.slice(0, -1); else s += k.ch;
+        }
+        const active = tMs < ln.submitT;
+        const cur = active ? '<span class="cur' + (blinkOn ? '' : ' off') + '"></span>' : '';
+        html += '<div class="ln"><span class="pr">' + ln.prompt + '</span>' + esc(s) + cur + '</div>';
+      } else if (ln.kind === "out"){
+        if (tMs < ln.t) continue;
+        html += '<div class="ln">' + ln.html + '</div>';
+      } else if (ln.kind === "spin"){
+        if (tMs < ln.tStart) continue;
+        if (tMs < ln.tEnd){
+          const g = SPIN[Math.floor(tMs / ln.periodMs) % SPIN.length];
+          html += '<div class="ln"><span class="c-c">' + g + '</span> ' + ln.labelHtml + '</div>';
+        } else {
+          html += '<div class="ln">' + ln.doneHtml + '</div>';
+        }
+      }
+    }
+    const content = document.getElementById("content");
+    content.innerHTML = html;
+    const screen = document.getElementById("screen");
+    const over = content.scrollHeight - screen.clientHeight;
+    content.style.transform = over > 0 ? "translateY(" + (-over) + "px)" : "none";
+    return true;
+  };
+</script>
+</body>
+</html>

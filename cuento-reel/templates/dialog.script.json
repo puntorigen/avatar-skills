@@ -1,0 +1,15 @@
+{
+  "_comment": "audio-theater dialogue for the character lip-sync lines. Use ONLY when you need a specific non-MiniMax voice (e.g. youthful/character voices). One entry per spoken line; generate the audio, then lip-sync each onto its character face with avatar-talking-video --audio, and reference the resulting clip in plan.json (kind 'audio') + storyboard (guest scene).",
+  "title": "<episodio> - dialogos",
+  "language": "es",
+  "language_code": "es-US",
+  "mode": "lipsync",
+  "characters": [
+    {"name": "<PersonajeA>", "voice": "<gemini_voice>", "persona": "voz juvenil clara; <rasgos>"},
+    {"name": "<PersonajeB>", "voice": "<gemini_voice>", "persona": "voz <rasgos>"}
+  ],
+  "lines": [
+    {"index": 0, "speaker": "<PersonajeA>", "text": "<línea original 1>", "tags": ["gentle"], "pause_after": 0.3},
+    {"index": 1, "speaker": "<PersonajeB>", "text": "<línea original 2>", "tags": ["defensive"], "pause_after": 0.3}
+  ]
+}

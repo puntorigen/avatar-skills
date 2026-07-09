@@ -1,0 +1,10 @@
+# reel-discovery is stdlib-only (urllib/json/argparse) -- no pip packages are
+# required to run the search + ranking. The only external tools it shells out to
+# are already on this machine:
+#
+#   yt-dlp   (YouTube/TikTok listing + download fallback)   pip3 install -U yt-dlp
+#   ffmpeg   (muxing for yt-dlp downloads)                  brew install ffmpeg
+#
+# Optional providers are reached over plain HTTPS (no SDK needed):
+#   - YouTube Data API v3  -> set YT_API_KEY        (free Google Cloud key)
+#   - Apify actors         -> set APIFY_TOKEN        (paid; TikTok kw + IG topic)

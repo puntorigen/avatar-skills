@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "_comment": "Example reel template (what extract_template.py produces). Script-agnostic 'DNA' of a ~30s reel: 7 beats, talking-head/B-roll pattern, per-beat camera angle + motion, transitions, SFX and caption style, proportional pacing. Re-apply it to a NEW avatar + voice + script with apply_template.py. Scene DURATIONS are NOT copied -- the composer derives them from the new narration's word alignment; only the proportional dur_weight is a soft guide for splitting the new script.",
+  "extracted_at": "2026-06-13T10:00:00-04:00",
+  "source": {
+    "avatar": "avatares/lolo",
+    "primary_analysis": "avatares/lolo/videos/2026-06-08_15-02-03.analysis.json",
+    "analyses": ["avatares/lolo/videos/2026-06-08_15-02-03.analysis.json"],
+    "transition_style": "avatares/lolo/transition_style.json",
+    "subtitle_style": "avatares/lolo/subtitle_style.json",
+    "talking_profile": "avatares/lolo/talking_profile.json"
+  },
+  "summary": {
+    "total_scenes": 7,
+    "talking_head": 4,
+    "broll": 3,
+    "total_duration": 31.8,
+    "avg_scene_dur": 4.54,
+    "cut_rhythm": "medium",
+    "narrative_arc": ["hook", "body", "body", "body", "body", "body", "cta"]
+  },
+  "angles_needed": ["eye_level", "push_in", "pull_out"],
+  "beats": [
+    {
+      "index": 0, "role": "hook", "type": "talking_head", "dur_weight": 0.093,
+      "zoom_from_previous": "none", "emphasis": false, "has_sfx": false,
+      "audio_profile": "speech_only", "focus": "Direct identification hook to the viewer",
+      "camera_angle": "eye_level", "framing": "medium_close_up", "move": "eye_level"
+    },
+    {
+      "index": 1, "role": "body", "type": "broll", "dur_weight": 0.19,
+      "zoom_from_previous": "hard_cut", "emphasis": false, "has_sfx": true,
+      "audio_profile": "speech_with_sfx", "focus": "Visualize the problem with an insert",
+      "camera_angle": null, "broll_camera": "push_in",
+      "broll_hint": "Insert that visualizes the problem; RE-AUTHOR for the new script's topic"
+    },
+    {
+      "index": 2, "role": "body", "type": "broll", "dur_weight": 0.16,
+      "zoom_from_previous": "hard_cut", "emphasis": false, "has_sfx": false,
+      "audio_profile": "speech_only", "focus": "Tighter second insert keeps the rhythm",
+      "camera_angle": null, "broll_camera": "push_in",
+      "broll_hint": "Tighter detail insert; RE-AUTHOR for the new script's topic"
+    },
+    {
+      "index": 3, "role": "body", "type": "talking_head", "dur_weight": 0.12,
+      "zoom_from_previous": "zoom_in", "emphasis": true, "has_sfx": false,
+      "audio_profile": "speech_only", "focus": "Presenter returns with the payoff",
+      "camera_angle": "zoom_in", "framing": "close_up", "move": "push_in"
+    },
+    {
+      "index": 4, "role": "body", "type": "talking_head", "dur_weight": 0.12,
+      "zoom_from_previous": "zoom_out", "emphasis": false, "has_sfx": false,
+      "audio_profile": "speech_only", "focus": "Reframe / reassurance, wider beat",
+      "camera_angle": "pull_out", "framing": "medium_shot", "move": "pull_out"
+    },
+    {
+      "index": 5, "role": "body", "type": "broll", "dur_weight": 0.15,
+      "zoom_from_previous": "hard_cut", "emphasis": false, "has_sfx": true,
+      "audio_profile": "speech_with_sfx", "focus": "Emotional outro insert",
+      "camera_angle": null, "broll_camera": "handheld",
+      "broll_hint": "Emotional outro insert; RE-AUTHOR for the new script's topic"
+    },
+    {
+      "index": 6, "role": "cta", "type": "talking_head", "dur_weight": 0.155,
+      "zoom_from_previous": "hard_cut", "emphasis": true, "has_sfx": false,
+      "audio_profile": "speech_only", "focus": "Call to action straight to the lens",
+      "camera_angle": "eye_level", "framing": "medium_close_up", "move": "eye_level"
+    }
+  ],
+  "transitions": {
+    "style": "golden_flash",
+    "flash_at": ["broll_entry"],
+    "flash_dur": 0.4,
+    "flash_gain": 0.99,
+    "_style_from": "avatares/lolo/transition_style.json"
+  },
+  "sfx": {
+    "density_sec": 15.0,
+    "events": ["whoosh_before_broll", "boom_on_emphasis"],
+    "_note": "Soft whoosh leading each B-roll cut + soft low boom on emphasis scenes; density measured from the reference reel."
+  },
+  "captions": {
+    "style_from": "avatares/lolo/subtitle_style.json",
+    "subtitle_style": {
+      "y_frac": 0.623,
+      "fontsize_frac": 0.0823,
+      "lines": 2,
+      "words_per_caption": 3,
+      "casing": "lower",
+      "color_hex": "#f0e4e0",
+      "progression": "replace"
+    }
+  },
+  "music": {
+    "mood": "ambient",
+    "include": true,
+    "detected_music_bed": false,
+    "prompt_hint": "sparse, intimate instrumental bed under a voice-over; soft and unobtrusive, no drums, no beat, no vocals -- TAILOR this to the new reel's topic + tone",
+    "words_per_caption": 3
+  },
+  "delivery_style_seed": "Calm, earnest presenter who addresses the lens directly, leans in slightly as if confiding, subtle expressive eyebrows, small nods, measured mouth movements and very little body motion. (STYLE only -- describe the NEW person's identity yourself.)"
+}

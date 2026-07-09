@@ -1,0 +1,7 @@
+# avatar-location delegates all generation to sibling skills, which bring their
+# own dependencies:
+#   - avatar-invent/generate_hero.py        (identity-anchored hero)  -> Pillow
+#   - avatar-camera-angles/generate_angles.py (camera angles)         -> Pillow
+#   - gpt-image-2/generate_image.py          (the actual renders)     -> replicate
+# Pillow is listed here so the 9:16 crops work even if only this skill is installed.
+Pillow>=10.0.0

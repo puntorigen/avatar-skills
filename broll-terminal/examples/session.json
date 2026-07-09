@@ -1,0 +1,22 @@
+{
+  "theme": "warp-dark",
+  "title": "zsh — virtual-avatar",
+  "kicker": "agent orchestration",
+  "cwd": "~/virtual-avatar",
+  "branch": "main",
+  "font": "JetBrains Mono",
+  "font_size": 19,
+  "typing": { "typo_chance": 0.25 },
+  "steps": [
+    { "cmd": "reel make --topic \"ai agents\" --avatar lolo" },
+    { "out": ["{dim}▸ discovering top reels…{/}", "{g}✓{/} ranked 18 candidates by velocity"], "stream_ms": 320 },
+    { "spinner": "scripting hook + beats", "duration_ms": 1500, "done": "{g}✓{/} script ready {dim}(48s){/}" },
+    { "spinner": "rendering avatar angles", "duration_ms": 1800, "done": "{g}✓{/} 4 camera angles lip-synced" },
+    { "out": ["{dim}▸ composing 9:16…{/}"], "latency_ms": 250 },
+    { "spinner": "muxing + captions", "duration_ms": 1400, "done": "{g}✓{/} reels/001_ai-agents.mp4 {dim}(1080x1920){/}" },
+    { "sleep_ms": 350 },
+    { "cmd": "ls reels/" },
+    { "out": "001_ai-agents.mp4  cover.png  manifest.json", "latency_ms": 240 }
+  ],
+  "tail_ms": 1200
+}

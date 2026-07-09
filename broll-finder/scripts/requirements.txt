@@ -1,0 +1,7 @@
+# broll-finder dependencies.
+# yt-dlp + ffmpeg do the heavy lifting (search fallback, section download, cut).
+yt-dlp>=2024.0.0
+# Timecoded transcripts without downloading the video (primary transcript path).
+youtube-transcript-api>=0.6.2
+# Optional: only needed for the --whisper ASR fallback on videos with no captions.
+# faster-whisper>=1.0.0

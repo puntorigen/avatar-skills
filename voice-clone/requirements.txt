@@ -1,0 +1,4 @@
+# Voice cloning + TTS via MiniMax on Replicate.
+replicate>=0.25.0
+# Language detection for the TTS language_boost hint (robust on short text).
+langid>=1.1.6

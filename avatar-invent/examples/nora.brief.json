@@ -1,0 +1,12 @@
+{
+  "_comment": "Example brief for avatar-invent. Either pass these as CLI flags or drop a brief.json in the avatar folder before the first run. The agent then refines scene.json / talking_profile.json / voice_brief.json at the author checkpoint.",
+  "name": "nora",
+  "description": "A warm, reassuring Chilean woman in her mid 30s, a clinical psychologist; soft features, shoulder-length dark wavy hair, light makeup, kind attentive eyes, a calm grounded presence",
+  "setting": "clinic",
+  "style": "photoreal",
+  "aspect_ratio": "9:16",
+  "generator": "gpt-image-2",
+  "language": "es",
+  "voice_description": "A warm, calm Chilean Spanish woman's voice, mid 30s, soft and reassuring, unhurried and empathetic, like a trusted therapist speaking gently to one person",
+  "quality": "high"
+}

@@ -1,0 +1,5 @@
+# video-transcribe skill.
+# Also requires ffmpeg on PATH (brew install ffmpeg) — faster-whisper uses it to
+# decode media, and yt-dlp uses it to mux downloaded streams.
+faster-whisper>=1.0.0
+yt-dlp>=2024.1.0

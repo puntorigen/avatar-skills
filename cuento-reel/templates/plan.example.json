@@ -1,0 +1,25 @@
+{
+  "_comment": "Master-narration plan. CRITICAL: gap MUST be 0 (guest clips have no trailing pad). Segments are in STORY ORDER and map 1:1 to storyboard.scenes (same order). kind 'tts' = Narrator (cloned MiniMax voice). kind 'audio' = a pre-made dialogue lip-sync clip (file = its .mp4; assemble extracts the clip's audio so the master-track slot == the clip duration). kind 'guest' = let assemble GENERATE the lip-sync clip from text in the character's own MiniMax voice. Run assemble_narration.py first, then compose_reel with --out-dir = this folder to REUSE narration.mp3 + align.",
+  "out_dir": "<libro>/<NN_slug>",
+  "gap": 0.0,
+  "language": "es",
+  "whisper_model": "small",
+  "resolution": "720p",
+  "segments": [
+    {"kind": "tts", "slug": "n1", "avatar_dir": "<serie>/cast/narrador",
+     "voice": {"voice_id": "<NARRADOR_VOICE_ID>", "emotion": "calm", "language_boost": "None"},
+     "text": "<narración original del beat 1 (3a persona)>"},
+
+    {"kind": "audio", "slug": "d_a_1", "file": "<serie>/cast/<charA>/generated-videos/<dlg_clip_1>.mp4",
+     "text": "<línea original del personaje A>"},
+
+    {"kind": "guest", "slug": "d_b_1", "avatar_dir": "<serie>/cast/<charB>",
+     "image": "<serie>/cast/<charB>/refs/<charB>_hero_master.png",
+     "voice_id": "<CHARB_VOICE_ID>", "emotion": "auto", "language_boost": "None",
+     "text": "<línea original del personaje B (su propia voz MiniMax)>"},
+
+    {"kind": "tts", "slug": "n2", "avatar_dir": "<serie>/cast/narrador",
+     "voice": {"voice_id": "<NARRADOR_VOICE_ID>", "emotion": "calm", "language_boost": "None"},
+     "text": "<narración original del beat 2>"}
+  ]
+}

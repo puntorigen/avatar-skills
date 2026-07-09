@@ -1,0 +1,11 @@
+replicate>=1.0.0
+google-genai>=0.3.0
+moviepy>=2.0.0
+opencv-python>=4.9.0
+Pillow>=10.0.0
+numpy>=1.26.0
+scenedetect[opencv]>=0.6.4
+librosa>=0.10.0
+soundfile>=0.12.0
+PyYAML>=6.0
+faster-whisper>=1.0.0

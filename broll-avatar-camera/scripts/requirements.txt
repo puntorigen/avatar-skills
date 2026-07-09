@@ -1,0 +1,2 @@
+replicate>=0.25
+pillow>=10.0

@@ -1,0 +1,24 @@
+{
+  "name": "video-compose-remotion",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Remotion title-overlay engine for the video-compose skill",
+  "scripts": {
+    "start": "remotion studio",
+    "render": "remotion render",
+    "build": "remotion bundle"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.455",
+    "@remotion/google-fonts": "^4.0.455",
+    "@remotion/transitions": "^4.0.455",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.455"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}
