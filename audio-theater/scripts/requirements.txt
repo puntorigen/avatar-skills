@@ -1,0 +1,10 @@
+# Core: Gemini TTS + text, Replicate (WhisperX, optional fallbacks)
+google-genai
+replicate
+
+# Optional local transcription fallback (only needed for --backend local|auto
+# when Replicate is unavailable). Heavy: pulls in torch/ctranslate2.
+# Install on demand:  pip3 install faster-whisper
+# faster-whisper
+
+# ffmpeg / ffprobe must be on PATH (brew install ffmpeg)

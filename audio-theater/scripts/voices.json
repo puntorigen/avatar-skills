@@ -1,0 +1,57 @@
+{
+  "_comment": "The 30 prebuilt Gemini TTS voices and their character. Used to assign one voice per speaker. See https://ai.google.dev/gemini-api/docs/speech-generation",
+  "voices": {
+    "Zephyr": "Bright",
+    "Puck": "Upbeat",
+    "Charon": "Informative",
+    "Kore": "Firm",
+    "Fenrir": "Excitable",
+    "Leda": "Youthful",
+    "Orus": "Firm",
+    "Aoede": "Breezy",
+    "Callirrhoe": "Easy-going",
+    "Autonoe": "Bright",
+    "Enceladus": "Breathy",
+    "Iapetus": "Clear",
+    "Umbriel": "Easy-going",
+    "Algieba": "Smooth",
+    "Despina": "Smooth",
+    "Erinome": "Clear",
+    "Algenib": "Gravelly",
+    "Rasalgethi": "Informative",
+    "Laomedeia": "Upbeat",
+    "Achernar": "Soft",
+    "Alnilam": "Firm",
+    "Schedar": "Even",
+    "Gacrux": "Mature",
+    "Pulcherrima": "Forward",
+    "Achird": "Friendly",
+    "Zubenelgenubi": "Casual",
+    "Vindemiatrix": "Gentle",
+    "Sadachbia": "Lively",
+    "Sadaltager": "Knowledgeable",
+    "Sulafat": "Warm"
+  },
+  "_archetypes_comment": "Suggested voice rotation per character archetype. write_script.py / generate_voices.py rotate through these to avoid collisions when auto-assigning.",
+  "archetypes": {
+    "narrator": ["Charon", "Rasalgethi", "Algieba", "Gacrux"],
+    "hero": ["Alnilam", "Orus", "Iapetus", "Zephyr"],
+    "heroine": ["Aoede", "Erinome", "Autonoe", "Leda"],
+    "villain": ["Algenib", "Gacrux", "Charon", "Alnilam"],
+    "child": ["Leda", "Sadachbia", "Puck"],
+    "elder": ["Gacrux", "Algenib", "Rasalgethi"],
+    "comic": ["Puck", "Fenrir", "Laomedeia", "Zubenelgenubi"],
+    "warm": ["Sulafat", "Vindemiatrix", "Achird", "Achernar"],
+    "neutral": ["Schedar", "Iapetus", "Erinome", "Despina"]
+  },
+  "_podcast_comment": "Default two-host pairing for podcast mode (contrasting timbres).",
+  "podcast_hosts": {
+    "host_a": "Charon",
+    "host_b": "Sulafat"
+  },
+  "_auto_pool_comment": "Generic rotation pool used when no archetype is given. Ordered for maximum contrast between consecutive speakers.",
+  "auto_pool": [
+    "Charon", "Aoede", "Alnilam", "Sulafat", "Algenib", "Erinome",
+    "Orus", "Leda", "Gacrux", "Despina", "Iapetus", "Achird"
+  ]
+}

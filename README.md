@@ -59,11 +59,14 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
 
 | Variable | Used by |
 |---|---|
-| `REPLICATE_API_TOKEN` | talking-head, B-roll, voice-clone, bg-music-hq, sound-effects, video-bg-replace, reel-composer, … |
-| `ELEVENLABS_API_KEY` | avatar-invent (voice design), avatar-ambient-sfx |
-| `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) | optional image generator, video-compose vision |
+| `REPLICATE_API_TOKEN` | talking-head, B-roll, voice-clone, bg-music-hq, sound-effects, video-bg-replace, reel-composer, gpt-image-2, audio-theater (WhisperX), … |
+| `ELEVENLABS_API_KEY` | avatar-invent (voice design), avatar-ambient-sfx, audio-theater (SFX) |
+| `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) | audio-theater (Gemini TTS), optional image generator, video-compose vision |
 | `YT_API_KEY` | reel-discovery, broll-finder (YouTube Data API) |
 | `APIFY_TOKEN` | optional paid upgrade for reel-discovery (TikTok/IG/FB) |
+
+> `seedance-2` needs **no API key** — it runs through the Higgsfield MCP (billed
+> via Higgsfield credits, handled by the MCP account).
 
 ## Available skills
 
@@ -138,6 +141,22 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
 - **viral-video-script** — write short-form scripts/dialogue following a viral
   content formula (beat sheet + shooting script + narration track).
 
+### Generation engines (shared)
+
+The shared model backends the pipeline skills call under the hood — bundled here
+so the set is self-contained (they read their own token; no keys are committed):
+
+- **gpt-image-2** — generate/edit images with OpenAI GPT Image 2 on Replicate
+  (character sheets, product sheets, storyboard sheets, precise in-image text).
+  Called by `avatar-invent`, `avatar-camera-angles`, `broll-avatar-camera` and
+  `broll-story`.
+- **seedance-2** — generate audio-synced video with ByteDance Seedance 2.0 via
+  the **Higgsfield MCP** (no API key — uses Higgsfield credits). Animates the
+  storyboard from `broll-story` and lip-syncs `audio-theater` clips.
+- **audio-theater** — multi-character audio (dramatized radio play / lipsync
+  clips / podcast) with Gemini TTS, realistic SFX and instrumental score. Powers
+  `avatar-ambient-sfx` and produces lipsync/voiceover tracks for the reel skills.
+
 ## Skill composition
 
 The avatar pipeline chains these skills:
@@ -151,9 +170,12 @@ avatar-reel-composer                        →  narrate → talking-head + B-ro
    └─ bg-music-hq / avatar-ambient-sfx       (music + spatial SFX)
 ```
 
-Some skills also compose with globally-installed skills that are not bundled here
-(e.g. `gpt-image-2`, `asset-generator`, `audio-theater`); they are auto-discovered
-when installed alongside these.
+The shared generation engines these skills call — `gpt-image-2`, `seedance-2` and
+`audio-theater` — are **bundled** in this repo (see *Generation engines* above). A
+couple of optional externals are still auto-discovered when installed alongside,
+but are **not required**: `asset-generator` (an alternative Gemini image generator)
+and `bg-music` (a faster instrumental-music backend for `audio-theater`; its
+default `hq` backend needs no extra skill).
 
 ## Repo layout
 

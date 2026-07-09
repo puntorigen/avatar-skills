@@ -73,6 +73,15 @@
         "brand-content-strategy",
         "viral-video-script"
       ]
+    },
+    {
+      "title": "Generation engines (shared)",
+      "description": "Shared model backends the pipeline skills call under the hood — image generation (GPT Image 2), audio-synced video (Seedance 2.0 via Higgsfield MCP), and multi-character audio (Gemini TTS + SFX + score).",
+      "skills": [
+        "gpt-image-2",
+        "seedance-2",
+        "audio-theater"
+      ]
     }
   ]
 }

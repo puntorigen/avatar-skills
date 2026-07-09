@@ -1,0 +1,5 @@
+# gpt-image-2 skill dependencies
+# The Replicate client and Pillow are usually already installed via the
+# other Replicate/image skills. Run this only if imports fail.
+replicate>=1.0
+Pillow>=10.0
