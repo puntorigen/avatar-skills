@@ -1,6 +1,18 @@
 ---
 name: avatar-location
-description: Create a new LOCATION (a look) for an existing avatar — keep its IDENTITY (face, gestures, cloned voice, talking_profile) but vary the LOOK: wardrobe + environment + light, optionally incorporating asset references (a logo on a shirt/jacket, a prop in the scene). Generates an identity-anchored hero still + camera angles under <avatar>/locations/<loc>/, selectable later per reel and per scene by avatar-reel-composer, so one avatar can appear in many looks without re-making it. The avatar's DEFAULT location is just what exists today (top-level scene.json + angles/) and is untouched. Use when the user wants to "dress" an avatar differently, put it in another setting/room, give it a wardrobe/scene variant, add a branded outfit (logo on the shirt) or a prop, create reel looks, or asks for avatar locations / outfits / wardrobes / environments / "otro ambiente" / "otra ropa" for an avatar.
+description: >-
+  Create a new LOCATION (a look) for an existing avatar — keep its IDENTITY
+  (face, gestures, cloned voice, talking_profile) but vary the LOOK: wardrobe +
+  environment + light, optionally incorporating asset references (a logo on a
+  shirt/jacket, a prop in the scene). Generates an identity-anchored hero still +
+  camera angles under <avatar>/locations/<loc>/, selectable later per reel and
+  per scene by avatar-reel-composer, so one avatar can appear in many looks
+  without re-making it. The avatar's DEFAULT location is just what exists today
+  (top-level scene.json + angles/) and is untouched. Use when the user wants to
+  "dress" an avatar differently, put it in another setting/room, give it a
+  wardrobe/scene variant, add a branded outfit (logo on the shirt) or a prop,
+  create reel looks, or asks for avatar locations / outfits / wardrobes /
+  environments / "otro ambiente" / "otra ropa" for an avatar.
 ---
 
 # avatar-location

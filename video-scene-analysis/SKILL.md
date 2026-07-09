@@ -1,6 +1,19 @@
 ---
 name: video-scene-analysis
-description: Analyze local video files (mp4, mov, webm) into scene sequences: scene-change detection, scene type (talking head vs B-roll), split-screen / screen-composition detection (B-roll band + presenter, picture-in-picture, graphic overlays), B-roll kind (archival footage of a recognizable/known person vs generic material, naming the people), presenter background (real set/location vs animated/cartoons/motion graphics), zoom in/out vs previous scene, faster-whisper transcription with timecodes, SFX/music-bed detection per scene, a representative frame per scene, and per-scene focus/emotion summaries. Outputs .analysis.json, .analysis.md, and a frames folder. Use when the user asks to analyze a video, detect scenes, camera angle, split-screen layouts, archival/known-person footage, animated vs real backgrounds, transcribe a local video, detect SFX or background music, build a shot list from footage, or understand reel/avatar video structure.
+description: >-
+  Analyze local video files (mp4, mov, webm) into scene sequences: scene-change
+  detection, scene type (talking head vs B-roll), split-screen /
+  screen-composition detection (B-roll band + presenter, picture-in-picture,
+  graphic overlays), B-roll kind (archival footage of a recognizable/known
+  person vs generic material, naming the people), presenter background (real
+  set/location vs animated/cartoons/motion graphics), zoom in/out vs previous
+  scene, faster-whisper transcription with timecodes, SFX/music-bed detection
+  per scene, a representative frame per scene, and per-scene focus/emotion
+  summaries. Outputs .analysis.json, .analysis.md, and a frames folder. Use when
+  the user asks to analyze a video, detect scenes, camera angle, split-screen
+  layouts, archival/known-person footage, animated vs real backgrounds,
+  transcribe a local video, detect SFX or background music, build a shot list
+  from footage, or understand reel/avatar video structure.
 ---
 
 # Video Scene Analysis
