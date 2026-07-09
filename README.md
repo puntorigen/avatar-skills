@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/puntorigen/avatar-skills/main/assets/banner.png" alt="avatar-skills" width="820" />
+</p>
+
 # puntorigen/avatar-skills
 
 Agent skills for creating **AI avatar talking-head videos and short-form reels**
@@ -20,6 +24,17 @@ npx skills add puntorigen/avatar-skills -g -y              # global install, ski
 ```
 
 Browse: [skills.sh/puntorigen/avatar-skills](https://skills.sh/puntorigen/avatar-skills)
+
+## Seen in the wild
+
+These skills power real published content. For example, the TikTok channel
+[**El Rincón del Alma**](https://www.tiktok.com/@elrincondelalma_com) publishes
+narrated *cuento* (short-story) reels whose presenters, voices and edits are
+produced with [`cuento-reel`](cuento-reel) and
+[`avatar-reel-composer`](avatar-reel-composer) — backed by
+[`avatar-invent`](avatar-invent) (invented presenters + designed voices),
+[`voice-clone`](voice-clone) (narrator voice) and
+[`bg-music-hq`](bg-music-hq) (music beds).
 
 ## Conventions
 

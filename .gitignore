@@ -32,6 +32,10 @@ credentials*.json
 *.webp
 *.gif
 
+# ...except the repo header art (logo + banner), committed on purpose.
+!/assets/
+!/assets/*.png
+
 # Dependencies (installed on first run by setup scripts)
 node_modules/
 .pnpm-store/
