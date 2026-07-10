@@ -27,10 +27,6 @@ Browse: [skills.sh/puntorigen/avatar-skills](https://skills.sh/puntorigen/avatar
 
 ## Demo — the reel is the proof
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/puntorigen/avatar-skills/main/assets/demo-poster.png" alt="avatar-skills demo reel — a Victorian detective presenter invented, voiced and filmed entirely by the toolkit" width="300" />
-</p>
-
 https://github.com/user-attachments/assets/0e762719-62e3-4c9d-bf6f-314a899dcb49
 
 A ~24s vertical reel in which a Victorian detective takes on his toughest case —
