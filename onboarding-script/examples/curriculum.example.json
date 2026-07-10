@@ -1,0 +1,101 @@
+{
+  "company": "acme",
+  "company_name": "Acme Labs",
+  "language": "en",
+  "audience": "new engineer",
+  "generated_at": "2026-07-09T00:00:00+00:00",
+  "guideline": "default-minimum",
+  "context_path": "onboarding/acme/context/company_context.json",
+  "episodes": [
+    {
+      "id": "welcome",
+      "order": 1,
+      "slug": "01_welcome",
+      "title": "Welcome & company intro",
+      "objective": "Make the new hire feel welcome and understand our mission, values, team and what we build.",
+      "audience": "new engineer",
+      "language": "en",
+      "target_seconds": 40,
+      "topics": ["mission", "values", "team", "what we build"],
+      "needs_demo": false,
+      "demo_targets": [],
+      "sources": []
+    },
+    {
+      "id": "tools-accounts",
+      "order": 2,
+      "slug": "02_tools-accounts",
+      "title": "Tools & accounts we use",
+      "objective": "Show the stack and the accounts to request so the new hire can get set up on day one.",
+      "audience": "new engineer",
+      "language": "en",
+      "target_seconds": 45,
+      "topics": ["the stack", "accounts to request", "how to get access"],
+      "needs_demo": true,
+      "demo_targets": [
+        {"url": "https://github.com/acme", "intent": "Tour the GitHub org: repos, teams, projects."}
+      ],
+      "sources": []
+    },
+    {
+      "id": "best-practices",
+      "order": 3,
+      "slug": "03_best-practices",
+      "title": "Engineering best practices",
+      "objective": "Explain how we write and ship code: branching, pull requests, reviews and coding standards.",
+      "audience": "new engineer",
+      "language": "en",
+      "target_seconds": 45,
+      "topics": ["branching", "pull requests", "code review", "coding standards"],
+      "needs_demo": false,
+      "demo_targets": [],
+      "sources": ["acme/.github CONTRIBUTING.md"]
+    },
+    {
+      "id": "create-project",
+      "order": 4,
+      "slug": "04_create-project",
+      "title": "Create a new project with the company skills",
+      "objective": "Walk through bootstrapping a new project the way we do it, using our templates/skills.",
+      "audience": "new engineer",
+      "language": "en",
+      "target_seconds": 45,
+      "topics": ["templates/skills", "scaffolding a repo", "first commit"],
+      "needs_demo": true,
+      "demo_targets": [
+        {"url": "https://github.com/acme/skills", "intent": "Open acme/skills and show how a new project is scaffolded from it."}
+      ],
+      "sources": ["acme/skills"]
+    },
+    {
+      "id": "deploy",
+      "order": 5,
+      "slug": "05_deploy",
+      "title": "How we deploy",
+      "objective": "Show the real path from a merged PR to production on our cloud, including CI/CD.",
+      "audience": "new engineer",
+      "language": "en",
+      "target_seconds": 45,
+      "topics": ["CI/CD", "environments", "cloud deploy", "rollbacks"],
+      "needs_demo": true,
+      "demo_targets": [
+        {"url": "", "intent": "Show a deploy running in CI to Vercel (fill the real URL/console)."}
+      ],
+      "sources": ["acme/web CI (vercel)"]
+    },
+    {
+      "id": "get-help",
+      "order": 6,
+      "slug": "06_get-help",
+      "title": "Where to get help & what's next",
+      "objective": "Point the new hire to people, docs and rituals so they know where to turn next.",
+      "audience": "new engineer",
+      "language": "en",
+      "target_seconds": 35,
+      "topics": ["who to ask", "docs", "rituals/ceremonies", "next steps"],
+      "needs_demo": false,
+      "demo_targets": [],
+      "sources": []
+    }
+  ]
+}

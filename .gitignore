@@ -16,6 +16,9 @@ credentials*.json
 # Generated avatars & their assets (created under ./avatares/ by the creator skills)
 /avatares/
 
+# Generated onboarding script series (created under ./onboarding/ by onboarding-script)
+/onboarding/
+
 # Sensitive web-session artifacts
 *.har
 

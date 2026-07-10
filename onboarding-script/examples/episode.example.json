@@ -1,0 +1,63 @@
+{
+  "id": "welcome",
+  "order": 1,
+  "slug": "01_welcome",
+  "title": "Welcome & company intro",
+  "company": "acme",
+  "company_name": "Acme Labs",
+  "language": "en",
+  "audience": "new engineer",
+  "target_seconds": 40,
+  "objective": "Make the new hire feel welcome and understand our mission, values, team and what we build.",
+  "topics": ["mission", "values", "team", "what we build"],
+  "sources": ["acme org profile", "handbook: Welcome (Notion)"],
+  "voice": {"emotion": "warm"},
+  "beats": [
+    {
+      "id": "b1",
+      "kind": "talking_head",
+      "seconds": 3,
+      "narration": "Welcome to Acme. Let me show you who we are in sixty seconds.",
+      "on_screen": "Presenter to camera; Acme title card.",
+      "caption": "Welcome to Acme",
+      "note": "Hook: warm, one line, sets the promise."
+    },
+    {
+      "id": "b2",
+      "kind": "talking_head",
+      "seconds": 9,
+      "narration": "We build developer tools that make shipping software feel effortless. That mission drives every decision.",
+      "on_screen": "Presenter to camera.",
+      "caption": "We make shipping effortless",
+      "note": "Mission, at the identity layer (what it means), not a feature list."
+    },
+    {
+      "id": "b3",
+      "kind": "broll",
+      "seconds": 10,
+      "narration": "Three values guide us: ship small, own the outcome, and leave the codebase better than you found it.",
+      "on_screen": "",
+      "caption": "Ship small · Own it · Leave it better",
+      "broll": "Montage of a small team pairing at laptops, a green CI check, a clean merge — energetic, no presenter.",
+      "note": "B-roll: VO over visuals; keep the three values crisp for the caption."
+    },
+    {
+      "id": "b4",
+      "kind": "talking_head",
+      "seconds": 10,
+      "narration": "You're joining a small, senior team where your first pull request ships in week one.",
+      "on_screen": "Presenter to camera; optional team photo.",
+      "caption": "Your PR ships week one",
+      "note": "Team + belonging; concrete promise."
+    },
+    {
+      "id": "b5",
+      "kind": "talking_head",
+      "seconds": 5,
+      "narration": "Next up: the tools and accounts you'll need. Let's get you set up.",
+      "on_screen": "Presenter to camera; end card pointing to episode 2.",
+      "caption": "Next: your tools",
+      "note": "Outro: one clear next step (to episode 2)."
+    }
+  ]
+}

@@ -163,6 +163,11 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
   research-backed content + channel strategy.
 - **viral-video-script** — write short-form scripts/dialogue following a viral
   content formula (beat sheet + shooting script + narration track).
+- **onboarding-script** — generate an ordered series of onboarding reel scripts
+  for a new team member (welcome, tools, best practices, create a project,
+  deploy), auto-discovering the company from the connected tools (gh org/CI,
+  `az`/`gcloud`/`vercel`, Notion/Linear MCP, chat transcripts). Company-agnostic;
+  outputs feed `avatar-video-reel` / `avatar-reel-composer`.
 
 ### Generation engines (shared)
 
