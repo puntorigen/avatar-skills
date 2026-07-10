@@ -1,0 +1,19 @@
+{
+  "theme": "cursor-dark",
+  "title": "Cursor — avatar-skills",
+  "kicker": "one prompt → one reel",
+  "model": "claude-4.6-sonnet",
+  "agent_name": "Agent",
+  "font_size": 21,
+  "placeholder": "Plan, search, build anything…",
+  "steps": [
+    { "user": "invent a Sherlock-style detective host for an avatar-skills demo" },
+    { "say": "On it — building the presenter with the pipeline." },
+    { "tool": "viral-video-script", "detail": "writing the hook", "duration_ms": 1200, "done": "script ready" },
+    { "tool": "avatar-invent", "detail": "inventing the face", "duration_ms": 1600, "done": "hero + 5 angles" },
+    { "tool": "voice-clone", "detail": "designing the voice", "duration_ms": 1200, "done": "voice cloned" },
+    { "tool": "avatar-reel-composer", "detail": "shooting every scene", "duration_ms": 1500, "done": "reel ready" },
+    { "say": "Done — your detective is live in {c}avatares/sherlock{/}." }
+  ],
+  "tail_ms": 1000
+}

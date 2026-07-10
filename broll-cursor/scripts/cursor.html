@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>broll-cursor</title>
+<style>
+  :root{
+    --radius: 18px;
+    --sans: -apple-system,"SF Pro Text","Segoe UI",Inter,Roboto,system-ui,sans-serif;
+    --mono: "JetBrains Mono","Cascadia Code","Fira Code","SF Mono",Menlo,Consolas,monospace;
+  }
+  /* ---- themes -------------------------------------------------------- */
+  [data-theme="cursor-dark"]{
+    --page1:#0a0b0f; --page2:#14161d;
+    --win:#191b22; --winbar:#15171d; --border:rgba(255,255,255,.07);
+    --fg:#e7e9ee; --muted:#8b909c; --faint:#6a6f7b;
+    --user-bg:#262a34; --user-border:rgba(255,255,255,.08);
+    --tool-bg:#1e2129; --tool-border:rgba(255,255,255,.09);
+    --composer-bg:#14161c; --composer-border:rgba(255,255,255,.10);
+    --accent:#6ea8fe; --accent2:#b48ead; --cursor:#e7e9ee;
+    --c-g:#8fd66a; --c-r:#f7768e; --c-y:#e0af68; --c-b:#7aa2f7; --c-c:#7dcfff; --c-m:#bb9af7; --c-w:#e7e9ee;
+  }
+  [data-theme="cursor-light"]{
+    --page1:#e7e9ef; --page2:#f6f7fb;
+    --win:#ffffff; --winbar:#f1f2f6; --border:rgba(0,0,0,.08);
+    --fg:#1f2430; --muted:#6b7280; --faint:#9aa1ad;
+    --user-bg:#eef1f6; --user-border:rgba(0,0,0,.06);
+    --tool-bg:#f4f6fa; --tool-border:rgba(0,0,0,.08);
+    --composer-bg:#f6f7fb; --composer-border:rgba(0,0,0,.12);
+    --accent:#2f6fed; --accent2:#7c3aed; --cursor:#1f2430;
+    --c-g:#2e7d32; --c-r:#c62828; --c-y:#a16207; --c-b:#1565c0; --c-c:#00838f; --c-m:#6a1b9a; --c-w:#1f2430;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; width:100%; height:100%; }
+  body{
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(120% 90% at 50% 0%, var(--page2) 0%, var(--page1) 72%);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow:hidden;
+  }
+
+  #kicker{
+    position:absolute; top:4.4%; left:0; right:0; text-align:center;
+    color:var(--muted); font-weight:700; letter-spacing:0.2em;
+    text-transform:uppercase; font-size:0.80em; opacity:.92;
+  }
+
+  .window{
+    width:92vw; height:84vh; display:flex; flex-direction:column;
+    background:var(--win); border-radius:var(--radius);
+    border:1px solid var(--border);
+    box-shadow:0 50px 110px rgba(0,0,0,.55), 0 8px 22px rgba(0,0,0,.38),
+               inset 0 1px 0 rgba(255,255,255,.05);
+    overflow:hidden;
+  }
+
+  /* ---- title bar ----------------------------------------------------- */
+  .titlebar{
+    flex:0 0 auto; height:2.9em; display:flex; align-items:center;
+    padding:0 1.1em; background:var(--winbar); border-bottom:1px solid var(--border);
+  }
+  .dots{ display:flex; gap:.6em; }
+  .dot{ width:.82em; height:.82em; border-radius:50%; }
+  .dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+  .title{ flex:1; text-align:center; color:var(--muted); font-size:.85em;
+    margin-right:3.6em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* ---- chat header --------------------------------------------------- */
+  .chathead{
+    flex:0 0 auto; display:flex; align-items:center; gap:.6em;
+    padding:.85em 1.15em; border-bottom:1px solid var(--border);
+  }
+  .spark{ width:1.15em; height:1.15em; flex:0 0 auto; }
+  .agentname{ font-weight:650; color:var(--fg); font-size:.98em; letter-spacing:.01em; }
+  .grow{ flex:1; }
+  .pill{
+    font-family:var(--mono); font-size:.74em; color:var(--muted);
+    background:var(--tool-bg); border:1px solid var(--tool-border);
+    padding:.28em .7em; border-radius:999px; display:inline-flex; align-items:center; gap:.42em;
+  }
+  .pill .caret{ color:var(--faint); font-size:.85em; }
+
+  /* ---- messages ------------------------------------------------------ */
+  #screen{ position:relative; flex:1 1 auto; overflow:hidden; }
+  #content{ padding:1.15em 1.2em 0.4em; will-change:transform; }
+
+  .msg{ margin-bottom:1.15em; }
+  .msg .role{ display:flex; align-items:center; gap:.5em; margin-bottom:.5em; }
+  .avatar{ width:1.55em; height:1.55em; border-radius:50%; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center; font-size:.72em; font-weight:700; }
+  .avatar.you{ background:linear-gradient(135deg,#5b6472,#3a3f4b); color:#e7e9ee; }
+  .avatar.ai{ background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; }
+  .rolename{ color:var(--muted); font-size:.86em; font-weight:600; letter-spacing:.02em; }
+
+  .bubble{
+    background:var(--user-bg); border:1px solid var(--user-border);
+    border-radius:14px; padding:.72em .9em; color:var(--fg);
+    font-size:1em; line-height:1.5; white-space:pre-wrap; word-break:break-word;
+  }
+  .saytext{ color:var(--fg); font-size:1em; line-height:1.62;
+    white-space:pre-wrap; word-break:break-word; padding-left:.15em; }
+
+  /* ---- tool-call rows ------------------------------------------------ */
+  .tool{
+    display:flex; align-items:center; gap:.6em; margin:.5em 0 .5em .1em;
+    background:var(--tool-bg); border:1px solid var(--tool-border);
+    border-radius:11px; padding:.6em .8em;
+  }
+  .tool .ico{ width:1.2em; text-align:center; flex:0 0 auto; font-family:var(--mono); }
+  .tool .name{ font-family:var(--mono); font-weight:600; color:var(--fg); font-size:.92em; }
+  .tool .detail{ color:var(--muted); font-size:.9em; }
+  .tool .done{ color:var(--muted); font-size:.9em; }
+  .tool .chev{ margin-left:auto; color:var(--faint); font-size:.9em; }
+
+  .c-g{color:var(--c-g);} .c-r{color:var(--c-r);} .c-y{color:var(--c-y);}
+  .c-b{color:var(--c-b);} .c-c{color:var(--c-c);} .c-m{color:var(--c-m);}
+  .c-w{color:var(--c-w);} .dim{color:var(--muted);} .bold{font-weight:700;}
+
+  .cur{ display:inline-block; width:.5em; height:1.02em; background:var(--cursor);
+    vertical-align:-0.16em; margin-left:2px; border-radius:1px; }
+  .cur.off{ opacity:0; }
+  .cur.thin{ width:2px; }
+
+  /* ---- composer ------------------------------------------------------ */
+  .composer{
+    flex:0 0 auto; margin:.55em .95em 1.0em; padding:.8em .95em .7em;
+    background:var(--composer-bg); border:1px solid var(--composer-border);
+    border-radius:15px; box-shadow:0 6px 20px rgba(0,0,0,.18);
+  }
+  .composer .inp{ min-height:1.5em; color:var(--fg); font-size:1em; line-height:1.5;
+    white-space:pre-wrap; word-break:break-word; }
+  .composer .inp.empty{ color:var(--faint); }
+  .composer .bar{ display:flex; align-items:center; gap:.6em; margin-top:.7em; }
+  .composer .bar .mode{ font-size:.78em; color:var(--muted); background:var(--tool-bg);
+    border:1px solid var(--tool-border); border-radius:8px; padding:.24em .6em;
+    display:inline-flex; align-items:center; gap:.4em; }
+  .composer .bar .model{ font-family:var(--mono); font-size:.76em; color:var(--muted); }
+  .composer .bar .send{ margin-left:auto; width:1.9em; height:1.9em; border-radius:9px;
+    background:var(--accent); display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:.9em; }
+</style>
+</head>
+<body data-theme="cursor-dark">
+  <div id="kicker"></div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <div class="title" id="title"></div>
+    </div>
+    <div class="chathead">
+      <svg class="spark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 2.2l2.3 5.9 5.9 2.3-5.9 2.3L12 18.6l-2.3-5.9L3.8 10.4l5.9-2.3L12 2.2z"
+              fill="url(#g1)"/>
+        <defs><linearGradient id="g1" x1="3" y1="3" x2="21" y2="21">
+          <stop offset="0" stop-color="#6ea8fe"/><stop offset="1" stop-color="#b48ead"/>
+        </linearGradient></defs>
+      </svg>
+      <span class="agentname" id="agentname">Agent</span>
+      <span class="grow"></span>
+      <span class="pill" id="modelpill" style="display:none"></span>
+    </div>
+    <div id="screen"><div id="content"></div></div>
+    <div class="composer">
+      <div class="inp empty" id="composer">…</div>
+      <div class="bar">
+        <span class="mode">Agent</span>
+        <span class="model" id="composerModel"></span>
+        <span class="send">↑</span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function esc(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  const SPIN = ["\u280b","\u2819","\u2839","\u2838","\u283c","\u2834","\u2826","\u2827","\u2807","\u280f"];
+
+  window.__INIT__ = function(data){
+    window.__DATA__ = data;
+    document.body.setAttribute("data-theme", data.theme || "cursor-dark");
+    document.getElementById("title").textContent = data.title || "";
+    document.getElementById("agentname").textContent = data.agentName || "Agent";
+    const k = document.getElementById("kicker");
+    k.textContent = data.kicker || "";
+    k.style.display = data.kicker ? "block" : "none";
+    const mp = document.getElementById("modelpill");
+    if (data.model){ mp.style.display = "inline-flex";
+      mp.innerHTML = esc(data.model) + ' <span class="caret">\u2304</span>'; }
+    document.getElementById("composerModel").textContent = data.model || "";
+    const content = document.getElementById("content");
+    if (data.fontSize) content.style.fontSize = data.fontSize + "px";
+    const comp = document.getElementById("composer");
+    comp.dataset.placeholder = data.placeholder || "";
+    window.seekTo(0);
+    return true;
+  };
+
+  window.seekTo = function(tMs){
+    const D = window.__DATA__;
+    if (!D) return false;
+    const blinkOn = Math.floor(tMs / 530) % 2 === 0;
+
+    // ---- transcript ----
+    let html = "";
+    for (const ev of D.events){
+      if (ev.kind === "user"){
+        if (tMs < ev.submitT) continue;   // still being typed in the composer
+        html += '<div class="msg">'
+              + '<div class="role"><span class="avatar you"></span>'
+              + '<span class="rolename">You</span></div>'
+              + '<div class="bubble">' + ev.textHtml + '</div></div>';
+      } else if (ev.kind === "say"){
+        if (tMs < ev.t0) continue;
+        let n;
+        if (tMs >= ev.t1) n = ev.text.length;
+        else n = Math.floor((tMs - ev.t0) / ev.msPerChar);
+        const vis = ev.text.slice(0, Math.max(0, n));
+        const streaming = tMs < ev.t1;
+        const cur = streaming ? '<span class="cur thin' + (blinkOn ? '' : ' off') + '"></span>' : '';
+        html += '<div class="msg">'
+              + '<div class="role"><span class="avatar ai">\u2726</span>'
+              + '<span class="rolename">' + esc(D.agentName || "Agent") + '</span></div>'
+              + '<div class="saytext">' + expand(vis) + cur + '</div></div>';
+      } else if (ev.kind === "tool"){
+        if (tMs < ev.tStart) continue;
+        if (tMs < ev.tEnd){
+          const g = SPIN[Math.floor(tMs / ev.periodMs) % SPIN.length];
+          html += '<div class="tool"><span class="ico c-c">' + g + '</span>'
+                + '<span class="name">' + ev.name + '</span>'
+                + (ev.detail ? '<span class="detail">' + ev.detail + '</span>' : '')
+                + '<span class="chev">\u2304</span></div>';
+        } else {
+          html += '<div class="tool"><span class="ico c-g">\u2713</span>'
+                + '<span class="name">' + ev.name + '</span>'
+                + (ev.done ? '<span class="done">' + ev.done + '</span>' : '')
+                + '<span class="chev">\u2304</span></div>';
+        }
+      }
+    }
+    const content = document.getElementById("content");
+    content.innerHTML = html;
+
+    // autoscroll: keep the latest content in view (tail behavior)
+    const screen = document.getElementById("screen");
+    const over = content.scrollHeight - screen.clientHeight;
+    content.style.transform = over > 0 ? "translateY(" + (-over) + "px)" : "none";
+
+    // ---- composer (the active, still-typing user step, else placeholder) ----
+    let active = null;
+    for (const ev of D.events){
+      if (ev.kind === "user" && tMs >= ev.start && tMs < ev.submitT){ active = ev; break; }
+    }
+    const comp = document.getElementById("composer");
+    if (active){
+      let s = "";
+      for (const kk of active.keys){ if (kk.t > tMs) break; if (kk.bs) s = s.slice(0,-1); else s += kk.ch; }
+      comp.classList.remove("empty");
+      comp.innerHTML = esc(s) + '<span class="cur' + (blinkOn ? '' : ' off') + '"></span>';
+    } else {
+      comp.classList.add("empty");
+      comp.innerHTML = esc(comp.dataset.placeholder || "");
+    }
+    return true;
+  };
+
+  // Expand the same {tag}…{/} markup timeline.py emits for assistant lines,
+  // but on a possibly-truncated (mid-stream) slice: escape, expand, and close
+  // any span left open by the truncation so partial markup never breaks layout.
+  function expand(s){
+    s = esc(s);
+    const TAG = {g:"c-g",r:"c-r",y:"c-y",b:"c-b",c:"c-c",m:"c-m",w:"c-w",dim:"dim",bold:"bold"};
+    let open = 0;
+    s = s.replace(/\{(\w+)\}/g, function(m,t){ if(TAG[t]){open++; return '<span class="'+TAG[t]+'">';} return m; });
+    s = s.replace(/\{\/\}/g, function(){ if(open>0){open--; return '</span>';} return ''; });
+    while(open-- > 0) s += '</span>';
+    return s;
+  }
+</script>
+</body>
+</html>

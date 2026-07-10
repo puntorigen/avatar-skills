@@ -25,6 +25,29 @@ npx skills add puntorigen/avatar-skills -g -y              # global install, ski
 
 Browse: [skills.sh/puntorigen/avatar-skills](https://skills.sh/puntorigen/avatar-skills)
 
+## Demo — the reel is the proof
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/puntorigen/avatar-skills/main/assets/demo-poster.png" alt="avatar-skills demo reel — a Victorian detective presenter invented, voiced and filmed entirely by the toolkit" width="300" />
+</p>
+
+https://github.com/user-attachments/assets/0e762719-62e3-4c9d-bf6f-314a899dcb49
+
+A ~24s vertical reel in which a Victorian detective takes on his toughest case —
+the mystery of **his own origin**. Every layer of him was produced by these
+skills from **a single prompt**:
+
+- [`broll-cursor`](broll-cursor) — the opening Cursor agent-chat (*"invent a Sherlock detective for a demo about avatar-skills"*) that streams the skill calls
+- [`viral-video-script`](viral-video-script) — the "I'm not real" AI-reveal script + narration track
+- [`avatar-invent`](avatar-invent) — invents the detective (hero still + camera angles) and **designs his voice**
+- [`voice-clone`](voice-clone) — the cloned voice that narrates every line
+- [`avatar-talking-video`](avatar-talking-video) — the lip-synced talking-head scenes
+- [`broll-avatar-camera`](broll-avatar-camera) — the action B-roll (inspecting a clue with a magnifying glass)
+- [`avatar-reel-composer`](avatar-reel-composer) — narrates, aligns, cuts, captions and scores the whole thing
+- [`bg-music-hq`](bg-music-hq) + [`avatar-ambient-sfx`](avatar-ambient-sfx) — the music bed and the **spatial** sound design (fireplace to the left, a pipe puff before the closing line)
+
+No camera, no actor, no studio — just the toolkit.
+
 ## Seen in the wild
 
 These skills power real published content. For example, the TikTok channel
@@ -105,6 +128,10 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
 - **broll-web-capture** — turn a website or GitHub repo into a polished B-roll
   clip (with optional avatar PiP).
 - **broll-terminal** — turn a session JSON into an animated-terminal B-roll clip.
+- **broll-cursor** — turn a session JSON into an animated IDE agent-chat B-roll
+  clip (a Cursor-style "Agent" panel): a typed prompt + a streaming assistant
+  turn with tool-call rows. Sibling of `broll-terminal` (shell) for the
+  IDE/agent register.
 - **broll-core** — internal shared library for the `broll-*` skills.
 
 ### Voice & audio
