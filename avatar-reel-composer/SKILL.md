@@ -8,8 +8,10 @@ description: Turn a script + an existing avatar into a finished vertical reel. N
 Orchestrates the sibling skills into one finished reel from a **script** + an
 **existing avatar**, replicating the structure of the avatar's analyzed reels.
 An optional **finishing pass** (`finish_reel.py`) adds burned-in word-timed
-subtitles + a music bed ducked under the voice. SFX stingers and dissolves are
-still deferred (see *Next phases*).
+subtitles + a music bed under the voice — flat by default, or a **structured
+volume envelope** (entrance / lift / settle / duck / resolve, anchored to scene
+boundaries) that makes the soundtrack do editing work. SFX stingers and dissolves
+are still deferred (see *Next phases*).
 
 ## When to use
 - The user has an avatar folder (e.g. `lolo/`) that already contains `videos/`,
@@ -67,9 +69,13 @@ storyboard.json (you write it, guided by <avatar>.analysis.json)
       ("subtitle") casing with intentional ALL-CAPS preserved and no trailing dot —
       matching the analyzed reels. Rendered as transparent PNGs (Pillow), burned
       in via video-compose's overlay_titles
-   8. music: bg-music-hq instrumental bed at a FIXED low volume under the voice
-      (no ducking — it never pumps up/down). TAILOR the prompt to the reel's tone
-   9. re-mux → final.mp4 (video copy + voice + fixed-volume music)
+   8. music: bg-music-hq instrumental bed under the voice. Default = a FIXED low
+      volume (no ducking). Optional STRUCTURED envelope (--music-structure auto,
+      a storyboard finish.music_plan, or --music-from-cutsheet) makes the bed do
+      editing work: a hard-cut entrance, a lift/settle at an emotional shift, a
+      duck under a key line, a resolve into the close — anchored to scene
+      boundaries. TAILOR the prompt to the reel's tone
+   9. re-mux → final.mp4 (video copy + voice + music, flat or enveloped)
 
 (optional polish pass) polish_reel.py — applied OVER the finished video
   10. keep the pre-fx version as final-without-sfx.mp4
@@ -198,11 +204,15 @@ Optional `finish` block (also overridable by `compose_reel.py --finish` flags):
 | `music` | add a fixed-volume music bed (default `true`) |
 | `music_mood` | `bg-music-hq` mood preset (default `ambient`; e.g. `cinematic`, `inspiring`, `dramatic`, `lofi`) |
 | `music_prompt` | **tailor this** to the reel's emotional tone (read from the script + B-roll); light, instrumental, no drums |
-| `music_volume` | FIXED bed level under the voice, 0–1 (default `0.12`) — constant, no ducking |
+| `music_volume` | BASE bed level under the voice, 0–1 (default `0.12`). With `music_structure`/`music_plan` this is the level the envelope moves around (still no sidechain ducking) |
 | `music_vocals` | `wordless` (default — soft, non-distracting oohs/aahs) or `none` (instrumental). Stage directions are NEVER sung either way |
+| `music_structure` | `flat` (default — constant bed) or `auto` (a tasteful volume envelope from the scene structure: duck under the hook, lift after it, resolve on the close) |
+| `music_plan` | explicit soundtrack moves — `{"moves":[{"type":…,"at":…,"amount":…}]}` — the precise envelope (overrides `music_structure`). See *Structured music* below |
+| `music_from_cutsheet` | path to a `rule-of-six-edit` `*.cutsheet.json`; its per-cut `sound` notes are mapped (best-effort) to music moves at their scene boundaries |
 | `max_words` | max words per caption phrase unit (default `6`) |
 | `emphasis` | highlight each breath group's payoff in bold-italic (default `true`) |
 | `casing` | `subtitle` (default — lowercase like the analyzed reels: no sentence-initial capitals and no trailing dot, but intentional ALL-CAPS words like `REPE`/`NO` stay shouted and accents are kept), `natural` (preserve ASR/script casing), `lower`, or `upper` |
+| `caption_reveal` | `word` (default — **karaoke reveal**: each word appears as it's spoken, building the phrase in place; already-spoken words stay lit, the phrase clears on the next unit) or `phrase` (the whole phrase unit pops in at once). See the [`caption-word-reveal`](../caption-word-reveal/SKILL.md) skill |
 | `style_from` | path to a `subtitle_style.json` (from avatar-frames) to seed caption position/size/casing |
 | `regular_font` / `emph_font` | override the serif / bold-italic caption fonts (TTF) |
 | `fontsize` / `y_frac` | caption size (px) / vertical center as fraction of height (defaults: profile, else ~8.2% of width / `0.66`) |
@@ -562,14 +572,16 @@ frames. Then write the storyboard and run `compose_reel.py` as above.
     soft drop shadow** (thin subtle outline, no heavy block outline). Rendered as
     transparent PNGs (Pillow) and composited with `video-compose`'s
     `overlay_titles`; windows are contiguous (no flicker).
-- **Fixed-volume music bed.** Reuses `bg-music-hq`'s prompt/structure builders but
-  drives `minimax/music-2.5` with prediction **polling** (a slow render can't trip
-  the HTTP read-timeout the way a blocking `replicate.run` long-poll does). Mixed
-  at a **constant low level** under the voice (plain `amix`, **no sidechain
-  ducking** — it never pumps up and down), and **looped (with a short crossfade) to
-  cover the whole reel** so the bed never drops out partway through. *Always tailor
-  `music_prompt` to the reel's emotional tone* (inferred from the script + the
-  generated B-roll); the default is a sparse, intimate, drumless piano bed.
+- **Music bed (fixed or structured).** Reuses `bg-music-hq`'s prompt/structure
+  builders but drives `minimax/music-2.5` with prediction **polling** (a slow
+  render can't trip the HTTP read-timeout the way a blocking `replicate.run`
+  long-poll does). Mixed under the voice with **no sidechain ducking**, and
+  **looped (with a short crossfade) to cover the whole reel** so the bed never
+  drops out partway through. By default it sits at a **constant low level**; with a
+  music plan it follows a **volume envelope** (see *Structured music* below).
+  *Always tailor `music_prompt` to the reel's emotional tone* (inferred from the
+  script + the generated B-roll); the default is a sparse, intimate, drumless piano
+  bed.
   - **Vocals — never the instructions.** `minimax/music-2.5` has no
     `is_instrumental` flag; it SINGS whatever is in its `lyrics` field, so passing
     a mood's raw structure template makes it literally sing the stage directions
@@ -579,6 +591,47 @@ frames. Then write the storyboard and run `compose_reel.py` as above.
     `wordless` (default) adds soft, airy **oohs/aahs** under the singable sections —
     a warm sung quality that doesn't compete with the spoken narration — while
     `none` is purely instrumental. Either way the model can't sing the prompt.
+
+### Structured music — the soundtrack that does editing work
+The bed can go beyond a flat wash and follow a **volume envelope** that carries
+the reel emotionally — the audible half of the [`rule-of-six-edit`](../rule-of-six-edit/SKILL.md)
+`sound` axis (a hard-cut entrance, a lift/settle at an emotional shift, a duck
+under a key line, a resolve/handoff into the close). It automates the bed's
+**presence/dynamics** (aligning a track's own intro/verse/chorus to a frame would
+need a structured render — future work). Three ways to drive it, in priority:
+
+1. **`--music-structure auto`** (or `finish.music_structure: "auto"`) — a tasteful,
+   zero-config envelope from the scene structure: soft enter, a gentle **duck**
+   under the hook so the opening voice punches, a small **lift** after the hook, a
+   **resolve** over the final scene.
+2. **`--music-plan plan.json`** (or an inline storyboard `finish.music_plan`) — the
+   precise envelope. A list of **moves**, each anchored at a scene boundary
+   (`"s3 -> s4"` → that cut), a scene id (`"s2"` → its start), or seconds:
+
+   ```json
+   { "moves": [
+     { "type": "enter_hard", "at": "s1 -> s2" },
+     { "type": "duck", "span": ["s2", "s2 -> s3"], "amount": 0.5 },
+     { "type": "lift", "at": "s3 -> s4", "amount": 1.3 },
+     { "type": "resolve", "at": "s5" }
+   ] }
+   ```
+
+   Move `type`s: `enter`/`enter_hard` (entrance, soft vs beat-on-the-cut),
+   `lift`/`settle` (sustained shift up/down, `amount` × current), `duck`
+   (transient dip over `span`/`dur`), `accent` (transient bump), `resolve`
+   (decrescendo to the end). `amount` is relative to the running level; the bed is
+   capped at a safe absolute ceiling. The envelope is applied as an ffmpeg `volume`
+   expression at mux time (entrance via `adelay`), so it's **recomputed for free**
+   and never regenerates audio.
+3. **`--music-from-cutsheet reel.cutsheet.json`** (or `finish.music_from_cutsheet`)
+   — the literal bridge: reads a `rule-of-six-edit` cut sheet and maps each cut's
+   `sound` note to a move at its `at` boundary (SPLIT edits carry on the voice, so
+   they add no gain move). Best-effort keyword mapping (EN/ES); for exact control
+   author a `music_plan`.
+
+The resolved plan + keyframes + entrance land in `reel_manifest.json`
+(`finish.music_mix = "automated:<source>"`, `music_plan`, `music_keyframes`).
 
 ### Matching the analyzed caption style (`subtitle_style.json`)
 `avatar-frames` profiles the burned-in captions of the *original* reels and
@@ -607,7 +660,7 @@ casing**, an approximate **progression** (replace vs accumulate) and a documente
 - `scripts/create_avatar.py` — stage 0 orchestrator: builds a ready-to-compose avatar from a public Instagram profile (download → analyze → [agent enrich] → frames → voice → transitions → profile → `avatar.json`), idempotent resume, `--status` / `--force-stage`.
 - `scripts/narrate.py` — stage 1 (TTS + faster-whisper alignment); importable + CLI.
 - `scripts/compose_reel.py` — stage 2 core (align/slice/generate/normalize/assemble/mux); `--finish` to chain stage 3.
-- `scripts/finish_reel.py` — stage 3 finishing pass (serif phrase-unit captions with payoff emphasis + fixed-volume music bed); importable + CLI.
+- `scripts/finish_reel.py` — stage 3 finishing pass (serif phrase-unit captions with payoff emphasis + a music bed, flat or a structured volume envelope via `--music-structure`/`--music-plan`/`--music-from-cutsheet`); importable + CLI.
 - `scripts/polish_reel.py` — stage 4 polish pass (measured-style flash transitions at B-roll cuts + short-soft SFX, applied OVER final.mp4; keeps `final-without-sfx.mp4`); importable + CLI.
 - `scripts/profile_transitions.py` — measures the ORIGINAL reels' transition style (flash per boundary type, hue, duration, strength) from `*.analysis.json` + the videos → `<avatar>/transition_style.json` consumed by polish.
 - `scripts/_arc_common.py` — shared utils (token, paths, ffmpeg, sibling-CLI runner, video-compose import).

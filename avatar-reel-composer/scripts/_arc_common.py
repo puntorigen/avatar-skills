@@ -49,6 +49,7 @@ def _resolve_skills_root() -> Path:
 
 HOME_SKILLS = _resolve_skills_root()
 VOICE_CLONE_SCRIPT = HOME_SKILLS / "voice-clone/scripts/generate_speech.py"
+ELEVENLABS_TTS_SCRIPT = HOME_SKILLS / "voice-clone/scripts/elevenlabs_tts.py"
 TALKING_VIDEO_SCRIPT = HOME_SKILLS / "avatar-talking-video/scripts/generate_video.py"
 BROLL_SCRIPT = HOME_SKILLS / "broll-generator/scripts/generate_broll.py"
 VIDEO_COMPOSE_SCRIPTS = HOME_SKILLS / "video-compose/scripts"

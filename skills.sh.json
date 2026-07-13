@@ -13,10 +13,11 @@
     },
     {
       "title": "Talking-head & reels",
-      "description": "Turn a script + an avatar into finished vertical reels — lip-synced talking-head scenes, style transfer, story reels, and ambient sound design.",
+      "description": "Turn a script + an avatar into finished vertical reels — lip-synced talking-head scenes, style transfer, story reels, karaoke captions, and ambient sound design.",
       "skills": [
         "avatar-talking-video",
         "avatar-reel-composer",
+        "caption-word-reveal",
         "reel-restyle",
         "cuento-reel",
         "avatar-ambient-sfx"
@@ -69,10 +70,11 @@
     },
     {
       "title": "Strategy & scripting",
-      "description": "Plan a content/channel strategy, write viral short-form scripts, and generate company-aware onboarding reel-script series ready to feed the reel pipeline.",
+      "description": "Plan a content/channel strategy, write viral short-form scripts, plan the cuts/montage (Rule of Six), and generate company-aware onboarding reel-script series ready to feed the reel pipeline.",
       "skills": [
         "brand-content-strategy",
         "viral-video-script",
+        "rule-of-six-edit",
         "onboarding-script"
       ]
     },

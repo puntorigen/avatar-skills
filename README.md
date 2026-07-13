@@ -79,7 +79,7 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
 | Variable | Used by |
 |---|---|
 | `REPLICATE_API_TOKEN` | talking-head, B-roll, voice-clone, bg-music-hq, bg-music, sound-effects, video-bg-replace, reel-composer, gpt-image-2, audio-theater (WhisperX), … |
-| `ELEVENLABS_API_KEY` | avatar-invent (voice design), avatar-ambient-sfx, audio-theater (SFX) |
+| `ELEVENLABS_API_KEY` | avatar-invent (voice design), voice-clone / avatar-reel-composer (optional ElevenLabs TTS backend), avatar-ambient-sfx, audio-theater (SFX) |
 | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) | asset-generator (image gen), audio-theater (Gemini TTS), video-compose vision |
 | `YT_API_KEY` | reel-discovery, broll-finder (YouTube Data API) |
 | `APIFY_TOKEN` | optional paid upgrade for reel-discovery (TikTok/IG/FB) |
@@ -106,6 +106,9 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
   MP4 in the avatar's cloned voice (`prunaai/p-video-avatar`).
 - **avatar-reel-composer** — turn a script + an existing avatar into a finished
   vertical reel (narration, per-scene cuts, talking-head + B-roll, music).
+- **caption-word-reveal** — word-by-word ("karaoke") burned-in captions for reels:
+  each word appears as it's spoken, building the phrase in place (frozen layout,
+  no reflow). The default caption mode of the `avatar-reel-composer` finishing pass.
 - **reel-restyle** — distill one avatar's reel style into a template and re-apply
   it to a different avatar.
 - **cuento-reel** — narrated "story" reels where invented avatars act as
@@ -163,6 +166,9 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
   research-backed content + channel strategy.
 - **viral-video-script** — write short-form scripts/dialogue following a viral
   content formula (beat sheet + shooting script + narration track).
+- **rule-of-six-edit** — plan and evaluate the cuts/montage of a reel with Walter
+  Murch's "Rule of Six" (emotion > story > rhythm > eye-trace > 2D > 3D); emits a
+  cut sheet whose `sound` notes can drive `avatar-reel-composer`'s music envelope.
 - **onboarding-script** — generate an ordered series of onboarding reel scripts
   for a new team member (welcome, tools, best practices, create a project,
   deploy), auto-discovering the company from the connected tools (gh org/CI,

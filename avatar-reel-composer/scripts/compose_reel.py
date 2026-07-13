@@ -433,19 +433,56 @@ def gen_broll(scene, chunk_dur, avatar_dir, resolution, slug):
 # ---------------------------------------------------------------------------
 # Normalization + assembly
 # ---------------------------------------------------------------------------
-def normalize_scene(src, out, W, H, target_dur, motion, intensity, fps, vp):
-    """Trim to target_dur, scale/pad to WxH, apply Ken Burns, strip audio.
+def _conform_to_frames(path: Path, n_frames: int, fps: int, W: int, H: int) -> None:
+    """Force ``path`` to EXACTLY ``n_frames`` frames (CFR ``fps``).
 
-    NO freeze-padding. Scene clips always cover their slot — talking-heads run
-    the chunk's exact (audio-driven) length, and B-roll is generated at
-    ceil(target) (and regenerated if a cached clip is too short) — so here we
-    only ever TRIM. We never clone a frozen last frame to fill a gap (a silent
-    B-roll has no voice to sync to, so stretching/freezing it is wrong)."""
+    A clip shorter than its slot is padded by CLONING its last frame (tpad); a
+    longer one is trimmed. This is what keeps the picture frame-locked to the
+    continuously-laid narration: talking-head takes from p-video can come back a
+    few frames short of their audio chunk, and slot durations rarely land on an
+    exact frame — left unconformed, those per-scene shortfalls ACCUMULATE and
+    push the picture ahead of the voice (the drift that reads as lip-sync
+    slipping, worst near the end). Cloning <=~0.1s of a tail frame is
+    imperceptible and holds every later scene in sync."""
+    n_frames = max(1, int(n_frames))
+    tmp = path.with_name(path.stem + ".fix.mp4")
+    ok = C.run_ffmpeg(
+        ["-i", str(path),
+         # tpad appends cloned copies of the last frame (generous 2s) so a short
+         # clip can reach n_frames; -frames:v then caps to EXACTLY n_frames
+         # (also trimming a clip that runs long).
+         "-vf", f"tpad=stop_mode=clone:stop_duration=2,fps={fps},"
+                f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1",
+         "-frames:v", str(n_frames), "-an", "-r", str(fps),
+         "-c:v", "libx264", "-crf", "20", "-preset", "medium", "-pix_fmt", "yuv420p",
+         str(tmp)],
+        description=f"Conform {path.stem} to {n_frames}f ({n_frames/fps:.3f}s)",
+    )
+    if ok and tmp.exists():
+        tmp.replace(path)
+    else:
+        tmp.unlink(missing_ok=True)
+        print(f"  Warning: could not conform {path.name} to {n_frames} frames; "
+              "leaving as-is (may drift).", file=sys.stderr)
+
+
+def normalize_scene(src, out, W, H, target_dur, motion, intensity, fps, vp,
+                    *, target_frames=None):
+    """Scale/crop to WxH, apply Ken Burns, strip audio, and conform to an EXACT
+    frame count so the clip fully covers (and never overruns) its audio slot.
+
+    ``target_frames`` (from the frame-aligned scene grid) pins the output length
+    to the frame; when omitted it falls back to ``round(target_dur*fps)``. Short
+    clips are padded by cloning the last frame (see ``_conform_to_frames``) rather
+    than left short — the invariant the assembly relies on is clip_len == slot_len
+    for every scene, so re-laying the whole narration stays in lip-sync."""
+    if target_frames is None:
+        target_frames = max(1, int(round(target_dur * fps)))
     base = out.with_name(out.stem + ".base.mp4")
     vf = (f"scale={W}:{H}:force_original_aspect_ratio=increase,"
           f"crop={W}:{H},setsar=1")
     ok = C.run_ffmpeg(
-        ["-i", str(src), "-vf", vf, "-an", "-t", f"{target_dur:.3f}", "-r", str(fps),
+        ["-i", str(src), "-vf", vf, "-an", "-t", f"{target_dur + 0.5:.3f}", "-r", str(fps),
          "-c:v", "libx264", "-crf", "20", "-preset", "medium", "-pix_fmt", "yuv420p",
          str(base)],
         description=f"Normalize base {out.stem} ({target_dur:.2f}s)",
@@ -464,6 +501,7 @@ def normalize_scene(src, out, W, H, target_dur, motion, intensity, fps, vp):
             base.replace(out)
         else:
             base.unlink(missing_ok=True)
+    _conform_to_frames(out, target_frames, fps, W, H)
     return out
 
 
@@ -614,11 +652,16 @@ def main():
         sentences_per_call=int(voice.get("sentences_per_call", 1)),
         max_chars=int(voice.get("tts_max_chars", narrate_mod.DEFAULT_MAX_CHARS)),
         reroll=args.reroll,
+        engine=voice.get("engine", "minimax"),
         voice_name=voice.get("name"), voice_id=voice.get("voice_id"),
         source=voice.get("source"), emotion=voice.get("emotion", "auto"),
         language_boost=voice.get("language_boost", "None"),
         speed=float(voice.get("speed", 1.0)), volume=float(voice.get("volume", 1.0)),
         pitch=int(voice.get("pitch", 0)),
+        el_stability=float(voice.get("el_stability", 0.5)),
+        el_similarity=float(voice.get("el_similarity", 0.75)),
+        el_style=float(voice.get("el_style", 0.0)),
+        el_model=voice.get("el_model", "eleven_multilingual_v2"),
     )
     narration_path = Path(narr["narration"])
     align = C.load_json(narr["align"])
@@ -701,6 +744,17 @@ def main():
             else:
                 cdur = C.ffprobe_duration(gsrc)
                 bounds[i + 1] = max(bounds[i] + MIN_SCENE_GAP, min(bounds[i] + cdur, hi))
+    # Frame-aligned assembly grid: pin every scene boundary to an integer frame so
+    # each clip is an exact number of frames and scene i occupies frames
+    # [grid[i], grid[i+1]). Because these positions are ABSOLUTE (not a cumulative
+    # sum of per-scene rounding), the picture tracks the audio within <=0.5 frame
+    # with NO accumulation — this is what kills the slow lip-sync drift. Audio
+    # chunks are still sliced at the real (sub-frame) bounds below, so the
+    # talking-head cache (keyed by chunk audio) is untouched.
+    frame_grid = [int(round(b * fps)) for b in bounds]
+    for i in range(1, len(frame_grid)):
+        if frame_grid[i] <= frame_grid[i - 1]:
+            frame_grid[i] = frame_grid[i - 1] + 1
     print("  Scene boundaries (s):", file=sys.stderr)
     for i, s in enumerate(scenes):
         st, en = bounds[i], bounds[i + 1]
@@ -745,9 +799,10 @@ def main():
 
     # --- Per-scene generation + normalization ---
     norm_clips = []
-    for rec, s in zip(scene_records, scenes):
+    for i, (rec, s) in enumerate(zip(scene_records, scenes)):
         sid = s["id"]
         target_dur = rec["duration"]
+        target_frames = frame_grid[i + 1] - frame_grid[i]
         chunk = Path(rec["chunk"])
         norm_path = scenes_dir / f"{sid}.norm.mp4"
 
@@ -785,9 +840,11 @@ def main():
         rec["intensity"] = intensity
         rec["emphasis"] = bool(s.get("emphasis"))
 
-        normalize_scene(raw, norm_path, W, H, target_dur, motion, intensity, fps, vp)
+        normalize_scene(raw, norm_path, W, H, target_dur, motion, intensity, fps, vp,
+                        target_frames=target_frames)
         rec["norm_clip"] = str(norm_path)
         rec["norm_duration"] = round(C.ffprobe_duration(norm_path), 3)
+        rec["target_frames"] = target_frames
         norm_clips.append(norm_path)
 
     # --- Assemble: hard-cut concat -> mux narration ---
@@ -841,15 +898,20 @@ def main():
         if fin.get("style_from"):
             style_profile = finish_reel.load_style_profile(
                 resolve_path(fin["style_from"], base_dir))
+        mfc = fin.get("music_from_cutsheet")
         finish_reel.finish(
             reel_dir, subtitles=do_subs, music=do_music,
             music_mood=args.music_mood or fin.get("music_mood", finish_reel.DEFAULT_MUSIC_MOOD),
             music_prompt=fin.get("music_prompt", finish_reel.DEFAULT_MUSIC_PROMPT),
             music_volume=float(fin.get("music_volume", 0.12)),
             music_vocals=fin.get("music_vocals", "wordless"),
+            music_structure=fin.get("music_structure", "flat"),
+            music_plan=fin.get("music_plan"),
+            music_from_cutsheet=resolve_path(mfc, base_dir) if mfc else None,
             max_words=int(fin.get("max_words", 6)),
             emphasis=bool(fin.get("emphasis", True)),
             casing=fin.get("casing", "subtitle"),
+            caption_reveal=fin.get("caption_reveal", "word"),
             fontsize=fin.get("fontsize"),
             y_frac=fin.get("y_frac"),
             regular_font=fin.get("regular_font"),

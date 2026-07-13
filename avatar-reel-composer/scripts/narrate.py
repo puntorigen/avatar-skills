@@ -336,37 +336,62 @@ def group_sentences(sentences: list[str], per_call: int = 1,
 
 
 def _tts_chunk(text: str, avatar_dir: Path, out_name: str, *,
-               voice_name=None, voice_id=None, source=None, emotion="auto",
-               language_boost="None", speed=1.0, volume=1.0, pitch=0) -> Path:
-    """Run voice-clone generate_speech.py for one chunk; return the mp3 path."""
+               engine="minimax", voice_name=None, voice_id=None, source=None,
+               emotion="auto", language_boost="None", speed=1.0, volume=1.0, pitch=0,
+               el_stability=0.5, el_similarity=0.75, el_style=0.0,
+               el_model="eleven_multilingual_v2") -> Path:
+    """Run the chosen TTS backend for one chunk; return the mp3 path.
+
+    engine="minimax" (default) -> voice-clone generate_speech.py (MiniMax clone).
+    engine="elevenlabs"        -> voice-clone elevenlabs_tts.py (studio TTS). The
+    MiniMax-only knobs (emotion/language_boost/pitch/volume) are ignored there;
+    warmth/expressiveness come from stability/style and speed instead.
+    """
     with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False, encoding="utf-8") as f:
         f.write(text)
         tf = f.name
     try:
-        cmd = [sys.executable, str(C.VOICE_CLONE_SCRIPT),
-               "--text-file", tf,
-               "--avatar-dir", str(avatar_dir),
-               "--emotion", emotion,
-               "--language-boost", language_boost,
-               "--speed", str(speed),
-               "--volume", str(volume),
-               "--pitch", str(pitch),
-               "--audio-format", "mp3",
-               "--out-name", out_name]
-        if voice_name:
-            cmd += ["--name", voice_name]
-        if voice_id:
-            cmd += ["--voice-id", voice_id]
-        if source:
-            cmd += ["--source", source]
-        result = C.run_cli_json(cmd, desc=f"TTS chunk -> {out_name}.mp3")
+        if engine == "elevenlabs":
+            cmd = [sys.executable, str(C.ELEVENLABS_TTS_SCRIPT),
+                   "--text-file", tf,
+                   "--avatar-dir", str(avatar_dir),
+                   "--speed", str(speed),
+                   "--stability", str(el_stability),
+                   "--similarity-boost", str(el_similarity),
+                   "--style", str(el_style),
+                   "--model-id", el_model,
+                   "--out-name", out_name]
+            if voice_name:
+                cmd += ["--name", voice_name]
+            if voice_id:
+                cmd += ["--voice-id", voice_id]
+            desc = f"ElevenLabs TTS chunk -> {out_name}.mp3"
+        else:
+            cmd = [sys.executable, str(C.VOICE_CLONE_SCRIPT),
+                   "--text-file", tf,
+                   "--avatar-dir", str(avatar_dir),
+                   "--emotion", emotion,
+                   "--language-boost", language_boost,
+                   "--speed", str(speed),
+                   "--volume", str(volume),
+                   "--pitch", str(pitch),
+                   "--audio-format", "mp3",
+                   "--out-name", out_name]
+            if voice_name:
+                cmd += ["--name", voice_name]
+            if voice_id:
+                cmd += ["--voice-id", voice_id]
+            if source:
+                cmd += ["--source", source]
+            desc = f"TTS chunk -> {out_name}.mp3"
+        result = C.run_cli_json(cmd, desc=desc)
     finally:
         Path(tf).unlink(missing_ok=True)
     if not result or not result.get("audio"):
-        raise RuntimeError("voice-clone returned no audio path.")
+        raise RuntimeError("TTS backend returned no audio path.")
     audio = Path(result["audio"])
     if not audio.exists():
-        raise RuntimeError(f"voice-clone audio not found: {audio}")
+        raise RuntimeError(f"TTS audio not found: {audio}")
     return audio
 
 
@@ -376,12 +401,17 @@ def _part_key(text: str, voice_kw: dict) -> str:
     changing the voice / emotion / language_boost / speed / … misses the cache."""
     relevant = {
         "text": text,
+        "engine": voice_kw.get("engine", "minimax"),
         "voice": voice_kw.get("voice_id") or voice_kw.get("voice_name"),
         "emotion": voice_kw.get("emotion"),
         "language_boost": voice_kw.get("language_boost"),
         "speed": voice_kw.get("speed"),
         "volume": voice_kw.get("volume"),
         "pitch": voice_kw.get("pitch"),
+        "el_stability": voice_kw.get("el_stability"),
+        "el_similarity": voice_kw.get("el_similarity"),
+        "el_style": voice_kw.get("el_style"),
+        "el_model": voice_kw.get("el_model"),
     }
     raw = json.dumps(relevant, ensure_ascii=False, sort_keys=True)
     return hashlib.sha1(raw.encode("utf-8")).hexdigest()[:16]
