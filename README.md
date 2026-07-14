@@ -126,6 +126,11 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
 - **broll-finder** — find real public YouTube footage about a topic or person.
 - **broll-web-capture** — turn a website or GitHub repo into a polished B-roll
   clip (with optional avatar PiP).
+- **broll-browser-recorder** — record a live browser product demo as smooth video
+  and reframe it to a vertical reel (auto-camera follows the clicks), with an
+  optional avatar PiP that narrates the demo (base-driven: the recording sets the
+  length). The record-first sibling of `broll-web-capture` (a Ken Burns still) for
+  when the value is the interaction.
 - **broll-terminal** — turn a session JSON into an animated-terminal B-roll clip.
 - **broll-cursor** — turn a session JSON into an animated IDE agent-chat B-roll
   clip (a Cursor-style "Agent" panel): a typed prompt + a streaming assistant

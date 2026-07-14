@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Shared helpers for the broll-* skills (single source of truth).
 
-Used by broll-web-capture, broll-terminal and broll-demo-avatar. Provides:
+Used by broll-web-capture, broll-browser-recorder, broll-terminal and
+broll-demo-avatar. Provides:
   * canonical reel geometry (ASPECTS) + fps that match avatar-reel-composer,
   * thin ffmpeg / ffprobe wrappers,
   * the numbered-clip + manifest.json conventions,

@@ -2,13 +2,19 @@
 """Composite a talking avatar over a base B-roll layer (the avatar PiP overlay).
 
 Single source of truth for the "base layer + avatar PiP" architecture, shared by
-every base-layer skill (broll-web-capture, broll-terminal) and the overlay skill
-(broll-demo-avatar). Two layouts:
+every base-layer skill (broll-web-capture, broll-terminal, broll-browser-recorder)
+and the overlay skill (broll-demo-avatar). Two layouts:
   * pip-circle (default) : avatar masked into a corner circle over a near-full base.
   * split                : base on top, avatar on the bottom (each cover-cropped).
 
-The avatar clip carries the narration, so its audio drives the output length and
-the base is looped to cover it.
+Length modes (``length=``):
+  * "avatar" (default): the avatar clip carries the narration, so its audio drives
+    the output length and the base is looped to cover it. Best for short B-roll
+    (broll-web-capture / broll-terminal).
+  * "base": the base clip is the hero and drives the length (e.g. a recorded
+    product demo). The base plays once; when the avatar's narration ends before the
+    base does, the avatar freezes on its last frame and its audio is padded with
+    trailing silence. Used by broll-browser-recorder.
 
 The avatar clip MUST be a static, face-forward "pip" shot (avatar-camera-angles
 `--move pip`), lip-synced LOCKED with avatar-talking-video (p-video-avatar): this
@@ -49,26 +55,46 @@ def _circle_masks(diameter: int, work: Path, ring: bool, ring_w: int):
 
 def overlay_pip(base, avatar, out, *, layout="pip-circle", aspect="9:16",
                 corner="br", diameter_frac=0.36, margin_frac=0.045, ring=True,
-                bottom_clear=0, face_bias=0.4, fps=C.DEFAULT_FPS) -> Path:
+                bottom_clear=0, face_bias=0.4, length="avatar",
+                fps=C.DEFAULT_FPS) -> Path:
     base, avatar, out = Path(base), Path(avatar), Path(out)
     W, H = C.aspect_dims(aspect)
     work = out.parent
     work.mkdir(parents=True, exist_ok=True)
-    dur = C.ffprobe_duration(avatar) or 5.0
-    amap = ["-map", "1:a"] if _has_audio(avatar) else []
+    has_audio = _has_audio(avatar)
+
+    if length == "base":
+        # The base recording is the hero (e.g. a product demo): it drives the
+        # length and plays once. The avatar freezes on its last frame once its
+        # narration ends (tpad clone) and its audio is padded with silence.
+        dur = C.ffprobe_duration(base) or 5.0
+        base_inputs = ["-i", str(base)]
+        ava_vpre = f"tpad=stop_mode=clone:stop_duration={dur},"
+        if has_audio:
+            aud_fc, amap = ";[1:a]apad[aud]", ["-map", "[aud]"]
+        else:
+            aud_fc, amap = "", []
+    else:
+        # avatar-driven (default): the avatar's narration sets the length and the
+        # base loops to cover it.
+        dur = C.ffprobe_duration(avatar) or 5.0
+        base_inputs = ["-stream_loop", "-1", "-i", str(base)]
+        ava_vpre = ""
+        aud_fc = ""
+        amap = ["-map", "1:a"] if has_audio else []
 
     if layout == "split":
         half = (H // 2) - ((H // 2) % 2)
         fc = (f"[0:v]scale={W}:{half}:force_original_aspect_ratio=increase,"
               f"crop={W}:{half},setsar=1[top];"
-              f"[1:v]scale={W}:{half}:force_original_aspect_ratio=increase,"
+              f"[1:v]{ava_vpre}scale={W}:{half}:force_original_aspect_ratio=increase,"
               f"crop={W}:{half},setsar=1[bot];"
-              f"[top][bot]vstack=inputs=2,format=yuv420p[v]")
-        cmd = ["ffmpeg", "-y", "-stream_loop", "-1", "-i", str(base),
+              f"[top][bot]vstack=inputs=2,format=yuv420p[v]" + aud_fc)
+        cmd = ["ffmpeg", "-y", *base_inputs,
                "-i", str(avatar), "-filter_complex", fc, "-map", "[v]", *amap,
                "-t", f"{dur}", "-r", str(fps), "-c:v", "libx264",
                "-pix_fmt", "yuv420p", "-shortest", str(out), "-loglevel", "error"]
-        C.run(cmd, desc=f"pip split -> {out.name}")
+        C.run(cmd, desc=f"pip split ({length}) -> {out.name}")
         return out
 
     # pip-circle
@@ -84,11 +110,10 @@ def overlay_pip(base, avatar, out, *, layout="pip-circle", aspect="9:16",
     }.get(corner, (f"W-w-{margin}", f"H-h-{by}"))
 
     fb = max(0.0, min(1.0, face_bias))  # vertical crop bias: lower = keep more of the top (face)
-    inputs = ["-stream_loop", "-1", "-i", str(base), "-i", str(avatar),
-              "-loop", "1", "-i", str(fill_p)]
+    inputs = [*base_inputs, "-i", str(avatar), "-loop", "1", "-i", str(fill_p)]
     fc = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,"
           f"crop={W}:{H},setsar=1[bg];"
-          f"[1:v]scale={d}:{d}:force_original_aspect_ratio=increase,"
+          f"[1:v]{ava_vpre}scale={d}:{d}:force_original_aspect_ratio=increase,"
           f"crop={d}:{d}:(iw-{d})/2:(ih-{d})*{fb}[sq];"
           f"[2:v]format=gray,scale={d}:{d}[m];"
           f"[sq][m]alphamerge[ava];"
@@ -100,11 +125,11 @@ def overlay_pip(base, avatar, out, *, layout="pip-circle", aspect="9:16",
         fc += (f";[{ring_idx}:v]format=rgba[ring];"
                f"[comp][ring]overlay=x={xy[0]}:y={xy[1]}:shortest=1[comp2]")
         last = "comp2"
-    fc += f";[{last}]format=yuv420p[v]"
+    fc += f";[{last}]format=yuv420p[v]" + aud_fc
     cmd = ["ffmpeg", "-y", *inputs, "-filter_complex", fc, "-map", "[v]", *amap,
            "-t", f"{dur}", "-r", str(fps), "-c:v", "libx264", "-pix_fmt", "yuv420p",
            "-shortest", str(out), "-loglevel", "error"]
-    C.run(cmd, desc=f"pip circle ({corner}) -> {out.name}")
+    C.run(cmd, desc=f"pip circle ({corner}, {length}) -> {out.name}")
     return out
 
 
@@ -122,11 +147,14 @@ def main() -> int:
                     help="px reserved at the bottom (lifts a bottom-corner PiP above a caption)")
     ap.add_argument("--face-bias", type=float, default=0.4,
                     help="vertical crop bias for the circle (0=top..1=bottom; lower keeps the face)")
+    ap.add_argument("--length", default="avatar", choices=["avatar", "base"],
+                    help="who drives the clip length: avatar narration (default) "
+                         "or the base clip (e.g. a recorded demo; avatar freezes at its end)")
     args = ap.parse_args()
     C.require_tool("ffmpeg")
     overlay_pip(args.base, args.avatar, args.out, layout=args.layout, aspect=args.aspect,
                 corner=args.corner, diameter_frac=args.diameter, ring=not args.no_ring,
-                bottom_clear=args.bottom_clear, face_bias=args.face_bias)
+                bottom_clear=args.bottom_clear, face_bias=args.face_bias, length=args.length)
     print(str(args.out))
     return 0
 

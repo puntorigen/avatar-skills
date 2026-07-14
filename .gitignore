@@ -19,6 +19,10 @@ credentials*.json
 # Generated onboarding script series (created under ./onboarding/ by onboarding-script)
 /onboarding/
 
+# broll-browser-recorder: cached practice playbooks + default demo output dir
+/broll-browser-recorder/cache/
+/broll_demo/
+
 # Sensitive web-session artifacts
 *.har
 

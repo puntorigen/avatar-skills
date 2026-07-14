@@ -32,6 +32,7 @@
         "broll-avatar-camera",
         "broll-finder",
         "broll-web-capture",
+        "broll-browser-recorder",
         "broll-terminal",
         "broll-cursor",
         "broll-core"
