@@ -30,6 +30,7 @@
         "broll-generator",
         "broll-story",
         "broll-avatar-camera",
+        "broll-actor-copy",
         "broll-finder",
         "broll-web-capture",
         "broll-browser-recorder",

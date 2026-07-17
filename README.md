@@ -123,6 +123,9 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
   activity (storyboard → seedance-2).
 - **broll-avatar-camera** — action B-roll of our own avatar (same
   `p-video-avatar` model, consistent face/wardrobe/room).
+- **broll-actor-copy** — make our avatar copy a driving video's motion,
+  expressions and lip movements (ByteDance DreamActor M2.0); one-character
+  driver (segment + stitch for multi-character), output keeps the hero's resolution.
 - **broll-finder** — find real public YouTube footage about a topic or person.
 - **broll-web-capture** — turn a website or GitHub repo into a polished B-roll
   clip (with optional avatar PiP).

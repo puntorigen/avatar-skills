@@ -1,0 +1,5 @@
+# broll-actor-copy — copy a video's motion onto our avatar via
+# bytedance/dreamactor-m2.0 on Replicate. ffmpeg/ffprobe must be on PATH
+# (used to trim/scale the driving video and to mute the output clip).
+replicate>=0.32.0
+pillow>=10.0
