@@ -1,14 +1,15 @@
 ---
 name: broll-browser-recorder
-description: Record a real browser product demo as smooth continuous video (Playwright HTTP server, adaptive agent-driven interaction), post-process it for a vertical reel (auto-camera reframe that follows the interactions, trim/speed/preset), and optionally composite a talking avatar in a picture-in-picture corner that NARRATES what the demo shows. Unlike broll-web-capture (a Ken Burns still), this is a live click-through demo — the recorded demo is the hero and drives the clip length (base-driven PiP); the avatar is authored afterwards to talk about it. Use when you want a real product/app walkthrough as the base layer of a reel, a browser demo with a presenter narrating in the corner, or a screen-recorded click-through reframed to 9:16.
+description: Record a real browser product demo as smooth continuous video (Playwright HTTP server, adaptive agent-driven interaction), post-process it for a reel in 9:16 vertical or 16:9 landscape/YouTube (auto-camera reframe that follows the interactions, trim/speed/preset), and optionally composite a talking avatar in a picture-in-picture corner that NARRATES what the demo shows. Unlike broll-web-capture (a Ken Burns still), this is a live click-through demo — the recorded demo is the hero and drives the clip length (base-driven PiP); the avatar is authored afterwards to talk about it. Use when you want a real product/app walkthrough as the base layer of a reel, a browser demo with a presenter narrating in the corner, or a screen-recorded click-through reframed to 9:16 or 16:9.
 ---
 
 # broll-browser-recorder
 
 Produce the **base layer** of a technical reel from a **live browser demo**: drive
 a real browser, record a smooth continuous video of the product being used, then
-reframe/trim it for a vertical reel and (optionally) composite a talking avatar in
-a PiP corner that narrates what's on screen.
+reframe/trim it for a reel — **9:16 vertical** (TikTok/Reels) or **16:9 landscape**
+(YouTube) — and (optionally) composite a talking avatar in a PiP corner that
+narrates what's on screen.
 
 Two-layer architecture (see the scene types in `brand-content-strategy`):
 
@@ -33,7 +34,7 @@ multi-step flow.
 
 - "Record a demo of this web app / dashboard / flow and make it a reel."
 - "Show me clicking through the product with a presenter narrating in the corner."
-- "Turn this browser walkthrough into 9:16 B-roll for `avatar-reel-composer`."
+- "Turn this browser walkthrough into 9:16 (or 16:9 YouTube) B-roll for `avatar-reel-composer`."
 
 ## Setup
 
@@ -107,6 +108,9 @@ S=.cursor/skills/broll-browser-recorder/scripts
 # Base demo only — reframed to 9:16 (auto-camera follows the recorded interactions)
 python3 $S/make_broll_demo.py /tmp/rec/ --max-duration 30
 
+# 16:9 landscape for a YouTube reel (match the composer's format: landscape)
+python3 $S/make_broll_demo.py /tmp/rec/ --max-duration 30 --aspect 16:9
+
 # Base demo + avatar PiP narrating it (base-driven: the demo sets the length)
 python3 $S/make_broll_demo.py /tmp/rec/ --max-duration 30 \
   --avatar avatares/lolo/pip/scene01.mp4 --corner br
@@ -115,11 +119,19 @@ python3 $S/make_broll_demo.py /tmp/rec/ --max-duration 30 \
 Pass either the recording directory (it finds the `.webm` + sibling `manifest.json`)
 or the `.webm` path directly. Output lands in `--out-dir` (default `broll_demo/`).
 
-When the recording aspect differs from the target (e.g. a 1440x900 capture → 9:16)
-and a `manifest.json` sits next to the video, **auto-camera** generates a lazy
-pan/zoom that follows the interactions and blurs the page chrome above them. Tune
-with `--max-duration`/`--speed`, or override framing with `--crop` / `--zoom`
+When the recording aspect differs from the target (e.g. a 1440x900 capture → 9:16,
+or → 16:9 with `--aspect 16:9`) and a `manifest.json` sits next to the video,
+**auto-camera** generates a lazy pan/zoom that follows the interactions and blurs
+the page chrome above them — the reframe is computed generically for the requested
+target ratio, so it works for both vertical and landscape. Tune with
+`--max-duration`/`--speed`, or override framing with `--crop` / `--zoom`
 (`--no-auto-camera`). See [REFERENCE.md](REFERENCE.md) for auto-camera details.
+
+> **Match the reel's format.** For a `format: landscape` reel in
+> `avatar-reel-composer`, produce this clip with `--aspect 16:9` (or
+> `--preset landscape`, both → 1920×1080). The default `9:16` matches a `reel`
+> storyboard. The clip is referenced as-is (`broll_source: "existing"`), so its
+> geometry must already match the reel.
 
 ## Avatar PiP overlay (`--avatar`)
 
@@ -132,8 +144,9 @@ narration to drive the length and the demo to be looped under it.
 
 - `--layout pip-circle` (default): avatar masked into a corner circle over the
   near-full demo — best when the demo is the value. `--corner br|bl|tr|tl` (default `br`).
-- `--layout split`: demo on top, avatar on the bottom — when the avatar's gestures
-  matter more.
+- `--layout split`: demo + avatar in equal halves — stacked (demo top, avatar
+  bottom) for 9:16, side-by-side (demo left, avatar right) for 16:9 — when the
+  avatar's gestures matter more.
 - `--face-bias 0..1` (default `0.4`): vertical crop of the circle; lower keeps more
   of the **top (the face)**.
 
@@ -181,15 +194,17 @@ Each clip is a drop-in B-roll scene. In the storyboard:
 The composer loops/pads it to the narration slot. For a base + avatar shot, generate
 it here with `--avatar` (base-driven) and reference the final clip the same way.
 **Subtitles belong to the reel, not the clip** — don't burn captions here or into
-the avatar.
+the avatar. **Match the reel's `format`**: a 9:16 reel wants a `9:16` clip (default),
+a `format: landscape` reel wants a `16:9` clip (`--aspect 16:9` / `--preset landscape`) —
+existing clips are used as-is, not re-cropped by the composer.
 
 ## Key options (`make_broll_demo.py`)
 
 | Flag | Default | Notes |
 |---|---|---|
 | `recording` | (required) | recording `.webm`/`.mp4` or the recording directory |
-| `--aspect` | `9:16` | final geometry (`9:16\|16:9\|1:1\|4:5`) |
-| `--preset` | – | social preset (`reel`, `post`, …) — overrides `--aspect` geometry |
+| `--aspect` | `9:16` | final geometry (`9:16\|16:9\|1:1\|4:5`); use `16:9` for YouTube/landscape reels |
+| `--preset` | – | social preset (`reel`, `post`, `landscape`, …) — overrides `--aspect` geometry |
 | `--max-duration` | – | target max seconds; auto-calculates speed |
 | `--speed` | `1.0` | playback speed multiplier |
 | `--crop` / `--zoom` | – | manual framing (else auto-camera / fit) |
