@@ -6,7 +6,8 @@
 
 Agent skills for creating **AI avatar talking-head videos and short-form reels**
 end to end — invent or clone a presenter, give it a cloned voice, generate
-lip-synced talking-head and B-roll scenes, and assemble finished vertical reels.
+lip-synced talking-head and B-roll scenes, and assemble finished reels in
+**9:16 vertical** (TikTok/Reels) or **16:9 landscape** (YouTube).
 
 Unlike the local-first [`puntorigen/skills`](https://github.com/puntorigen/skills),
 these skills are **cloud-based**: they orchestrate hosted models (Replicate —
@@ -105,7 +106,8 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
 - **avatar-talking-video** — turn a line of text into a lip-synced talking-head
   MP4 in the avatar's cloned voice (`prunaai/p-video-avatar`).
 - **avatar-reel-composer** — turn a script + an existing avatar into a finished
-  vertical reel (narration, per-scene cuts, talking-head + B-roll, music).
+  reel (narration, per-scene cuts, talking-head + B-roll, music), in 9:16
+  vertical or 16:9 landscape (YouTube) via the storyboard `format`.
 - **caption-word-reveal** — word-by-word ("karaoke") burned-in captions for reels:
   each word appears as it's spoken, building the phrase in place (frozen layout,
   no reflow). The default caption mode of the `avatar-reel-composer` finishing pass.

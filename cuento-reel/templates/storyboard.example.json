@@ -3,6 +3,7 @@
   "avatar_dir": "<serie>/cast/narrador",
   "slug": "<slug>",
   "format": "reel",
+  "_format_note": "'reel' = 9:16 vertical (TikTok/Reels); use 'landscape' for 16:9 YouTube (1920x1080). Everything else stays identical.",
   "resolution": "720p",
   "fps": 30,
   "voice": {"voice_id": "<NARRADOR_VOICE_ID>", "emotion": "calm", "language_boost": "None"},

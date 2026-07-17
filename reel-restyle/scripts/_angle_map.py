@@ -3,8 +3,9 @@
 
 The analysis pipeline tags each talking-head scene with a ``camera.angle`` from
 a fixed vocabulary (see video-scene-analysis/scripts/_camera_vocabulary.py). The
-avatar-camera-angles skill generates stills named ``<slug>_<move>_916.png`` from
-a slightly different move catalog (avatar-camera-angles/scripts/camera_moves.json).
+avatar-camera-angles skill generates stills named ``<slug>_<move>_916.png`` (or
+``_169.png`` for 16:9 landscape) from a slightly different move catalog
+(avatar-camera-angles/scripts/camera_moves.json).
 This bridges the two so a template's per-beat angle resolves to a real still for
 the new avatar.
 

@@ -22,7 +22,11 @@ export const KineticBurst: React.FC<StyleProps> = ({
     ? 1
     : interpolate(frame, [exitStart, exitStart + exitDur], [1, 0.85], { extrapolateRight: "clamp" });
 
-  const fontSize = Math.round(height * 0.075);
+  // Centered burst: in landscape (16:9) size off the LONGER side so the words
+  // don't shrink with the short frame height.
+  const isVertical = height >= width;
+  const refSide = isVertical ? height : width;
+  const fontSize = Math.round(refSide * (isVertical ? 0.075 : 0.06));
   const lineHeight = 1.05;
 
   const accentIndices = words.length >= 4 ? [Math.floor(words.length / 2)] :

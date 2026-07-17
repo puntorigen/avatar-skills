@@ -2,7 +2,7 @@
 """Shared utilities for the avatar-reel-composer skill.
 
 This skill orchestrates the sibling skills to turn a script + an existing avatar
-into a finished vertical reel:
+into a finished reel (9:16 vertical, 1:1 square or 16:9 landscape/YouTube):
   voice-clone           -> continuous cloned-voice narration (one master track)
   faster-whisper        -> word-level alignment of that narration
   avatar-talking-video  -> lip-synced talking-head scenes (driven by audio chunks)

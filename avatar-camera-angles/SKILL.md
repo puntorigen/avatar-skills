@@ -53,8 +53,8 @@ pip3 install -r ~/.cursor/skills/gpt-image-2/scripts/requirements.txt
    important step: the more accurate it is, the less the scene drifts. You can
    also pass the fields as `--subject/--wardrobe/--scene/--light`.
 3. **Choose camera moves** from the catalog (`--list`).
-4. **Generate** the masters (native 2:3), optionally with `--crop916` for the
-   reel-ready 9:16 crop.
+4. **Generate** the masters, optionally with `--crop916` for the reel-ready 9:16
+   crop (master `2:3`) or `--crop169` for a 16:9 YouTube crop (master `3:2`).
 5. **Review & re-roll.** Use `--count N` or re-run a move to pick the best take.
 6. **Animate each still** with lip-sync per shot (the **`seedance-2`** skill or
    VEED Fabric) and stitch the clips into the reel, cutting between angles every
@@ -79,10 +79,15 @@ python3 ~/.cursor/skills/avatar-camera-angles/scripts/generate_angles.py \
 # Generate only the empirically validated moves
 python3 ~/.cursor/skills/avatar-camera-angles/scripts/generate_angles.py \
   --ref frame_0001.png --scene-file scene.json --validated-only --crop916 -o out/
+
+# 16:9 landscape crops for YouTube (masters in 3:2, cropped to _169.png)
+python3 ~/.cursor/skills/avatar-camera-angles/scripts/generate_angles.py \
+  --ref frame_0001.png --scene-file scene.json \
+  --move push_in --move three_quarter --crop169 -o out/ --slug lolo
 ```
 
 Every run prints a JSON object to stdout with a `results` array (each item has
-`master` and, with `--crop916`, `reel_916`). Per-move prompts are saved next to
+`master` and, with `--crop916`/`--crop169`, `reel_916`/`reel_169`). Per-move prompts are saved next to
 the images as `<slug>_<move>.prompt.txt` for transparency.
 
 ## Camera-move catalog
@@ -124,13 +129,15 @@ eye level with no rotation.
 - Don't burn subtitles into the PiP clip — captions go on the **whole reel
   frame** (the reel composer's finish pass), not inside the circle.
 
-## Aspect ratio: master 2:3, reel crop 9:16
+## Aspect ratio: master 2:3 → 9:16, or master 3:2 → 16:9
 
-gpt-image-2 renders natively only at `1:1 / 3:2 / 2:3`. This skill generates the
-**master at `2:3`** (the cleanest vertical — no canvas padding, full native
-resolution ~1024×1536). `--crop916` then **center-crops** the sides to a
-`9:16` reel frame (~864×1536), keeping native resolution (no upscaling). Keep
-the 2:3 masters as the archive; feed the 9:16 crops to the reel.
+gpt-image-2 renders natively only at `1:1 / 3:2 / 2:3`. For **9:16 reels** this
+skill generates the **master at `2:3`** (the cleanest vertical — no canvas
+padding, full native resolution ~1024×1536) and `--crop916` **center-crops** the
+sides to a `9:16` reel frame (~864×1536). For **16:9 YouTube** pass `--crop169`:
+the master defaults to `3:2` and is center-cropped to a `16:9` frame (~1536×864).
+Both keep native resolution (no upscaling); keep the masters as the archive and
+feed the crops (`_916.png` / `_169.png`) to the reel.
 
 ## Options
 
@@ -141,10 +148,11 @@ the 2:3 masters as the archive; feed the 9:16 crops to the reel.
 | `--subject/--wardrobe/--scene/--light` | — | Per-field overrides (or use instead of a file). |
 | `--move NAME` | — | Camera move (repeatable). |
 | `--all` / `--validated-only` | — | Run the whole catalog / only validated moves. |
-| `--crop916` | off | Also write a 9:16 center-crop per image. |
+| `--crop916` | off | Also write a 9:16 center-crop per image (`_916.png`). |
+| `--crop169` | off | Also write a 16:9 landscape crop per image (`_169.png`, YouTube). |
 | `--output, -o` | `.` | Output directory. |
 | `--slug` | `angle` | Output filename prefix. |
-| `--aspect-ratio, -ar` | `2:3` | Master ratio passed to gpt-image-2. |
+| `--aspect-ratio, -ar` | `2:3` (or `3:2` with `--crop169`) | Master ratio passed to gpt-image-2. |
 | `--quality, -q` | `high` | Fidelity (`low/medium/high/auto`). |
 | `--count, -n` | `1` | Variations per move (1–10). |
 | `--retries` | `2` | Retries per generation on transient Replicate timeouts. |

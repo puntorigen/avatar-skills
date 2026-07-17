@@ -244,7 +244,8 @@ def scene_location(scene, default_location=None) -> str:
     return (scene.get("location") or default_location or "default")
 
 
-def resolve_image(scene, avatar_dir: Path, base_dir: Path, default_location=None) -> Path | None:
+def resolve_image(scene, avatar_dir: Path, base_dir: Path, default_location=None,
+                  aspect="9:16") -> Path | None:
     img = scene.get("image")
     if img:
         return resolve_path(img, base_dir)  # explicit path always wins
@@ -260,8 +261,14 @@ def resolve_image(scene, avatar_dir: Path, base_dir: Path, default_location=None
     if loc and loc != "default":
         roots.append((loc, avatar_dir / "locations" / loc / "angles"))
     roots.append((None, avatar_dir / "angles"))
+    # Prefer the still cropped for THIS output format (``_169`` for 16:9
+    # landscape, ``_916`` for 9:16 reels), then any ``_916`` (back-compat), then
+    # any still for the angle.
+    suffix = "_" + str(aspect).replace(":", "")  # _916 / _169
+    pats = list(dict.fromkeys(
+        [f"**/*{angle}*{suffix}.png", f"**/*{angle}*_916.png", f"**/*{angle}*.png"]))
     for loc_name, root in roots:
-        for pat in (f"**/*{angle}*_916.png", f"**/*{angle}*.png"):
+        for pat in pats:
             matches = sorted(root.glob(pat))
             if matches:
                 if loc_name is None and loc and loc != "default":
@@ -396,7 +403,7 @@ def resolve_guest_clip(scene, avatar_dir, base_dir):
     return src
 
 
-def gen_broll(scene, chunk_dur, avatar_dir, resolution, slug):
+def gen_broll(scene, chunk_dur, avatar_dir, resolution, slug, aspect="9:16"):
     out_name = f"reel_{slug}_{scene['id']}"
     cached = avatar_dir / "broll" / f"{out_name}.mp4"
     duration = max(1, min(20, C.ceil_int(chunk_dur)))
@@ -415,7 +422,7 @@ def gen_broll(scene, chunk_dur, avatar_dir, resolution, slug):
     cmd = [sys.executable, str(C.BROLL_SCRIPT),
            scene.get("broll_description", scene.get("text", "")),
            "--duration", str(duration),
-           "--aspect-ratio", "9:16",
+           "--aspect-ratio", aspect,
            "--resolution", resolution,
            "--fps", str(BROLL_FPS),
            "--avatar-dir", str(avatar_dir),
@@ -550,7 +557,7 @@ def mux_narration(video_track, narration, out):
 # ---------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(
-        description="Compose a finished vertical reel from a storyboard + an existing avatar.",
+        description="Compose a finished reel (9:16, 1:1 or 16:9) from a storyboard + an existing avatar.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     ap.add_argument("storyboard", type=Path, help="Path to storyboard.json")
@@ -779,7 +786,7 @@ def main():
         if s["type"] == "talking_head":
             loc = scene_location(s, reel_location)
             rec["location"] = loc
-            img = resolve_image(s, avatar_dir, base_dir, reel_location)
+            img = resolve_image(s, avatar_dir, base_dir, reel_location, aspect=preset["aspect"])
             rec["image"] = str(img) if img else None
             tag = "" if loc == "default" else f" @ {loc}"
             if img:
@@ -807,7 +814,7 @@ def main():
         norm_path = scenes_dir / f"{sid}.norm.mp4"
 
         if s["type"] == "talking_head":
-            image_path = resolve_image(s, avatar_dir, base_dir, reel_location)
+            image_path = resolve_image(s, avatar_dir, base_dir, reel_location, aspect=preset["aspect"])
             if not image_path or not image_path.exists():
                 raise SystemExit(f"Scene {sid}: talking-head image not found "
                                  f"(set 'image' to a valid angle PNG, or check the "
@@ -829,7 +836,7 @@ def main():
             else:
                 if args.regen:
                     (avatar_dir / "broll" / f"reel_{slug}_{sid}.mp4").unlink(missing_ok=True)
-                raw = gen_broll(s, target_dur, avatar_dir, resolution, slug)
+                raw = gen_broll(s, target_dur, avatar_dir, resolution, slug, aspect=preset["aspect"])
             rec["broll_description"] = s.get("broll_description")
             rec["broll_camera"] = s.get("broll_camera")
             rec["broll_action"] = s.get("broll_action")

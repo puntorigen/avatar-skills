@@ -76,7 +76,9 @@ avatar look -> hero image  +  driving video
   animal) visible in scene. Our reference hero is one avatar → match it with a
   one-character driver. See the multi-character workflow below.
 - **The reference image sets the output resolution.** Feed a **9:16 hero** for a
-  9:16 reel clip. Keep the subject clear and framed like the shot you want.
+  9:16 reel clip, or a **16:9 hero** for a 16:9 YouTube clip. When it falls back
+  to a camera angle, pass `--aspect 16:9` to prefer the avatar's `_169.png`
+  angle. Keep the subject clear and framed like the shot you want.
 - **Driving video ≤ 30s.** Longer input is auto-trimmed to the first 30s; pick a
   segment with `--trim-start` / `--trim-duration` (or `--segments`).
 - **Muted output.** The clip is muted on disk; `avatar-reel-composer` re-lays the

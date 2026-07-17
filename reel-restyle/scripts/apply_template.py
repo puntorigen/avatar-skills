@@ -49,7 +49,7 @@ def _todo_broll(sb_path: Path) -> list[str]:
 def _status(args, base_dir, avatar_dir):
     rc = C.run_child([C.PY, str(SCAFFOLD), str(avatar_dir),
                       "--template", str(Path(args.template).expanduser().resolve()),
-                      "--base-dir", str(base_dir), "--status"],
+                      "--base-dir", str(base_dir), "--format", args.format, "--status"],
                      desc="scaffold status")
     sb = _storyboard_path(args, avatar_dir)
     print(f"\nStoryboard: {'present' if sb and sb.exists() else 'not drafted'}"
@@ -112,7 +112,7 @@ def main():
     # --- 1. Scaffold the new avatar (idempotent; may stop at an agent checkpoint) ---
     scaffold_cmd = [C.PY, str(SCAFFOLD), str(avatar_dir),
                     "--template", str(template_path), "--base-dir", str(base_dir),
-                    "--quality", args.quality]
+                    "--format", args.format, "--quality", args.quality]
     for flag, val in (("--picture", args.picture), ("--voice", args.voice),
                       ("--name", args.name), ("--scene-file", args.scene_file),
                       ("--language", args.language)):

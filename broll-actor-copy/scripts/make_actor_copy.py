@@ -176,6 +176,11 @@ def main():
                          "sets the output resolution.")
     ap.add_argument("--avatar-dir", type=Path, default=None,
                     help="Avatar folder (alias for the positional arg / inferred from --image).")
+    ap.add_argument("--aspect", default="9:16",
+                    choices=["9:16", "16:9", "1:1", "4:3", "3:4"],
+                    help="Target output aspect when falling back to a camera angle "
+                         "(9:16 default; 16:9 prefers _169.png angles for YouTube). "
+                         "Ignored when --image is given (that image's ratio wins).")
     # Driving-video segment selection
     ap.add_argument("--segments", default=None,
                     help="Comma-separated 'start-end' ranges (seconds or M:SS/H:MM:SS), each with "
@@ -231,7 +236,7 @@ def main():
         location = None
     else:
         location = args.location
-        image_path = C.resolve_reference_image(avatar_dir, location)
+        image_path = C.resolve_reference_image(avatar_dir, location, aspect=args.aspect)
         if image_path is None:
             avail = ", ".join(C.list_locations(avatar_dir))
             ap.error(f"No hero image found for avatar '{avatar_dir.name}' look "

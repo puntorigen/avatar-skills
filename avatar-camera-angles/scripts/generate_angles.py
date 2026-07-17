@@ -15,16 +15,23 @@ identity at high fidelity, which is what makes the angles read as the same
 recording.
 
 gpt-image-2 renders natively only at 1:1 / 3:2 / 2:3, so we generate the
-master at 2:3 (cleanest vertical, no padding) and - with --crop916 - also
-center-crop a 9:16 version for reels (native resolution, no upscaling).
+master at 2:3 (cleanest vertical) for 9:16 reels or at 3:2 (cleanest
+horizontal) for 16:9 YouTube, and then center-crop the exact reel frame:
+--crop916 -> a 9:16 version, --crop169 -> a 16:9 version (native resolution,
+no upscaling). When you pass --crop169 without an explicit --aspect-ratio the
+master defaults to 3:2 (landscape); otherwise it defaults to 2:3 (vertical).
 
 Usage:
-    # One move
+    # One move (vertical 9:16 reel)
     python3 generate_angles.py --ref frame.png --scene-file scene.json --move push_in -o out/
 
     # Several moves at once (each is its own generation)
     python3 generate_angles.py --ref frame.png --scene-file scene.json \
         --move push_in --move low_angle --move three_quarter --crop916 -o out/
+
+    # Landscape 16:9 (YouTube): master rendered at 3:2, cropped to 16:9
+    python3 generate_angles.py --ref frame.png --scene-file scene.json \
+        --move push_in --move three_quarter --crop169 -o out/
 
     # The whole catalog / only the empirically validated moves
     python3 generate_angles.py --ref frame.png --scene-file scene.json --all -o out/
@@ -55,13 +62,13 @@ DEFAULT_GPT_IMAGE_SCRIPT = (
 def crop_to_ratio(src_path, target_ratio, out_path):
     """Center-crop an image to target_ratio (width/height), no upscaling.
 
-    Used to turn the native 2:3 master into a 9:16 reel frame by trimming the
-    sides. Returns "WxH".
+    Used to turn the native 2:3 master into a 9:16 reel frame (or the native
+    3:2 master into a 16:9 frame) by trimming the sides. Returns "WxH".
     """
     try:
         from PIL import Image
     except ImportError:
-        print("Error: Pillow is required for --crop916. Run:", file=sys.stderr)
+        print("Error: Pillow is required for --crop916/--crop169. Run:", file=sys.stderr)
         print(f"  pip3 install -r {SCRIPT_DIR}/requirements.txt", file=sys.stderr)
         sys.exit(1)
 
@@ -159,10 +166,13 @@ def main():
                         help="Output directory (or a path prefix). Default: current dir")
     parser.add_argument("--slug", default="angle",
                         help="Filename prefix for outputs (default: 'angle')")
-    parser.add_argument("--aspect-ratio", "-ar", default="2:3",
-                        help="Master aspect ratio passed to gpt-image-2 (default: 2:3, native vertical)")
+    parser.add_argument("--aspect-ratio", "-ar", default=None,
+                        help="Master aspect ratio passed to gpt-image-2. Default: 2:3 (native "
+                             "vertical), or 3:2 when --crop169 is requested without --crop916.")
     parser.add_argument("--crop916", action="store_true",
                         help="Also write a 9:16 reel crop (center-cropped from the master, no upscaling)")
+    parser.add_argument("--crop169", action="store_true",
+                        help="Also write a 16:9 landscape crop for YouTube (center-cropped, no upscaling)")
     parser.add_argument("--quality", "-q", default="high", choices=["low", "medium", "high", "auto"],
                         help="gpt-image-2 fidelity (default: high)")
     parser.add_argument("--count", "-n", type=int, default=1,
@@ -175,6 +185,12 @@ def main():
     parser.add_argument("--print-prompt", action="store_true",
                         help="Print the assembled prompt(s) and exit (no generation)")
     args = parser.parse_args()
+
+    # Resolve the master aspect ratio. If the user did not force one, pick the
+    # cleanest master for the requested crop: 3:2 for a 16:9 landscape crop,
+    # 2:3 otherwise (vertical default, back-compatible with --crop916).
+    if args.aspect_ratio is None:
+        args.aspect_ratio = "3:2" if (args.crop169 and not args.crop916) else "2:3"
 
     moves, default_anchor = load_catalog()
 
@@ -240,15 +256,20 @@ def main():
             continue
 
         entry = {"move": key, "master": files}
-        if args.crop916:
+        for suffix, ratio, label, out_key in (
+            ("_916", 9.0 / 16.0, "9:16", "reel_916"),
+            ("_169", 16.0 / 9.0, "16:9", "reel_169"),
+        ):
+            if not getattr(args, f"crop{suffix.lstrip('_')}"):
+                continue
             crops = []
             for fp in files:
                 fp = Path(fp)
-                crop_path = fp.with_name(fp.stem + "_916" + fp.suffix)
-                dims = crop_to_ratio(fp, 9.0 / 16.0, crop_path)
+                crop_path = fp.with_name(fp.stem + suffix + fp.suffix)
+                dims = crop_to_ratio(fp, ratio, crop_path)
                 crops.append(str(crop_path))
-                print(f"  9:16 crop: {crop_path} ({dims})", file=sys.stderr)
-            entry["reel_916"] = crops
+                print(f"  {label} crop: {crop_path} ({dims})", file=sys.stderr)
+            entry[out_key] = crops
         results.append(entry)
         print(f"  done: {files}", file=sys.stderr)
 
@@ -257,6 +278,7 @@ def main():
         "scene_file": args.scene_file,
         "aspect_ratio": args.aspect_ratio,
         "crop916": args.crop916,
+        "crop169": args.crop169,
         "quality": args.quality,
         "results": results,
     }, indent=2))

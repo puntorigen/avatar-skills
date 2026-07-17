@@ -84,12 +84,23 @@ def overlay_pip(base, avatar, out, *, layout="pip-circle", aspect="9:16",
         amap = ["-map", "1:a"] if has_audio else []
 
     if layout == "split":
-        half = (H // 2) - ((H // 2) % 2)
-        fc = (f"[0:v]scale={W}:{half}:force_original_aspect_ratio=increase,"
-              f"crop={W}:{half},setsar=1[top];"
-              f"[1:v]{ava_vpre}scale={W}:{half}:force_original_aspect_ratio=increase,"
-              f"crop={W}:{half},setsar=1[bot];"
-              f"[top][bot]vstack=inputs=2,format=yuv420p[v]" + aud_fc)
+        if W > H:
+            # Landscape (16:9): side-by-side halves (base left, avatar right) —
+            # a stacked split would squash both panels on a wide frame.
+            half = (W // 2) - ((W // 2) % 2)
+            fc = (f"[0:v]scale={half}:{H}:force_original_aspect_ratio=increase,"
+                  f"crop={half}:{H},setsar=1[left];"
+                  f"[1:v]{ava_vpre}scale={half}:{H}:force_original_aspect_ratio=increase,"
+                  f"crop={half}:{H},setsar=1[right];"
+                  f"[left][right]hstack=inputs=2,format=yuv420p[v]" + aud_fc)
+        else:
+            # Portrait / square: stacked halves (base top, avatar bottom).
+            half = (H // 2) - ((H // 2) % 2)
+            fc = (f"[0:v]scale={W}:{half}:force_original_aspect_ratio=increase,"
+                  f"crop={W}:{half},setsar=1[top];"
+                  f"[1:v]{ava_vpre}scale={W}:{half}:force_original_aspect_ratio=increase,"
+                  f"crop={W}:{half},setsar=1[bot];"
+                  f"[top][bot]vstack=inputs=2,format=yuv420p[v]" + aud_fc)
         cmd = ["ffmpeg", "-y", *base_inputs,
                "-i", str(avatar), "-filter_complex", fc, "-map", "[v]", *amap,
                "-t", f"{dur}", "-r", str(fps), "-c:v", "libx264",

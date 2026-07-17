@@ -9,6 +9,7 @@ when its outputs already exist):
     picture   copy the reference picture        -> <avatar>/refs/<file>
     [author]  AGENT writes scene.json + talking_profile.json   (vision checkpoint)
     angles    avatar-camera-angles              -> <avatar>/angles/<slug>_<move>_916.png
+              (or ..._169.png for --format landscape / 16:9 YouTube)
     voice     voice-clone                       -> <avatar>/voices/ (+ voice_id)
     styles    copy reference transition/subtitle styles -> <avatar>/{transition,subtitle}_style.json
 
@@ -72,6 +73,9 @@ class Ctx:
                            if args.scene_file else self.avatar_dir / "scene.json")
         self.language = args.language
         self.quality = args.quality
+        self.fmt = args.format
+        self.angle_suffix = C.angle_suffix(self.fmt)
+        self.angle_crop_flag = C.angle_crop_flag(self.fmt)
         self.force = set(args.force_stage or [])
         self.template_path = Path(args.template).expanduser().resolve()
         self.template = C.load_json(self.template_path)
@@ -100,7 +104,7 @@ def done_author(ctx) -> bool:
 
 
 def _angle_file(ctx, move) -> Path:
-    return ctx.angles_dir / f"{ctx.slug}_{move}_916.png"
+    return ctx.angles_dir / f"{ctx.slug}_{move}{ctx.angle_suffix}.png"
 
 
 def missing_moves(ctx) -> list[str]:
@@ -182,7 +186,7 @@ def run_angles(ctx):
            "--scene-file", str(ctx.scene_file),
            "--slug", ctx.slug,
            "-o", str(ctx.angles_dir),
-           "--crop916", "--quality", ctx.quality]
+           ctx.angle_crop_flag, "--quality", ctx.quality]
     for m in todo:
         cmd += ["--move", m]
     rc, _ = C.run_child_json(cmd, desc=f"avatar-camera-angles: {', '.join(todo)}")
@@ -264,7 +268,7 @@ def write_report(ctx) -> dict:
         "artifacts": {
             "scene": "scene.json" if _scene_ok(ctx) else None,
             "talking_profile": "talking_profile.json" if _profile_ok(ctx) else None,
-            "angles": [f"angles/{ctx.slug}_{m}_916.png" for m in ctx.moves
+            "angles": [f"angles/{ctx.slug}_{m}{ctx.angle_suffix}.png" for m in ctx.moves
                        if _angle_file(ctx, m).exists()],
             "voices": _voice_ids(ctx),
             "transition_style": "transition_style.json"
@@ -306,6 +310,9 @@ def main():
     ap.add_argument("--name", default=None, help="Voice/avatar name (default: avatar folder name)")
     ap.add_argument("--scene-file", default=None, help="scene.json path (default: <avatar>/scene.json)")
     ap.add_argument("--language", default=None, help="Language hint (es, en, ...)")
+    ap.add_argument("--format", default="reel", choices=["reel", "post", "landscape"],
+                    help="Target output format. Selects the angle crop: reel/post -> 9:16 "
+                         "(_916.png), landscape -> 16:9 (_169.png) for YouTube.")
     ap.add_argument("--quality", default="high", choices=["low", "medium", "high", "auto"],
                     help="Angle-image fidelity passed to avatar-camera-angles")
     ap.add_argument("--base-dir", default=".", help="Base for resolving template-relative paths")

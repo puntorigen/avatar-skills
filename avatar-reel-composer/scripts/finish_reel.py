@@ -425,6 +425,25 @@ def _layout(draw, event, casing, regular_font, emph_font, fs, max_w):
     return rows, len(u_lines), len(l_lines)
 
 
+def _caption_max_w(W, H) -> int:
+    """Max text width for caption wrapping. Landscape (16:9 YouTube) wraps into a
+    narrower band than the very wide frame so lines stay readable; portrait/square
+    keep the original 84% band."""
+    return int(W * (0.70 if W > H else 0.84))
+
+
+def _default_caption_y_frac(W, H) -> float:
+    """Default vertical center for the caption block: a lower-third for landscape
+    (16:9), the original ~two-thirds line for portrait/square."""
+    return 0.85 if W > H else 0.66
+
+
+def _caption_font_ref(W, H) -> int:
+    """Reference dimension for caption font sizing: the SHORTER side, so a 16:9
+    frame is sized like a 9:16 one instead of ballooning off the 1920px width."""
+    return min(W, H)
+
+
 def render_caption_png(event, out_path, *, W, H, regular_font, emph_font,
                        fontsize, y_frac=0.66, casing="natural", max_lines=2):
     """Render one caption event as a full-frame transparent PNG.
@@ -440,7 +459,7 @@ def render_caption_png(event, out_path, *, W, H, regular_font, emph_font,
 
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
-    max_w = int(W * 0.84)
+    max_w = _caption_max_w(W, H)
     # Captions are pre-split to fit at nominal size, so only a gentle shrink floor
     # is needed for the rare residual overflow (keeps text big and consistent).
     floor = max(48, int(fontsize * 0.80))
@@ -624,7 +643,7 @@ def build_reveal_track(events, caps_dir, *, W, H, fps, regular_font, emph_font,
     from PIL import Image as _I, ImageDraw as _ID
 
     mdraw = _ID.Draw(_I.new("RGBA", (W, 240)))
-    max_w = int(W * 0.84)
+    max_w = _caption_max_w(W, H)
     caps_dir.mkdir(parents=True, exist_ok=True)
     blank = caps_dir / "rev_blank.png"
     _I.new("RGBA", (W, H), (0, 0, 0, 0)).save(blank)
@@ -1308,16 +1327,27 @@ def finish(reel_dir, *, subtitles=True, music=True, music_mood=DEFAULT_MUSIC_MOO
     # "upper" casing is trusted from the profile — OCR lowercases its output, so a
     # reported "lower" is unreliable; we keep natural casing in that case.
     sp = style_profile or {}
-    eff_y_frac = float(y_frac) if y_frac is not None else float(sp.get("y_frac", 0.66))
-    if casing in ("natural", "subtitle") and sp.get("casing") == "upper":
-        casing = "upper"
-
     video_track = Path(manifest.get("video_track") or (reel_dir / "video_track.mp4"))
     narration = Path(manifest.get("narration") or (reel_dir / "narration.mp3"))
     align_path = Path(manifest.get("align") or (reel_dir / "narration.align.json"))
     W = int(manifest.get("width") or 1080)
     H = int(manifest.get("height") or 1920)
     fps = int(manifest.get("fps") or 30)
+
+    # Caption placement defaults follow the output geometry: a lower-third for
+    # 16:9 landscape (YouTube), the original ~two-thirds line for portrait/square.
+    # An explicit --y-frac wins; a profile y_frac is trusted only for
+    # portrait/square (it is captured from vertical reels, so it would sit too
+    # high on a wide frame).
+    default_y = _default_caption_y_frac(W, H)
+    if y_frac is not None:
+        eff_y_frac = float(y_frac)
+    elif "y_frac" in sp and W <= H:
+        eff_y_frac = float(sp["y_frac"])
+    else:
+        eff_y_frac = default_y
+    if casing in ("natural", "subtitle") and sp.get("casing") == "upper":
+        casing = "upper"
     for label, pth in [("video_track", video_track), ("narration", narration)]:
         if not pth.exists():
             raise SystemExit(f"Missing {label}: {pth}")
@@ -1338,12 +1368,12 @@ def finish(reel_dir, *, subtitles=True, music=True, music_mood=DEFAULT_MUSIC_MOO
             words = align.get("words") or []
             reg_font, emp_font = pick_fonts(regular_font, emph_font)
             frac = min(0.085, max(0.05, float(sp.get("fontsize_frac", 0.072))))
-            fs = int(fontsize or round(W * frac))
+            fs = int(fontsize or round(_caption_font_ref(W, H) * frac))
             # A measurer at the NOMINAL font: captions that wouldn't fit (and would
             # otherwise shrink) are split into sequential captions instead.
             from PIL import Image as _I, ImageDraw as _ID
             _mdraw = _ID.Draw(_I.new("RGBA", (W, 240)))
-            _max_w = int(W * 0.84)
+            _max_w = _caption_max_w(W, H)
 
             def _fit(ev):
                 _r, nu, nl = _layout(_mdraw, ev, casing, reg_font, emp_font, fs, _max_w)
@@ -1541,7 +1571,8 @@ def main():
                     help="Caption font size in px (default ~6.3%% of width)")
     ap.add_argument("--y-frac", type=float, default=None,
                     help="Vertical center of captions as a fraction of height "
-                         "(default: profile's value, else 0.66)")
+                         "(default: profile's value for portrait/square, else 0.66; "
+                         "0.85 lower-third for 16:9 landscape)")
     ap.add_argument("--regular-font", default=None, help="Override the regular caption font (TTF)")
     ap.add_argument("--emph-font", default=None, help="Override the emphasis (bold-italic) font (TTF)")
     ap.add_argument("--style-from", default=None,

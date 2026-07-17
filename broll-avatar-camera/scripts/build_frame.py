@@ -23,9 +23,10 @@ hands as they slowly turn the page of a large open antique numerology book resti
 
 Notes:
 - gpt-image-2 renders natively at 1:1 / 3:2 / 2:3; we master at 2:3 and (--crop916)
-  center-crop a clean 9:16 reel frame (native res, no upscaling, no padding bars).
-- Feed the 9:16 frame to p-video so the clip comes out 9:16 (p-video follows the
-  input image's ratio).
+  center-crop a clean 9:16 reel frame, or master at 3:2 and (--crop169) center-crop
+  a 16:9 landscape frame for YouTube (native res, no upscaling, no padding bars).
+- Feed the cropped frame to p-video so the clip comes out at that ratio (p-video
+  follows the input image's ratio): a 9:16 frame -> a 9:16 clip, a 16:9 -> 16:9.
 """
 
 import argparse
@@ -150,10 +151,13 @@ def main():
     ap.add_argument("--face", choices=list(FACE_RULES), default="partial",
                     help="How much of the avatar's face is in frame (default: partial).")
     ap.add_argument("--framing", help="Override the framing anchor line.")
-    ap.add_argument("--aspect-ratio", "-ar", default="2:3",
-                    help="Master ratio for gpt-image-2 (default 2:3 native vertical).")
+    ap.add_argument("--aspect-ratio", "-ar", default=None,
+                    help="Master ratio for gpt-image-2. Default: 2:3 (native vertical), "
+                         "or 3:2 when --crop169 is requested without --crop916.")
     ap.add_argument("--crop916", action="store_true",
                     help="Also write a 9:16 reel crop (center-crop, no upscaling).")
+    ap.add_argument("--crop169", action="store_true",
+                    help="Also write a 16:9 landscape crop for YouTube (center-crop, no upscaling).")
     ap.add_argument("--quality", "-q", default="high", choices=["low", "medium", "high", "auto"])
     ap.add_argument("--count", "-n", type=int, default=1, help="Variations (1-10).")
     ap.add_argument("--output", "-o", default=".", help="Output dir (or path prefix).")
@@ -162,6 +166,11 @@ def main():
     ap.add_argument("--gpt-image-2-script", default=str(DEFAULT_GPT_IMAGE_SCRIPT))
     ap.add_argument("--print-prompt", action="store_true", help="Print the prompt and exit.")
     args = ap.parse_args()
+
+    # Pick the cleanest master for the requested crop: 3:2 for a 16:9 landscape
+    # crop, 2:3 otherwise (vertical default, back-compatible with --crop916).
+    if args.aspect_ratio is None:
+        args.aspect_ratio = "3:2" if (args.crop169 and not args.crop916) else "2:3"
 
     action = None
     if args.action_file:
@@ -215,16 +224,21 @@ def main():
     if not files:
         raise SystemExit(f"frame generation failed: {last_err}")
 
-    crops = []
-    if args.crop916:
+    crops_916, crops_169 = [], []
+    for flag, ratio, suffix, label, bucket in (
+        (args.crop916, 9.0 / 16.0, "_916", "9:16", crops_916),
+        (args.crop169, 16.0 / 9.0, "_169", "16:9", crops_169),
+    ):
+        if not flag:
+            continue
         for fp in files:
             fp = Path(fp)
-            cp = fp.with_name(fp.stem + "_916" + fp.suffix)
-            dims = crop_to_ratio(fp, 9.0 / 16.0, cp)
-            crops.append(str(cp))
-            print(f"  9:16 crop: {cp} ({dims})", file=sys.stderr)
+            cp = fp.with_name(fp.stem + suffix + fp.suffix)
+            dims = crop_to_ratio(fp, ratio, cp)
+            bucket.append(str(cp))
+            print(f"  {label} crop: {cp} ({dims})", file=sys.stderr)
 
-    print(json.dumps({"masters": files, "reel_916": crops,
+    print(json.dumps({"masters": files, "reel_916": crops_916, "reel_169": crops_169,
                       "prompt_file": str(prompt_file)}, ensure_ascii=False, indent=2))
 
 

@@ -19,7 +19,7 @@ Cada episodio = un capítulo (o trozo) condensado en un reel.
 ## 2. ADN de la serie (constante en todos los episodios)
 | Elemento | Definición fija |
 |---|---|
-| **Formato** | reel vertical 9:16, ~90–120s, narrado en 3a persona + diálogo lip-sync en beats clave. |
+| **Formato** | `reel` vertical 9:16 (TikTok/Reels) o `landscape` 16:9 (YouTube), ~90–120s, narrado en 3a persona + diálogo lip-sync en beats clave. Elige uno por serie y fíjalo en el `storyboard.json` (`"format"`). |
 | **Estilo visual** | <fotorrealista cine / soft3d / anime>; paleta y luz consistentes. |
 | **Idioma / voz** | español neutro LATAM. Narrador cuentacuentos (viejito); cada personaje con su voz. |
 | **Estructura** | Narrador sostiene el hilo; personajes ACTÚAN (acción, no talking-heads); diálogos puntuales con lip-sync. |
@@ -50,7 +50,7 @@ guion original
 | 1 | <título> | <beats> | <estado> |
 
 ## 6. Ficha técnica (cada reel)
-- 9:16, ~90–120s, 30 fps; generación 720p (subir a 1080p en finales si rinde).
+- 9:16 (`reel`) o 16:9 (`landscape`, YouTube), ~90–120s, 30 fps; generación 720p (subir a 1080p en finales si rinde).
 - Captions quemados estilo cuento (serif), español neutro.
 - Transiciones: corte limpio + flash/whoosh suave en cambios de mundo.
 - SFX a medida (viento, puertas, pasos…); música instrumental bajo la voz.

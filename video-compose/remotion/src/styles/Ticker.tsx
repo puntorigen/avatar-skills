@@ -21,9 +21,11 @@ export const Ticker: React.FC<StyleProps> = ({
 
   const repeatedText = ` ${text}  •  ${text}  •  ${text}  •  ${text}  •  ${text} `;
 
-  const fontSize = Math.round(height * 0.024);
+  const isVertical = height >= width;
+  const refSide = isVertical ? height : width;
+  const fontSize = Math.round(refSide * 0.024);
   const barHeight = Math.round(fontSize * 2.6);
-  const bottomOffset = Math.round(height * 0.04);
+  const bottomOffset = Math.round(height * (isVertical ? 0.04 : 0.035));
 
   const scrollDist = -width * 0.85;
   const x = interpolate(frame, [0, totalFrames], [0, scrollDist]);

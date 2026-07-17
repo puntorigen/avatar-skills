@@ -453,7 +453,16 @@ def main():
     assets = load_json(args.assets)
     music_meta = load_json(args.music_meta)
 
-    print(f"Generating EDL for {len(treatment.get('shots', []))} shots...", file=sys.stderr)
+    # Prefer the treatment's own format (chosen at draft time and validated) so the
+    # EDL resolution follows the treatment even if --format was left at its default;
+    # fall back to the CLI value otherwise.
+    fmt = treatment.get("format") if isinstance(treatment, dict) else None
+    if fmt not in FORMAT_PRESETS:
+        fmt = args.format
+
+    print(f"Generating EDL for {len(treatment.get('shots', []))} shots "
+          f"({fmt} {get_format_preset(fmt)['width']}x{get_format_preset(fmt)['height']})...",
+          file=sys.stderr)
     matched = call_llm_for_matching(treatment, assets, music_meta)
     if not matched or "video" not in matched:
         print("Error: LLM did not return a valid match. Re-run.", file=sys.stderr)
@@ -462,7 +471,7 @@ def main():
     timeline = build_timeline_from_match(
         matched["video"], treatment, assets,
         music_path=args.music, music_meta=music_meta,
-        format_=args.format,
+        format_=fmt,
         music_volume=args.music_volume,
         music_fade_in_ms=args.music_fade_in_ms,
         music_fade_out_ms=args.music_fade_out_ms,

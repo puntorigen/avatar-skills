@@ -57,6 +57,30 @@ IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp")
 
 
 # ---------------------------------------------------------------------------
+# Output format -> talking-head angle frame conventions
+# ---------------------------------------------------------------------------
+# avatar-camera-angles writes each camera-move still as ``<slug>_<move><suffix>``.
+# reel/post keep the vertical 9:16 crop (``_916`` via ``--crop916``); landscape
+# (YouTube) uses the 16:9 crop (``_169`` via ``--crop169``). Both are produced by
+# avatar-camera-angles/scripts/generate_angles.py.
+FORMAT_ANGLE = {
+    "reel":      ("_916", "--crop916"),
+    "post":      ("_916", "--crop916"),
+    "landscape": ("_169", "--crop169"),
+}
+
+
+def angle_suffix(fmt: str) -> str:
+    """Frame-name suffix for a given output format (default: vertical ``_916``)."""
+    return FORMAT_ANGLE.get(fmt, FORMAT_ANGLE["reel"])[0]
+
+
+def angle_crop_flag(fmt: str) -> str:
+    """generate_angles crop flag for a given output format (default: ``--crop916``)."""
+    return FORMAT_ANGLE.get(fmt, FORMAT_ANGLE["reel"])[1]
+
+
+# ---------------------------------------------------------------------------
 # JSON IO
 # ---------------------------------------------------------------------------
 def load_json(path):

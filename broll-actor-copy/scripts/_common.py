@@ -235,7 +235,27 @@ def _first_existing(paths):
     return None
 
 
-def resolve_reference_image(avatar_dir, location=None):
+def _preferred_angles(angles_dir, aspect="9:16"):
+    """Ordered camera-angle candidates for a target output aspect.
+
+    Prefers the still cropped for THIS aspect (``_169`` for 16:9 landscape,
+    ``_916`` for 9:16 reels), then any ``_916`` (back-compat), then any still.
+    Because actor-copy's OUTPUT keeps the reference image's resolution, picking a
+    format-matching angle yields a format-matching clip.
+    """
+    base = Path(angles_dir)
+    if not base.is_dir():
+        return []
+    suffix = "_" + str(aspect).replace(":", "")  # _916 / _169
+    ordered = []
+    for pat in dict.fromkeys([f"*{suffix}.png", "*_916.png", "*.png"]):
+        for p in sorted(base.glob(pat)):
+            if p not in ordered:
+                ordered.append(p)
+    return ordered
+
+
+def resolve_reference_image(avatar_dir, location=None, aspect="9:16"):
     """Resolve the avatar's identity-anchored hero image for a given look.
 
     Mirrors avatar-location's layout:
@@ -243,7 +263,8 @@ def resolve_reference_image(avatar_dir, location=None):
       - named location -> <avatar>/locations/<loc>/refs/<slug>__<loc>_hero.png
                           (then that look's _hero_master.png)
     Falls back to the styled hero, then the identity master, then a camera
-    angle, then the first extracted frame. Returns a Path or None.
+    angle (matching ``aspect`` when possible), then the first extracted frame.
+    Returns a Path or None.
     """
     avatar_dir = Path(avatar_dir).expanduser().resolve()
     slug = avatar_dir.name
@@ -256,8 +277,8 @@ def resolve_reference_image(avatar_dir, location=None):
         ])
         if cand:
             return cand
-        # fall back to any 9:16 camera angle, then the styled/master heroes, then a frame
-        angles = sorted((avatar_dir / "angles").glob("*_916.png"))
+        # fall back to a format-matching camera angle, then the styled/master heroes, then a frame
+        angles = _preferred_angles(avatar_dir / "angles", aspect)
         cand = _first_existing([
             *(angles[:1]),
             *sorted((avatar_dir / "refs").glob(f"{slug}_hero*.png"))[:1],
@@ -275,7 +296,7 @@ def resolve_reference_image(avatar_dir, location=None):
     ])
     if cand:
         return cand
-    angles = sorted((loc_dir / "angles").glob("*_916.png"))
+    angles = _preferred_angles(loc_dir / "angles", aspect)
     return _first_existing([
         *sorted(refs.glob(f"{slug}__{loc}_hero*.png"))[:1],
         *(angles[:1]),

@@ -29,7 +29,7 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPT_DIR))
-from _common import REMOTION_DIR, load_json
+from _common import REMOTION_DIR, load_json, get_format_preset
 
 TITLE_COMPOSITION_ID = "TitleOverlay"
 DEFAULT_WORKERS = 3
@@ -132,8 +132,11 @@ def main():
         print(json.dumps({"rendered": 0, "skipped": 0, "titles_dir": args.titles_dir}))
         return
 
-    width = int(timeline.get("width", 1080))
-    height = int(timeline.get("height", 1920))
+    # Prefer the timeline's explicit dimensions; fall back to the format preset
+    # (so a landscape timeline renders 1920x1080, not the portrait default).
+    _preset = get_format_preset(timeline.get("format", "reel"))
+    width = int(timeline.get("width", _preset["width"]))
+    height = int(timeline.get("height", _preset["height"]))
     fps = int(timeline.get("fps", 30))
 
     titles_dir = Path(args.titles_dir).resolve()

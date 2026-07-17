@@ -135,10 +135,14 @@ def main():
         print("Error: timeline has no video segments", file=sys.stderr)
         sys.exit(1)
 
+    # Prefer the timeline's explicit dimensions (like render_final.py); fall back
+    # to the format preset so a landscape timeline previews at 16:9, not portrait.
     fmt = timeline.get("format", "reel")
     preset = get_format_preset(fmt)
-    target_w = max(64, int(round(preset["width"] * args.scale)))
-    target_h = max(64, int(round(preset["height"] * args.scale)))
+    base_w = int(timeline.get("width", preset["width"]))
+    base_h = int(timeline.get("height", preset["height"]))
+    target_w = max(64, int(round(base_w * args.scale)))
+    target_h = max(64, int(round(base_h * args.scale)))
     target_w = target_w + (target_w % 2)
     target_h = target_h + (target_h % 2)
     fps = args.fps

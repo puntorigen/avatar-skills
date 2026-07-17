@@ -29,7 +29,7 @@ flowchart TD
   pic["new picture"] --> scaffold["scaffold_avatar.py"]
   vox["new voice sample"] --> scaffold
   tmpl --> scaffold
-  scaffold --> newav["new avatar dir\nscene.json, angles/*_916.png, voices/,\ntalking_profile.json, transition/subtitle styles"]
+  scaffold --> newav["new avatar dir\nscene.json, angles/*_916.png (or *_169.png), voices/,\ntalking_profile.json, transition/subtitle styles"]
   tmpl --> gensb["generate_storyboard.py"]
   script["new script"] --> gensb
   newav --> gensb
@@ -98,8 +98,10 @@ yields many short beats and over-fragments a short script.
 | `none` | (none -- B-roll, no still) |
 
 Unknown/missing angles fall back to `eye_level`. The new avatar's stills are
-named `<avatar>/angles/<avatar_name>_<move>_916.png` (the composer's storyboard
-`image` references). `zoom_from_previous` is mapped to Ken Burns motion by the
+named `<avatar>/angles/<avatar_name>_<move>_916.png` for 9:16 reels, or
+`..._169.png` for 16:9 landscape (YouTube) when scaffolded with
+`--format landscape` (the composer's storyboard `image` references).
+`zoom_from_previous` is mapped to Ken Burns motion by the
 composer (`zoom_in`->`push_in`, `zoom_out`->`push_out`, `hard_cut`->`none`,
 `none`->`zoom_center`).
 
@@ -112,7 +114,7 @@ table; `--force-stage NAME` re-runs one stage.
 |---|---|---|
 | `picture` | an image in `<avatar>/refs/` | copy `--picture` in |
 | `author` (agent) | `scene.json` (4 fields) + `talking_profile.json` (`video_prompt`) | **stops** with instructions + the template's `delivery_style_seed` |
-| `angles` | every `angles_needed` still exists | `avatar-camera-angles` for the missing moves (`--crop916`) |
+| `angles` | every `angles_needed` still exists | `avatar-camera-angles` for the missing moves (`--crop916`, or `--crop169` for `--format landscape`) |
 | `voice` | `voices/index.json` has a `voice_id` | `voice-clone` on `--voice` |
 | `styles` | `transition_style.json` present | copy reference styles in (or write the embedded template copies) |
 

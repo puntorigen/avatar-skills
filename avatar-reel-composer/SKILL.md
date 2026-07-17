@@ -1,6 +1,6 @@
 ---
 name: avatar-reel-composer
-description: Turn a script + an existing avatar into a finished vertical reel. Narrates the script once in the avatar's cloned voice, cuts it per scene by word-level alignment, generates lip-synced talking-head scenes (avatar-talking-video) and silent B-roll scenes (broll-generator) as voice-over, applies Ken Burns / zoom motion, and assembles with hard cuts under one master narration. Can weave in a GUEST/cameo scene (a clip of a DIFFERENT avatar speaking in its own voice) that keeps its own audio. Supports per-reel and per-scene LOCATIONS (alternate avatar looks built by avatar-location). Can also onboard a brand-new avatar from a public Instagram profile via create_avatar.py (download, analysis, frames, voice cloning, style profiling). Use when the user wants to produce a full reel/short from a script for an avatar that already exists (videos/, voices/, angles/ and/or talking_profile.json), or to onboard a new avatar from an Instagram URL, in the style of that avatar's analyzed reels.
+description: Turn a script + an existing avatar into a finished reel — 9:16 vertical (TikTok/Reels) or 16:9 landscape (YouTube), set via the storyboard `format`. Narrates the script once in the avatar's cloned voice, cuts it per scene by word-level alignment, generates lip-synced talking-head scenes (avatar-talking-video) and silent B-roll scenes (broll-generator) as voice-over, applies Ken Burns / zoom motion, and assembles with hard cuts under one master narration. Can weave in a GUEST/cameo scene (a clip of a DIFFERENT avatar speaking in its own voice) that keeps its own audio. Supports per-reel and per-scene LOCATIONS (alternate avatar looks built by avatar-location). Can also onboard a brand-new avatar from a public Instagram profile via create_avatar.py (download, analysis, frames, voice cloning, style profiling). Use when the user wants to produce a full reel/short from a script for an avatar that already exists (videos/, voices/, angles/ and/or talking_profile.json), or to onboard a new avatar from an Instagram URL, in the style of that avatar's analyzed reels.
 ---
 
 # Avatar Reel Composer
@@ -17,10 +17,12 @@ are still deferred (see *Next phases*).
 - The user has an avatar folder (e.g. `lolo/`) that already contains `videos/`,
   a trained voice in `voices/`, camera-angle images in `angles/`, and ideally a
   `talking_profile.json` (all produced by the upstream skills below).
-- They give you a **script** (what the avatar should say) and want a vertical
-  reel where the avatar's voice narrates continuously while the video cuts
+- They give you a **script** (what the avatar should say) and want a reel — 9:16
+  vertical (TikTok/Reels) or 16:9 landscape (YouTube), set via the storyboard's
+  `format` — where the avatar's voice narrates continuously while the video cuts
   between talking-head shots and complementary B-roll — exactly like the
-  original reels analyzed by `video-scene-analysis`.
+  original reels analyzed by `video-scene-analysis`. For 16:9, use the avatar's
+  `_169.png` angle crops (see `avatar-camera-angles --crop169`).
 
 If the avatar does NOT exist yet, create it first from its public Instagram
 profile with `create_avatar.py` (see *Stage 0: create an avatar from a public
@@ -37,7 +39,7 @@ Instagram URL*).
 |---|---|---|
 | `videos/`, `<name>.analysis.json` | `video-scene-analysis` | structural template (pacing, camera, zoom, emotion) |
 | `voices/*.json` (trained voice) | `voice-clone` | the cloned narration voice |
-| `angles/**/<angle>_916.png` | `avatar-camera-angles` | talking-head scene framings |
+| `angles/**/<angle>_916.png` (or `_169.png` for 16:9) | `avatar-camera-angles` | talking-head scene framings |
 | `talking_profile.json` | `video-scene-analysis` | reusable lip-sync prompt/personality |
 
 A shared `replicate_api_token` (inherited from the sibling skills) is required.
@@ -56,7 +58,7 @@ storyboard.json (you write it, guided by <avatar>.analysis.json)
    2. slice narration.mp3 → scenes/chunk_<id>.mp3
    3. talking_head → avatar-talking-video --audio chunk   (lip-synced)
       broll        → broll-generator --duration ceil(chunk) (silent)
-   4. normalize each clip: TRIM to exact chunk dur (never freeze-pad) + scale/pad 1080x1920 + Ken Burns/zoom
+   4. normalize each clip: TRIM to exact chunk dur (never freeze-pad) + scale/crop to the format size (1080x1920 reel / 1920x1080 landscape) + Ken Burns/zoom
    5. concat with HARD CUTS (Σ durations == narration length)
    6. mux narration.mp3 back on as the single master track → final.mp4
 
@@ -215,7 +217,7 @@ Optional `finish` block (also overridable by `compose_reel.py --finish` flags):
 | `caption_reveal` | `word` (default — **karaoke reveal**: each word appears as it's spoken, building the phrase in place; already-spoken words stay lit, the phrase clears on the next unit) or `phrase` (the whole phrase unit pops in at once). See the [`caption-word-reveal`](../caption-word-reveal/SKILL.md) skill |
 | `style_from` | path to a `subtitle_style.json` (from avatar-frames) to seed caption position/size/casing |
 | `regular_font` / `emph_font` | override the serif / bold-italic caption fonts (TTF) |
-| `fontsize` / `y_frac` | caption size (px) / vertical center as fraction of height (defaults: profile, else ~8.2% of width / `0.66`) |
+| `fontsize` / `y_frac` | caption size (px) / vertical center as fraction of height (defaults: profile, else ~7.2% of the SHORTER side / `0.66` for 9:16, `0.85` lower-third for 16:9) |
 | `fx` | OPTIONAL polish-pass block (see below) — runs after the finish pass, keeps `final-without-sfx.mp4` |
 
 `finish.fx` block (stage 4, `polish_reel.py`):
@@ -244,8 +246,8 @@ Each scene:
 | `text` | all | the contiguous slice of the script spoken during this scene |
 | `motion` | all | Ken Burns/zoom: `zoom_center`, `push_in`, `push_out`, `drift_{left,right,up,down}`, `none` |
 | `emphasis` | all | `true` bumps motion intensity (subtle→medium); a marked zoom-in for key lines |
-| `image` | talking_head | path to a `*_916.png` camera-angle image (preferred); an explicit path always wins over `angle`/`location` |
-| `angle` | talking_head | alternative to `image`: a move name (e.g. `push_in`) globbed under the active location's `angles/` — `<avatar>/locations/<location>/angles/**/*<angle>*_916.png` when a `location` is active, else `<avatar>/angles/**/*<angle>*_916.png`. Falls back to the default look (with a warning) if the location lacks that angle |
+| `image` | talking_head | path to a `*_916.png` (9:16) or `*_169.png` (16:9) camera-angle image (preferred); an explicit path always wins over `angle`/`location` |
+| `angle` | talking_head | alternative to `image`: a move name (e.g. `push_in`) globbed under the active location's `angles/`, preferring the crop that matches the reel `format` (`*_169.png` for landscape, else `*_916.png`, then any `*.png`). Falls back to the default look (with a warning) if the location lacks that angle |
 | `location` | talking_head | OPTIONAL per-scene **look** override (a name from the `avatar-location` skill); overrides the reel-level `location`. `"default"`/unset = the avatar's base look |
 | `video_prompt` / `negative_prompt` | talking_head | optional p-video-avatar overrides; omit to use `talking_profile.json` |
 | `broll_description` | broll | the scene to generate (people/objects/environment, NO main presenter) |
@@ -366,9 +368,9 @@ Reproduce the analyzed reel's rhythm, not just its talking-head:B-roll ratio:
 
 ### Camera-angle sequence (base the new reel on the analyzed one)
 The talking-head shots are NOT free camera moves — they reuse a few
-**pre-rendered angle crops** from `<avatar>/angles/*_916.png` plus digital zoom.
-So replicate the reference's *tendencies*, not a 1:1 angle-per-scene copy
-(the new reel has fewer scenes):
+**pre-rendered angle crops** from `<avatar>/angles/*_916.png` (or `*_169.png` for
+a 16:9 reel) plus digital zoom. So replicate the reference's *tendencies*, not a
+1:1 angle-per-scene copy (the new reel has fewer scenes):
 - `compose_reel.py` prints a **camera fingerprint** of the reference
   (talking-head angle + framing distribution, and the zoom-transition mix). Match it.
 - **Base shot:** use the dominant angle/framing for most talking-heads (for the

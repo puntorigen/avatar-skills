@@ -6,6 +6,7 @@
   "reference_analysis": "2026-06-08_15-02-03.analysis.json",
 
   "format": "reel",
+  "_format_note": "'reel' = 9:16 vertical (TikTok/Reels, 1080x1920). For 16:9 YouTube set \"format\": \"landscape\" (1920x1080) and point each talking_head image at the avatar's _169.png angle (e.g. angles/lolo_eye_level_169.png) instead of _916.png; scaffold those with reel-restyle --format landscape or avatar-camera-angles --crop169. All other mechanics are identical.",
   "resolution": "720p",
   "fps": 30,
 

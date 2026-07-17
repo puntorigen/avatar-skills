@@ -26,8 +26,10 @@ export const TagLine: React.FC<StyleProps> = ({
 
   const opacity = enterOpacity * exitOpacity;
 
-  const fontSize = Math.round(height * 0.034);
-  const bottomOffset = Math.round(height * 0.085);
+  const isVertical = height >= width;
+  const refSide = isVertical ? height : width;
+  const fontSize = Math.round(refSide * 0.034);
+  const bottomOffset = Math.round(height * (isVertical ? 0.085 : 0.07));
 
   return (
     <AbsoluteFill style={{ backgroundColor: "transparent" }}>

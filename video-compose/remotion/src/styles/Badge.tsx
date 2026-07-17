@@ -28,7 +28,9 @@ export const Badge: React.FC<StyleProps> = ({
 
   const opacity = enterOpacity * exitOpacity;
 
-  const fontSize = Math.round(height * 0.022);
+  const isVertical = height >= width;
+  const refSide = isVertical ? height : width;
+  const fontSize = Math.round(refSide * 0.022);
   const padX = Math.round(fontSize * 1.2);
   const padY = Math.round(fontSize * 0.5);
 
@@ -37,7 +39,7 @@ export const Badge: React.FC<StyleProps> = ({
       <div
         style={{
           position: "absolute",
-          top: Math.round(height * 0.05),
+          top: Math.round(height * (isVertical ? 0.05 : 0.06)),
           right: Math.round(width * 0.04),
           display: "flex",
           alignItems: "center",

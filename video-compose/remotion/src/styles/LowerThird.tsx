@@ -26,13 +26,17 @@ export const LowerThird: React.FC<StyleProps> = ({
 
   const slideX = interpolate(enterX, [0, 1], [-100, 0]);
 
-  const baseFontSize = Math.round(height * 0.045);
-  const subFontSize = Math.round(height * 0.026);
+  // Landscape (16:9) is short and wide: size the type off the LONGER side so the
+  // lower-third stays legible, and sit it in a tighter YouTube safe area.
+  const isVertical = height >= width;
+  const refSide = isVertical ? height : width;
+  const baseFontSize = Math.round(refSide * 0.045);
+  const subFontSize = Math.round(refSide * 0.026);
   const padX = Math.round(width * 0.04);
   const padY = Math.round(width * 0.025);
   const accentBarWidth = Math.round(width * 0.012);
 
-  const bottomOffset = Math.round(height * 0.18);
+  const bottomOffset = Math.round(height * (isVertical ? 0.18 : 0.1));
 
   return (
     <AbsoluteFill style={{ backgroundColor: "transparent" }}>

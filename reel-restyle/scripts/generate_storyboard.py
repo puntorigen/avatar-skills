@@ -88,12 +88,12 @@ def fit_beats(beats: list[dict], n_words: int) -> list[dict]:
 # Storyboard assembly
 # ---------------------------------------------------------------------------
 def build_scene(beat: dict, idx: int, text: str, *, avatar_rel: str, avatar_slug: str,
-                seg: dict | None) -> dict:
+                seg: dict | None, angle_suffix: str = "_916") -> dict:
     sid = f"s{idx + 1}"
     scene = {"id": sid, "type": beat["type"], "text": text}
     if beat["type"] == "talking_head":
         move = beat.get("move") or "eye_level"
-        scene["image"] = f"{avatar_rel}/angles/{avatar_slug}_{move}_916.png"
+        scene["image"] = f"{avatar_rel}/angles/{avatar_slug}_{move}{angle_suffix}.png"
         scene["zoom_from_previous"] = beat.get("zoom_from_previous", "none")
         scene["emphasis"] = bool(beat.get("emphasis"))
     else:
@@ -131,6 +131,7 @@ def build_storyboard(template: dict, *, avatar_dir: Path, base_dir: Path, script
 
     avatar_rel = C.rel_to(avatar_dir, base_dir)
     avatar_slug = avatar_dir.name
+    angle_suffix = C.angle_suffix(fmt)
 
     # Resolve per-beat text.
     if segments is not None:
@@ -156,7 +157,8 @@ def build_storyboard(template: dict, *, avatar_dir: Path, base_dir: Path, script
     missing_moves: list[str] = []
     for i, (beat, text) in enumerate(zip(eff_beats, texts)):
         seg = segments[i] if segments is not None else None
-        scene = build_scene(beat, i, text, avatar_rel=avatar_rel, avatar_slug=avatar_slug, seg=seg)
+        scene = build_scene(beat, i, text, avatar_rel=avatar_rel, avatar_slug=avatar_slug,
+                            seg=seg, angle_suffix=angle_suffix)
         if scene.get("broll_description", "").startswith(TODO_PREFIX):
             todo_ids.append(scene["id"])
         if scene["type"] == "talking_head":

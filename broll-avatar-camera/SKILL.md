@@ -71,7 +71,7 @@ cousin of `broll-story` but starring the real avatar.
 ```
 scene profile + avatar ref + an ACTION description
   │
-1 build_frame.py  → gpt-image-2 → ONE action start frame (2:3 master + 9:16 crop)
+1 build_frame.py  → gpt-image-2 → ONE action start frame (2:3 master + 9:16 crop, or 3:2 master + 16:9 crop with --crop169)
   │
 2 make_broll_camera.py → prunaai/p-video-avatar
   │   inputs: image (start frame) + audio (beat slice) + video_prompt (action) + negative_prompt
@@ -105,7 +105,7 @@ scene profile + avatar ref + an ACTION description
   (`--start-image` / `--end-image`). See REFERENCE.md.
 - **No frozen frames / no Ken Burns.** The clip length follows the audio, so pass the exact beat
   slice and the clip matches its slot (the composer trims, never freezes). Project rule since Cap. 6.
-- **Feed a 9:16 frame** for a 9:16 reel clip.
+- **Feed a 9:16 frame** for a 9:16 reel clip, or a **16:9 frame** (`build_frame.py --crop169`) for a 16:9 YouTube clip — p-video follows the input image's ratio.
 
 ## Workflow
 

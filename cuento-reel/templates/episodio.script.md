@@ -1,7 +1,7 @@
 # Ep. NN — "<título del episodio>" · <obra>
 
-> **Relato ORIGINAL** de los hechos (no es el texto del autor). 9:16 · ~90–120s ·
-> español neutro LATAM · <estilo visual>.
+> **Relato ORIGINAL** de los hechos (no es el texto del autor). 9:16 (`reel`) o
+> 16:9 (`landscape`, YouTube) · ~90–120s · español neutro LATAM · <estilo visual>.
 > Híbrido: el **Narrador** sostiene el hilo; los personajes dialogan con lip-sync.
 >
 > Leyenda: **N** = narración (voz del Narrador sobre escena de acción `broll`) ·

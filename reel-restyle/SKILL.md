@@ -81,10 +81,21 @@ python3 .cursor/skills/reel-restyle/scripts/apply_template.py mara \
 # Inspect readiness at any time:
 python3 .cursor/skills/reel-restyle/scripts/apply_template.py mara \
     --template lolo/reel_template.json --status
+
+# 16:9 YouTube instead of 9:16: add --format landscape (scaffolds _169.png angles
+# and drafts a landscape storyboard). Everything else is identical.
+python3 .cursor/skills/reel-restyle/scripts/apply_template.py mara \
+    --template lolo/reel_template.json --format landscape \
+    --picture refs/mara.png --voice samples/mara.wav --script mara_script.txt
 ```
 
 You can also run the steps individually (`extract_template.py`,
 `scaffold_avatar.py`, `generate_storyboard.py`, then `compose_reel.py`).
+
+**Output format.** `--format reel` (default) makes a 9:16 vertical reel; `--format
+landscape` makes a 16:9 YouTube video. The format flows through scaffolding (which
+angle crop to generate: `_916.png` vs `_169.png`), the storyboard and the
+composer — no other changes needed.
 
 ## What transfers vs. what is authored fresh
 
