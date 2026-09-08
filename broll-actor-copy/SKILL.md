@@ -2,18 +2,19 @@
 name: broll-actor-copy
 description: >-
   Generate a B-roll clip where OUR avatar COPIES the motion of a driving video —
-  same movement, gestures, expressions and lip movements, but performed by the
-  avatar — via ByteDance DreamActor M2.0 (bytedance/dreamactor-m2.0 on Replicate).
-  Takes an avatar, a location/look (or its default) and a driving video, resolves
-  the look's identity-anchored hero image, and transfers the video's performance
-  onto it. DreamActor is universal (humans, cartoons, animals) and needs no pose
-  estimation. The driving video must show exactly ONE animated character (person
-  or animal); multi-character sources are split into single-character segments and
-  stitched. Output keeps the reference image's resolution (9:16 hero →
-  9:16 clip); the clip is muted and avatar-reel-composer re-lays narration. Use
-  when the user wants the avatar to mimic a reference video's movement, a motion
-  copy / performance transfer / actor copy / "copiar el movimiento del video"
-  B-roll, or mentions dreamactor / DreamActor M2.0.
+  same movement, gestures, expressions and lip movements — via ByteDance
+  DreamActor M2.0 (bytedance/dreamactor-m2.0 on Replicate). Takes an avatar, a
+  location/look (or its default) and a driving video, resolves the look's hero
+  image, and transfers the video's performance onto it. Works with humans,
+  cartoons and animals. The driving video must show exactly ONE animated
+  character; multi-character sources are split into single-character segments
+  and stitched. A human driver should match a human avatar's gender (else warn +
+  ask: the face distorts) and the reference scene should include the objects the
+  driver interacts with. Output keeps the reference image's resolution (9:16
+  hero → 9:16 clip); the clip is muted and avatar-reel-composer re-lays
+  narration. Use when the user wants the avatar to mimic a video's movement, a
+  motion copy / performance transfer / actor copy / "copiar el movimiento del
+  video" B-roll, or mentions dreamactor.
 disable-model-invocation: true
 ---
 
@@ -75,6 +76,22 @@ avatar look -> hero image  +  driving video
   the driving video must show **exactly one animated character** (a person OR an
   animal) visible in scene. Our reference hero is one avatar → match it with a
   one-character driver. See the multi-character workflow below.
+- **Human driver → same gender as the avatar (or warn + ask).** DreamActor also
+  transfers the driver's facial gestures and the position of facial features. When
+  both driver and avatar are human but of different genders, the avatar's face
+  gets distorted / drifts off-identity. Before generating with a human driver,
+  check its apparent gender against the avatar's: if they differ, **tell the user
+  and ask (AskQuestion) whether to continue anyway or pick another driver**.
+  A human driver animating an ANIMAL avatar is fine — the face-matching issue is
+  human-to-human.
+- **The reference scene must support the driver's interactions.** If the driving
+  actor interacts with objects (a bench, a mat, a bar, a chair…), the reference
+  image's location should contain a **similar interactable element** — not
+  necessarily identical, just coherent with the avatar's scene — placed where the
+  motion needs it. Otherwise DreamActor invents props mid-clip and the motion
+  looks unnatural. Also frame the reference **half-body (mid-thigh up)** when the
+  detail that matters is the face/torso: DreamActor plausibly fills in whatever
+  is outside the reference frame, and a closer reference keeps the face sharp.
 - **The reference image sets the output resolution.** Feed a **9:16 hero** for a
   9:16 reel clip, or a **16:9 hero** for a 16:9 YouTube clip. When it falls back
   to a camera angle, pass `--aspect 16:9` to prefer the avatar's `_169.png`
@@ -109,14 +126,40 @@ python3 broll-actor-copy/scripts/make_actor_copy.py nora \
 Each segment must be ≤ 30s and contain a single character; the stitched output is
 always muted (VO is re-laid later).
 
+## If the driver's gender differs from the avatar's (human ↔ human)
+DreamActor mirrors the driver's facial gestures and feature placement, so a
+female driver on a male avatar (or vice versa) tends to **distort the face**.
+Before generating with a human driver:
+
+1. Compare the driver's apparent gender with the avatar's.
+2. If they differ, **inform the user** of the face-distortion risk and **ask**
+   (AskQuestion) whether to (a) use/pick a same-gender driving clip, or
+   (b) continue anyway accepting possible facial drift.
+
+This only applies human-to-human: driving an **animal** avatar with a human
+video is fine and supported.
+
+## Match the reference scene to the driver's interactions
+Watch what the driving actor touches or leans on (bench, mat, bar, wall, chair…)
+and make sure the reference image's location has a **coherent interactable
+counterpart** in a workable position — the avatar's own version of it, not a copy
+of the driver's scene. If the hero look lacks it, generate a scene-matched
+reference (e.g. with `gpt-image-2` / `avatar-location`) instead of feeding a
+mismatched hero: DreamActor will otherwise hallucinate props and the contact
+points will look wrong. Prioritize detail where it matters — a **half-body
+(mid-thigh up) reference** keeps face/torso sharp and lets the model infer legs
+and clothing below the frame.
+
 ## Workflow
 
 ### 1 — Pick the driver + the look
 Choose (or download) the driving video whose performance you want the avatar to
 copy, and decide the avatar look. **Confirm the driver shows a single animated
-character** (see the multi-character workflow above if not). Preview the resolved
-inputs with `--dry-run` (no spend): it prints the resolved hero, prepared
-image/video sizes and the plan.
+character** (see the multi-character workflow above if not), **check the
+driver/avatar gender match** (warn + ask if they differ), and **check the
+reference scene supports the driver's object interactions** (see above). Preview
+the resolved inputs with `--dry-run` (no spend): it prints the resolved hero,
+prepared image/video sizes and the plan.
 
 ### 2 — Generate
 ```bash
@@ -149,6 +192,15 @@ narration over it:
 ## Notes / troubleshooting
 - **Identity drifts / off-look** → the reference hero controls the appearance;
   use a cleaner, front-ish hero (or a specific `--location`) and re-run.
+- **Face looks distorted / wrong gender vibes** → likely a human driver of a
+  different gender than the avatar (DreamActor copies facial gesture/feature
+  placement). Use a same-gender driving clip, or accept the drift knowingly.
+- **Face mushy in full-body shots** → the face is too small in the reference;
+  switch to a half-body (mid-thigh up) reference so face/torso carry the detail
+  and let the model infer the rest.
+- **Props appear/change mid-clip, unnatural contact** → the reference scene lacks
+  the element the driver interacts with; regenerate the reference with a coherent
+  interactable counterpart (bench/mat/bar…) in position.
 - **Motion looks wrong / cropped** → the driver's framing matters; prefer a clean,
   well-lit driving clip with the same shot scale you want (portrait vs full-body
   both work — the model adapts).

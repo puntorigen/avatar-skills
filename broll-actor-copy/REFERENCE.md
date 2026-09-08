@@ -34,6 +34,32 @@ For (b), pass the ranges to `--segments` (see below). To find where each charact
 is alone on screen, inspect the video visually or with the `video-scene-analysis`
 skill.
 
+## Driver gender rule (human ↔ human)
+
+DreamActor also copies the driver's **facial gestures and feature placement**.
+With a human driver and a human avatar of **different genders**, the avatar's
+face distorts / drifts off-identity (observed: female driver → male avatar).
+
+- Human driver + human avatar → **same apparent gender**, or **inform the user
+  and ask (AskQuestion)** whether to continue anyway or swap the driving clip.
+- Human driver + **animal** avatar → fine, no gender constraint (the
+  human-to-human face matching is what breaks).
+
+## Reference scene & framing rules
+
+- **Interactable elements.** If the driving actor interacts with objects (bench,
+  mat, bar, chair, wall…), the reference image's scene must include a **coherent
+  counterpart** the avatar could use, roughly where the motion needs it. It does
+  NOT have to look like the driver's prop — just fit the avatar's location. A
+  mismatched scene makes DreamActor hallucinate props mid-clip and contact points
+  (hands/feet on surfaces) look wrong.
+- **Half-body reference for face-critical work.** DreamActor invents whatever
+  lies outside the reference frame to complete the motion. Since face + torso
+  carry the identity, frame the reference **mid-thigh up** (with a hint of the
+  lower clothing so the model infers the rest). A far full-body reference makes
+  the face tiny → mushy/distorted output; details invented below frame (pants,
+  shoes) matter much less than a faithful face.
+
 ## Segment → process → stitch (multi-character sources)
 
 `--segments "start-end,start-end,…"` takes single-character time ranges (seconds,
@@ -125,6 +151,13 @@ python3 broll-actor-copy/scripts/make_actor_copy.py nora \
   full-body both work; the model adapts scale.
 - **One character only** in the driving video (see the single-subject rule
   above); for multi-character sources, segment + stitch with `--segments`.
+- **Match driver gender (human→human).** A female driver on a male avatar (or
+  vice versa) distorts the face — warn + ask before proceeding. Human→animal is
+  fine.
+- **Scene must afford the motion.** Include the driver's interaction objects
+  (bench/mat/bar…) as coherent counterparts in the reference scene, and prefer a
+  half-body (mid-thigh up) reference when the face/torso are what matter — the
+  model fills in the rest below frame.
 - **Muted broll.** The clip is muted (ffmpeg `-an`); `avatar-reel-composer`
   re-lays the single master narration. Use `--keep-audio` only for a standalone
   lip-sync/motion QA preview.

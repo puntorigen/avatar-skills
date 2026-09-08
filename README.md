@@ -185,6 +185,16 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
   `az`/`gcloud`/`vercel`, Notion/Linear MCP, chat transcripts). Company-agnostic;
   outputs feed `avatar-video-reel` / `avatar-reel-composer`.
 
+### Social posts & carousels
+
+- **carousel-generator** — turn a topic + a brand into a finished Instagram
+  carousel: research the winning carousel structure of a competitor Top-10
+  (Apify via `reel-discovery`), prove whether carousels beat reels, decompose the
+  winners slide-by-slide with Gemini vision (fused with the `reel-discovery`
+  narrative patterns), confirm the angle with the user, then generate on-brand
+  4:5 slides + caption + hashtags with `asset-generator` (Gemini 3 Pro Image),
+  keeping palette/typography/identity consistent across slides.
+
 ### Generation engines (shared)
 
 The shared model backends the pipeline skills call under the hood — bundled here

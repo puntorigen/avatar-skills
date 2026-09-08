@@ -21,6 +21,16 @@ the video shows more than one, either use a clip/segment with a single character
 or pass --segments to split it into single-character time ranges — each range is
 processed separately and the results are stitched into one clip.
 
+DRIVER GENDER RULE (human->human): DreamActor also copies the driver's facial
+gestures/feature placement, so a human driver of a DIFFERENT gender than a human
+avatar distorts the face. Use a same-gender driver, or warn the user and ask
+before continuing. Human driver -> animal avatar is fine.
+
+REFERENCE SCENE RULE: the reference image's scene should contain coherent
+counterparts of the objects the driver interacts with (bench/mat/bar...), and a
+half-body (mid-thigh up) reference keeps the face/torso sharp — the model infers
+whatever lies below the frame.
+
 A bare avatar name routes under ./avatares/<name> (repo convention; override with
 AVATARES_ROOT); an explicit path is used as-is.
 
@@ -58,7 +68,11 @@ SINGLE_SUBJECT_NOTICE = (
     "  NOTE: DreamActor copies ONE subject. The driving video must show exactly "
     "ONE animated\n        character (a person OR an animal) in scene. If it shows "
     "more than one, use a\n        single-character clip, or --segments to split "
-    "into single-character ranges (stitched)."
+    "into single-character ranges (stitched).\n"
+    "        A HUMAN driver should match a HUMAN avatar's gender (a mismatch "
+    "distorts the face;\n        warn + ask first). The reference scene should "
+    "include the objects the driver\n        interacts with (bench/mat/bar...), "
+    "and a half-body (mid-thigh up) reference\n        keeps the face/torso sharp."
 )
 
 

@@ -1,0 +1,24 @@
+{
+  "name": "Arnoldo",
+  "handle": "@arnoldo_schaffner_bofill",
+  "language": "es",
+  "tone": "cálido, cercano y esperanzador; habla de tú, valida el dolor de la ruptura y ofrece un camino de sanación; nada de clichés de autoayuda ni tono de gurú",
+  "default_aspect_ratio": "4:5",
+  "default_slide_count": 7,
+  "palette": {
+    "background": "#F7F1EA",
+    "ink": "#26201B",
+    "accent": "#D97A6C",
+    "muted": "#9B8E82"
+  },
+  "fonts": {
+    "heading": "sans serif geométrica cálida y con carácter (estilo Sora / Poppins semibold)",
+    "body": "sans serif humanista muy legible (estilo Inter / Work Sans)"
+  },
+  "visual_style": "editorial minimalista y cálido, tonos tierra suaves, mucho aire, fotografía con luz natural y grano fino; sensación íntima y de calma",
+  "assets": {
+    "logo": "",
+    "identity_photos": []
+  },
+  "cta_default": "Guarda este post para tus días difíciles y sígueme para acompañarte en el proceso"
+}

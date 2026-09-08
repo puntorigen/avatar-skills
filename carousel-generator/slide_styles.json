@@ -1,0 +1,38 @@
+{
+  "portada": {
+    "name": "Portada / gancho",
+    "layout": "Titular grande y protagonista centrado en la mitad superior, con abundante espacio en blanco. Una barra o forma de acento pequeña bajo el título. Sensación de promesa clara.",
+    "text_treatment": "Titular en peso bold, 3-7 palabras, alto contraste. Sin párrafos largos.",
+    "face_position": "retrato de medio cuerpo a un costado o abajo, mirada cálida hacia la cámara, sin tapar el titular"
+  },
+  "idea": {
+    "name": "Idea / paso",
+    "layout": "Número o etiqueta de la idea arriba (en color de acento), título de la idea en el centro y 1-2 líneas de apoyo debajo. Mucho aire alrededor.",
+    "text_treatment": "Un solo concepto por slide. Título en bold, apoyo en peso regular más pequeño.",
+    "face_position": "sin foto por defecto; solo tipografía y formas de marca"
+  },
+  "cita": {
+    "name": "Cita / frase",
+    "layout": "Frase corta centrada, entre comillas grandes de acento, ocupando el centro visual. Fondo limpio.",
+    "text_treatment": "Frase memorable, máximo 12 palabras, en peso medium/bold.",
+    "face_position": "opcional, difuminada o pequeña en una esquina"
+  },
+  "dato": {
+    "name": "Dato / estadística",
+    "layout": "Número grande de acento como héroe visual, con una línea de contexto debajo. Composición minimalista.",
+    "text_treatment": "El dato es el protagonista; el resto es soporte pequeño.",
+    "face_position": "sin foto por defecto"
+  },
+  "recap": {
+    "name": "Recap / resumen",
+    "layout": "Lista compacta de 3-5 puntos con viñetas de acento, alineada a la izquierda, título breve arriba.",
+    "text_treatment": "Frases cortas tipo bullet. Legibles y escaneables.",
+    "face_position": "sin foto por defecto"
+  },
+  "cta": {
+    "name": "Cierre / llamado a la acción",
+    "layout": "Mensaje de cierre cálido arriba y un llamado claro (guardar / comentar / seguir) destacado en color de acento abajo. Espacio para el @ de la cuenta.",
+    "text_treatment": "Tono cercano y directo. Verbo de acción explícito.",
+    "face_position": "retrato cálido a un costado invitando a seguir, sin tapar el llamado"
+  }
+}

@@ -81,6 +81,13 @@
       ]
     },
     {
+      "title": "Social posts & carousels",
+      "description": "Turn a topic + a brand into a finished Instagram carousel — research the winning carousel structure of competitors (Apify), decompose it slide-by-slide with Gemini vision, then generate on-brand 4:5 slides + caption + hashtags with the asset-generator engine.",
+      "skills": [
+        "carousel-generator"
+      ]
+    },
+    {
       "title": "Generation engines (shared)",
       "description": "Shared model backends the pipeline skills call under the hood — image generation (GPT Image 2, Gemini asset-generator), audio-synced video (Seedance 2.0 via Higgsfield MCP), multi-character audio (Gemini TTS + SFX + score), and instrumental background music.",
       "skills": [
