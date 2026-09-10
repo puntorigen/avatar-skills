@@ -1,0 +1,7 @@
+# pdf-remix dependencies
+google-genai>=0.3.0
+Pillow>=10.0.0
+PyMuPDF>=1.24.0
+playwright>=1.40.0
+# After install, fetch the Chromium runtime once:
+#   python3 -m playwright install chromium

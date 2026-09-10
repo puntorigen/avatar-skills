@@ -1,0 +1,69 @@
+{
+  "brand": {
+    "name": "Arnoldo Schaffner",
+    "handle": "@arnoldo_schaffner_bofill",
+    "author_byline": "Por Arnoldo Schaffner",
+    "channel_url": "instagram.com/arnoldo_schaffner_bofill",
+    "reference_images": ["/abs/path/to/arnoldo1.jpg", "/abs/path/to/arnoldo2.jpg"],
+    "palette_override": {"accent": "#D97A6C"}
+  },
+  "meta": {
+    "title": "7 días para soltar a tu ex",
+    "subtitle": "Una guía breve para dejar de revisar su perfil",
+    "topic": "duelo amoroso / superar una ruptura",
+    "language": "es"
+  },
+  "pages": [
+    {
+      "archetype": "cover",
+      "title": "7 días para\n==soltar== a tu ex",
+      "subtitle": "Una guía breve para dejar de revisar su perfil",
+      "callout": "Sin clichés de autoayuda. Un paso pequeño y honesto por día.",
+      "byline": "Por Arnoldo Schaffner",
+      "brand_bar": "@arnoldo_schaffner_bofill",
+      "portrait": "p01_portrait",
+      "assets": [
+        {
+          "id": "p01_portrait",
+          "kind": "author_portrait",
+          "aspect": "2:3",
+          "prompt": "a calm, warm portrait looking toward the camera",
+          "composition": "subject on the right, empty upper-left for the title",
+          "treatment": "black and white cinematic"
+        }
+      ]
+    },
+    {
+      "archetype": "what_is",
+      "variant": "photo_top",
+      "title": "Por qué duele tanto",
+      "body": "No extrañas solo a la persona: extrañas la **rutina** que construiste con ella.\n\nSoltar no es olvidar. Es dejar de *sangrar* por la misma herida cada mañana.",
+      "photo": "p02_photo",
+      "assets": [
+        {
+          "id": "p02_photo",
+          "kind": "emotive_photo",
+          "aspect": "3:4",
+          "prompt": "a person sitting by a window at dawn, soft natural light, introspective mood"
+        }
+      ]
+    },
+    {
+      "archetype": "cta_closing",
+      "lead": "Si una sola de estas señales te tocó, ya estás más lejos de lo que crees.",
+      "headline": "Empieza tu día 1 hoy",
+      "body": "Guarda esta guía y vuelve a ella en tus días difíciles.",
+      "button": "Sígueme para acompañarte",
+      "foot": "@arnoldo_schaffner_bofill",
+      "mock": "p03_mock",
+      "assets": [
+        {
+          "id": "p03_mock",
+          "kind": "product_mockup",
+          "aspect": "3:4",
+          "screen": "the cover of this 7-day guide"
+        }
+      ]
+    }
+  ]
+}

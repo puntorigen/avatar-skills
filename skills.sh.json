@@ -88,6 +88,13 @@
       ]
     },
     {
+      "title": "Documents & PDFs",
+      "description": "Deconstruct a premium reference PDF into a reusable design + narrative mold (palette, type roles, per-page archetypes, arc) with Gemini vision, then regenerate a brand-new on-topic multi-page PDF — crisp HTML text via Chromium, imagery via the asset-generator engine.",
+      "skills": [
+        "pdf-remix"
+      ]
+    },
+    {
       "title": "Generation engines (shared)",
       "description": "Shared model backends the pipeline skills call under the hood — image generation (GPT Image 2, Gemini asset-generator), audio-synced video (Seedance 2.0 via Higgsfield MCP), multi-character audio (Gemini TTS + SFX + score), and instrumental background music.",
       "skills": [

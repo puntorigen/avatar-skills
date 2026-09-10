@@ -1,0 +1,9 @@
+# Research output + generated media (large, per-run)
+runs/
+# Bundled fonts are fetched by setup_fonts.py
+fonts/*.ttf
+# Python cache
+__pycache__/
+*.pyc
+# Reused credentials never live here, but be safe
+config.json

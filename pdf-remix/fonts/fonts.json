@@ -1,0 +1,44 @@
+{
+  "note": "Role -> font-family map used by build_pdf.py. Faces are emitted as @font-face only when the .ttf exists (run setup_fonts.py). Missing files fall back to CSS generics gracefully.",
+  "families": [
+    {
+      "css_family": "Playfair Display",
+      "faces": [
+        {"file": "PlayfairDisplay-var.ttf", "style": "normal", "weight": "400 900"},
+        {"file": "PlayfairDisplay-Italic-var.ttf", "style": "italic", "weight": "400 900"}
+      ]
+    },
+    {
+      "css_family": "Inter",
+      "faces": [
+        {"file": "Inter-var.ttf", "style": "normal", "weight": "100 900"},
+        {"file": "Inter-Italic-var.ttf", "style": "italic", "weight": "100 900"}
+      ]
+    },
+    {
+      "css_family": "Caveat",
+      "faces": [
+        {"file": "Caveat-var.ttf", "style": "normal", "weight": "400 700"}
+      ]
+    },
+    {
+      "css_family": "Great Vibes",
+      "faces": [
+        {"file": "GreatVibes-Regular.ttf", "style": "normal", "weight": "400"}
+      ]
+    },
+    {
+      "css_family": "Kaushan Script",
+      "faces": [
+        {"file": "KaushanScript-Regular.ttf", "style": "normal", "weight": "400"}
+      ]
+    }
+  ],
+  "roles": {
+    "display_serif": "Playfair Display",
+    "body_sans": "Inter",
+    "hand_marker": "Caveat",
+    "signature_script": "Great Vibes",
+    "brush_script": "Kaushan Script"
+  }
+}
