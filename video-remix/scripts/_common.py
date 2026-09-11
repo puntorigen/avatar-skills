@@ -480,7 +480,11 @@ def measure_music(scenes: list[dict]) -> dict:
     base_volume = round(min(0.16, max(0.06, med_ns * 1.4)) if med_ns else 0.12, 3)
     depth = 0.0
     if med_ns and med_sp and med_ns > 0:
-        depth = round(max(0.0, min(0.9, 1.0 - (med_sp / (med_ns + 1e-6)) * 0.0)), 3)
+        # Rough duck-depth proxy: how far the bed must sit under the voice. When
+        # the voice is much louder than the ambient/music bed (ratio >> 1), a
+        # deeper duck reads natural; when they're comparable, little/no ducking.
+        ratio = med_sp / (med_ns + 1e-6)
+        depth = round(max(0.0, min(0.85, 1.0 - 1.0 / max(1.0, ratio))), 3)
     structure = "auto" if (present and under_speech >= 0.25) else "flat"
     notes = ("music present under the voice -> low ducked bed with an auto envelope"
              if structure == "auto"
@@ -489,6 +493,300 @@ def measure_music(scenes: list[dict]) -> dict:
     return {"present": present, "coverage": coverage, "under_speech": under_speech,
             "base_volume": base_volume, "structure": structure, "depth": depth,
             "notes": notes}
+
+
+# --------------------------------------------------------------------------- #
+# Transition SFX measurement (sounds AT the cuts) — mechanical
+# --------------------------------------------------------------------------- #
+def measure_transition_sfx(scenes: list[dict], *, boundary_window: float = 0.6,
+                           present_coverage: float = 0.30, min_hits: int = 2) -> dict:
+    """Measure whether the reference dresses its CUTS with transition SFX.
+
+    A transition sound (whoosh / sting) sits right AT a scene boundary. We inspect
+    each scene's mechanical audio (``has_sfx`` + ``sfx_events`` with absolute
+    ``start``/``end``/``strength`` from video-scene-analysis) and count boundaries
+    whose INCOMING scene carries an SFX event within ``boundary_window`` s of its
+    start (or a trailing one on the OUTGOING scene). Returns present/coverage/kind/
+    level so the remix enables inter-cut SFX only when the original actually uses
+    them (instead of hardcoding them on every reel).
+    """
+    if not scenes or len(scenes) < 2:
+        return {"present": False, "coverage": 0.0, "kind": "none", "level": 0.0,
+                "count": 0, "notes": "no cuts to dress"}
+    n_boundaries = len(scenes) - 1
+    hits, levels = 0, []
+    for i in range(1, len(scenes)):
+        cur, prev = scenes[i], scenes[i - 1]
+        a = cur.get("audio") or {}
+        pa = prev.get("audio") or {}
+        cstart = float(cur.get("start") or 0.0)
+        pend = float(prev.get("end") or cstart)
+        near = False
+        for ev in (a.get("sfx_events") or []):
+            est = float(ev.get("start") or ev.get("t") or 0.0)
+            if abs(est - cstart) <= boundary_window:
+                near = True
+                levels.append(float(ev.get("strength") or 0.0))
+                break
+        if not near:
+            for ev in (pa.get("sfx_events") or []):
+                eend = float(ev.get("end") or ev.get("start") or 0.0)
+                if abs(eend - pend) <= boundary_window:
+                    near = True
+                    levels.append(float(ev.get("strength") or 0.0))
+                    break
+        if near:
+            hits += 1
+    coverage = round(hits / n_boundaries, 3) if n_boundaries else 0.0
+    med_lv = round(statistics.median(levels), 4) if levels else 0.0
+    present = coverage >= present_coverage and hits >= min_hits
+    notes = (f"~{hits}/{n_boundaries} cuts carry a boundary SFX"
+             if hits else "cuts are clean (no boundary SFX detected)")
+    return {"present": present, "coverage": coverage,
+            "kind": "whoosh" if present else "none",
+            "level": med_lv, "count": hits, "notes": notes}
+
+
+# --------------------------------------------------------------------------- #
+# Caption STYLE derivation (enums + ES/EN prose -> renderer-ready structure)
+# --------------------------------------------------------------------------- #
+# Multiword phrases first so "gris claro" wins over "gris".
+_COLOR_PHRASES = [
+    ("gris claro", "#e4e6e9"), ("gris clara", "#e4e6e9"),
+    ("light gray", "#e4e6e9"), ("light grey", "#e4e6e9"),
+    ("gris oscuro", "#3a3c40"), ("dark gray", "#3a3c40"), ("dark grey", "#3a3c40"),
+    ("negro", "#141416"), ("negra", "#141416"), ("black", "#141416"),
+    ("blanco", "#ffffff"), ("blanca", "#ffffff"), ("white", "#ffffff"),
+    ("amarillo", "#ffd400"), ("amarilla", "#ffd400"), ("yellow", "#ffd400"),
+    ("rojo", "#e5342b"), ("roja", "#e5342b"), ("red", "#e5342b"),
+    ("verde", "#2ec26b"), ("green", "#2ec26b"),
+    ("azul", "#2f6bff"), ("blue", "#2f6bff"),
+    ("gris", "#8a8d91"), ("gray", "#8a8d91"), ("grey", "#8a8d91"),
+]
+
+
+def _first_color(text: str):
+    t = (text or "").lower()
+    best, besti = None, len(t) + 1
+    for word, hexv in _COLOR_PHRASES:
+        i = t.find(word)
+        if 0 <= i < besti:
+            besti, best = i, hexv
+    return best
+
+
+def _fg_bg_from_color(text: str):
+    """Split a caption color phrase like 'negro sobre pastilla gris claro' into
+    (foreground_ink_hex, background_hex)."""
+    t = (text or "").lower()
+    parts = re.split(r"\bsobre\b|\bon\b|\bcon fondo\b|\ben caja\b|\ben pastilla\b|\ben barra\b",
+                     t, maxsplit=1)
+    fg = _first_color(parts[0]) if parts else None
+    bg = _first_color(parts[1]) if len(parts) > 1 else None
+    return fg, bg
+
+
+_CAPTION_BOX_WORDS = ("caja", "pastilla", "barra", "banda", "bar", "box", "pill",
+                      "band", "rectáng", "rectang", "cápsula", "capsula", "chip",
+                      "tarjeta", "card", "backing")
+_CAPTION_ROUND_WORDS = ("redonde", "rounded", "pill", "cápsula", "capsula")
+_CAPTION_SANS_WORDS = ("sans", "geométr", "geometr", "grotesk", "grotesque",
+                       "helvetica", "inter", "neue", "roboto", "arial", "futura")
+_CAPTION_NOEMPH_WORDS = ("sin énfasis", "sin enfasis", "no emphasis", "plano",
+                         "uniforme", "sin resalt", "no highlight", "flat")
+
+_CAPTION_Y_BY_POSITION = {"top": 0.14, "middle": 0.5, "center": 0.5,
+                          "lower_third": 0.85, "bottom": 0.9}
+
+
+def caption_emphasis_flag(caps: dict) -> bool:
+    """True when the mold highlights key words (default), False when it uses a flat
+    uniform caption block (e.g. 'Sin énfasis tipográfico')."""
+    blob = " ".join(str((caps or {}).get(k) or "")
+                    for k in ("emphasis", "style_notes")).lower()
+    if any(w in blob for w in _CAPTION_NOEMPH_WORDS):
+        return False
+    return True
+
+
+def derive_caption_style(caps: dict) -> dict:
+    """Map a blueprint ``captions`` block (enums + ES/EN prose) to a STRUCTURED,
+    renderer-ready style. Any structured fields already present in ``caps['style']``
+    win. Safe when ``caps`` is empty (returns renderer defaults == today's look).
+    """
+    caps = caps or {}
+    existing = dict(caps.get("style") or {})
+    pos = (caps.get("position") or "").lower()
+    y_default = _CAPTION_Y_BY_POSITION.get(pos, 0.85)
+    blob = " ".join(str(caps.get(k) or "")
+                    for k in ("color", "style_notes", "emphasis")).lower()
+
+    # Font class (None -> caller keeps its current serif default).
+    if "serif" in blob and "sans" not in blob:
+        font_class = "serif"
+    elif any(w in blob for w in _CAPTION_SANS_WORDS):
+        font_class = "sans"
+    else:
+        font_class = None
+
+    fg, bg_hex = _fg_bg_from_color(caps.get("color") or "")
+
+    bg = dict(existing.get("background") or {})
+    if not bg.get("kind"):
+        if any(w in blob for w in _CAPTION_BOX_WORDS):
+            bg["kind"] = "pill" if any(w in blob for w in _CAPTION_ROUND_WORDS) else "box"
+        else:
+            bg["kind"] = "none"
+    if bg.get("kind") not in (None, "none"):
+        if not bg.get("color_hex"):
+            bg["color_hex"] = bg_hex or _first_color(caps.get("style_notes") or "") or "#e4e6e9"
+        bg.setdefault("opacity", 0.92)
+        bg.setdefault("radius_frac", 0.34 if bg["kind"] == "pill" else 0.12)
+
+    has_box = bg.get("kind") not in (None, "none")
+    text_color = existing.get("text_color_hex") or fg or ("#141416" if has_box else "#ffffff")
+
+    return {
+        "font_class": existing.get("font_class") or font_class,
+        "text_color_hex": text_color,
+        "y_frac": existing.get("y_frac", y_default),
+        "align": existing.get("align") or "center",
+        "background": bg,
+    }
+
+
+# --------------------------------------------------------------------------- #
+# Environment / lighting / location aggregation (mold-level look)
+# --------------------------------------------------------------------------- #
+_WARDROBE_WORDS = ("blusa", "camisa", "camiseta", "polera", "chaqueta", "saco",
+                   "traje", "vestido", "suéter", "sueter", "sweater", "turtleneck",
+                   "cuello alto", "hoodie", "t-shirt", "tshirt", "shirt", "jacket",
+                   "blazer", "dress", "abrigo", "corbata", "collar", "aretes",
+                   "pendientes", "gafas", "lentes", "sombrero", "gorra", "bufanda",
+                   "prenda", "outfit", "ropa", "top", "cardigan")
+
+# On-screen graphics (burned-in captions / lower-thirds / watermarks) that vision
+# reports as "elements" but are NOT physical set props — they must NOT be baked
+# into a generated location still (captions are added later in finishing).
+_UI_OVERLAY_WORDS = ("subtítulo", "subtitulo", "subtitle", "caption", "rótulo",
+                     "rotulo", "lower third", "lower-third", "tercio inferior",
+                     "texto en pantalla", "overlay", "marca de agua", "watermark")
+
+
+_ENV_STOPWORDS = frozenset(
+    "de del la el los las un una uno unos unas y o con sin sobre para por en al "
+    "the a an of and or with without on for in to sin".split())
+
+
+def _sig(text: str) -> frozenset:
+    """A keyword signature (significant lowercased words) for near-dup detection."""
+    words = re.findall(r"[a-záéíóúñ0-9]+", (text or "").lower())
+    return frozenset(w for w in words if len(w) > 3 and w not in _ENV_STOPWORDS)
+
+
+def _dedupe_similar(items: list[str], *, threshold: float = 0.6) -> list[str]:
+    """Collapse near-duplicate phrases by Jaccard overlap of their signatures."""
+    out: list[str] = []
+    sigs: list[frozenset] = []
+    for it in items:
+        s = _sig(it)
+        dup = False
+        for prev in sigs:
+            union = s | prev
+            if union and len(s & prev) / len(union) >= threshold:
+                dup = True
+                break
+        if not dup:
+            out.append(it)
+            sigs.append(s)
+    return out
+
+
+def aggregate_environment(scenes: list[dict], design_system: dict | None = None) -> dict:
+    """Aggregate per-scene backgrounds + elements + the design system into ONE
+    mold-level look: background, lighting, wardrobe, the key set elements to carry
+    over, and any distinct alternate looks. A deterministic fallback the remix can
+    use to build a matching avatar-location even without vision synthesis.
+    """
+    from collections import Counter
+    design_system = design_system or {}
+    bg_descs: list[str] = []
+    elements: list[str] = []
+    wardrobe: list[str] = []
+    types: Counter = Counter()
+    off_type_descs: list[str] = []
+    for s in scenes or []:
+        b = s.get("background") or {}
+        t = (b.get("type") or "").strip()
+        if t:
+            types[t] += 1
+        el = (b.get("elements") or "").strip()
+        if el and el.lower() not in [x.lower() for x in bg_descs]:
+            bg_descs.append(el)
+        for e in (s.get("elements") or []):
+            e = (e or "").strip()
+            if not e:
+                continue
+            low = e.lower()
+            if any(w in low for w in _UI_OVERLAY_WORDS):
+                continue  # burned-in caption/watermark graphic, not a set prop
+            bucket = wardrobe if any(w in low for w in _WARDROBE_WORDS) else elements
+            if e not in bucket:
+                bucket.append(e)
+    bg_type = types.most_common(1)[0][0] if types else "unknown"
+    # An alternate look is a scene whose background TYPE differs from the dominant
+    # one (e.g. plain studio vs a real set) — NOT mere adjective variation of the
+    # same look. This keeps a single-look mold (all "black studio") from spawning
+    # spurious per-scene locations.
+    for s in scenes or []:
+        b = s.get("background") or {}
+        if (b.get("type") or "").strip() and (b.get("type") or "").strip() != bg_type:
+            d = (b.get("elements") or "").strip()
+            if d:
+                off_type_descs.append(d)
+    bg_unique = _dedupe_similar(bg_descs)
+    distinct = _dedupe_similar(off_type_descs)
+    return {
+        "background": (bg_unique[0] if bg_unique else bg_type),
+        "background_type": bg_type,
+        "lighting": (design_system.get("visual_style") or "").strip(),
+        "mood": (design_system.get("mood") or "").strip(),
+        "wardrobe": "; ".join(_dedupe_similar(wardrobe)[:4]),
+        "set_elements": _dedupe_similar(elements)[:6],
+        "key_elements": _dedupe_similar(elements + wardrobe)[:8],
+        "distinct_looks": distinct,
+    }
+
+
+# --------------------------------------------------------------------------- #
+# Camera-move normalization (analysis vocabulary -> avatar-camera-angles catalog)
+# --------------------------------------------------------------------------- #
+CAMERA_MOVES = ("eye_level", "push_in", "pull_out", "low_angle", "high_angle",
+                "three_quarter", "three_quarter_mirror", "profile", "dutch_tilt",
+                "negative_space_left", "negative_space_right", "pip")
+_MOVE_ALIASES = {
+    "negative_space": "negative_space_left", "zoom_in": "push_in",
+    "zoom_out": "pull_out", "low_angle_v2": "low_angle", "center": "eye_level",
+    "centered": "eye_level", "medium": "eye_level", "medium_shot": "eye_level",
+    "straight_on": "eye_level", "": "eye_level", None: "eye_level",
+}
+
+
+def normalize_move(m):
+    """Map an analysis/beat move token to a valid avatar-camera-angles move."""
+    if m in CAMERA_MOVES:
+        return m
+    return _MOVE_ALIASES.get(m, "eye_level")
+
+
+def normalize_moves(moves, *, always=("eye_level",)) -> list[str]:
+    """A de-duplicated, catalog-valid move list (always includes ``always``)."""
+    out: list[str] = []
+    for m in list(always) + list(moves or []):
+        nm = normalize_move(m)
+        if nm not in out:
+            out.append(nm)
+    return out
 
 
 # --------------------------------------------------------------------------- #

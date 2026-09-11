@@ -172,8 +172,86 @@ def stage_voices(content: dict, content_path: Path, base_dir: Path) -> int:
 # --------------------------------------------------------------------------- #
 # stage: locations
 # --------------------------------------------------------------------------- #
-def stage_locations(content: dict, base_dir: Path, *, no_review: bool) -> int:
+def _host_role_of(content: dict) -> str:
+    for a in content.get("avatars", []):
+        if a.get("role") == "host":
+            return "host"
+    avs = content.get("avatars", [])
+    return avs[0].get("role", "host") if avs else "host"
+
+
+def _derive_reel_location(content: dict, blueprint: dict, base_dir: Path):
+    """Derive the ONE avatar-location that matches the mold's environment (its
+    background + lighting + set elements) and the camera moves the beats use.
+
+    Returns ``(host_role, avatar_dir, slug, cmd_flags, moves)`` or ``None`` when
+    the mold has no environment or the author disabled auto-location
+    (``content.location.auto == false``). Wardrobe is intentionally NOT copied —
+    a location changes ENVIRONMENT + LIGHT only, so the new avatar keeps its own
+    outfit/identity while inheriting the reference's look.
+    """
+    loc_cfg = content.get("location") or {}
+    if loc_cfg.get("auto", True) is False:
+        return None
+    env = blueprint.get("environment") or {}
+    background = (env.get("background") or "").strip()
+    lighting = (env.get("lighting") or "").strip()
+    if not background and not lighting:
+        return None  # nothing to reproduce -> keep the avatar's default look
+
+    host_role = _host_role_of(content)
     avatars = {a.get("role"): a for a in content.get("avatars", [])}
+    a = avatars.get(host_role) or (content.get("avatars") or [None])[0]
+    if not a or not a.get("use"):
+        return None
+    adir = C.resolve_path(a["use"], base_dir)
+    if not adir.is_dir():
+        return None
+
+    meta_slug = (content.get("meta", {}) or {}).get("slug") or "mold"
+    slug = C.slugify(loc_cfg.get("name") or f"{meta_slug}_look")
+
+    set_elements = env.get("set_elements") or []
+    scene_txt = background or (env.get("background_type") or "")
+    if set_elements:
+        scene_txt = (scene_txt + ". Elementos del set: " + ", ".join(set_elements)).strip(". ")
+    brief = (loc_cfg.get("brief") or "").strip()
+
+    moves = C.normalize_moves([b.get("move") for b in blueprint.get("beats", [])])
+
+    fmt = ((content.get("meta", {}) or {}).get("format")
+           or blueprint.get("geometry", {}).get("format", "reel"))
+    ar = "16:9" if fmt == "landscape" else "9:16"
+
+    cmd_flags: list[str] = ["-ar", ar, "--moves", ",".join(moves)]
+    if scene_txt:
+        cmd_flags += ["--scene", scene_txt]
+    if lighting:
+        cmd_flags += ["--light", lighting]
+    if brief:
+        cmd_flags += ["--brief", brief]
+    for asset in (loc_cfg.get("assets") or []):
+        ap = C.resolve_path(asset, base_dir)
+        if ap.exists():
+            cmd_flags += ["--asset", str(ap)]
+    return host_role, adir, slug, cmd_flags, moves
+
+
+def _location_ready(adir: Path, slug: str, moves: list[str], suffix: str) -> bool:
+    ang = adir / "locations" / slug / "angles"
+    if not ang.is_dir():
+        return False
+    for m in moves:
+        if not list(ang.glob(f"*{m}*_{suffix}.png")) and not list(ang.glob(f"*{m}*.png")):
+            return False
+    return True
+
+
+def stage_locations(content: dict, content_path: Path, blueprint: dict, base_dir: Path,
+                    *, no_review: bool) -> int:
+    avatars = {a.get("role"): a for a in content.get("avatars", [])}
+
+    # --- (a) explicit per-beat locations (unchanged behavior) ---
     wanted: dict = {}   # (role, loc) -> brief
     for b in content.get("beats", []):
         loc = (b.get("location") or "").strip()
@@ -199,6 +277,41 @@ def stage_locations(content: dict, base_dir: Path, *, no_review: bool) -> int:
                    [f"Refine {adir}/locations/{loc}/scene.json, then re-run remix.py."], code=2)
         if rc != 0:
             return rc
+
+    # --- (b) auto reel-level location matching the mold's environment ---
+    derived = _derive_reel_location(content, blueprint, base_dir)
+    if derived is None:
+        return 0
+    host_role, adir, slug, cmd_flags, moves = derived
+
+    # Record the chosen reel look so build_storyboard sets storyboard["location"].
+    loc_cfg = dict(content.get("location") or {})
+    if loc_cfg.get("name") != slug or "name" not in loc_cfg:
+        loc_cfg["name"] = slug
+        loc_cfg.setdefault("auto", True)
+        content["location"] = loc_cfg
+        C.save_json(content_path, content)
+
+    fmt = ((content.get("meta", {}) or {}).get("format")
+           or blueprint.get("geometry", {}).get("format", "reel"))
+    suffix = "169" if fmt == "landscape" else "916"
+    if _location_ready(adir, slug, moves, suffix):
+        print(f"  [locations] reel look '{slug}' ready ({', '.join(moves)}).", file=sys.stderr)
+        return 0
+
+    cmd = [C.PY, str(C.CREATE_LOCATION), str(adir), slug] + cmd_flags
+    if no_review:
+        cmd += ["--no-review"]
+    rc = C.run_child(cmd, desc=f"avatar-location (auto, from mold environment): "
+                              f"{adir.name} / {slug}  [{', '.join(moves)}]")
+    if rc == 2:
+        C.stop(f"avatar-location needs your review for the mold look '{adir.name}/{slug}'.",
+               [f"The remix derived this look from the reference's environment:",
+                f"  {adir}/locations/{slug}/scene.json",
+                "Refine wardrobe/scene/light (keep the avatar's identity), then re-run remix.py.",
+                "(Pass --no-review to skip this checkpoint.)"], code=2)
+    if rc != 0:
+        return rc
     return 0
 
 
@@ -349,9 +462,10 @@ def main() -> int:
     content = C.load_json(content_path)
 
     # --- 3. locations ---
-    rc = stage_locations(content, base_dir, no_review=args.no_review)
+    rc = stage_locations(content, content_path, blueprint, base_dir, no_review=args.no_review)
     if rc != 0:
         return rc
+    content = C.load_json(content_path)  # reload (locations stage may set the reel look)
 
     # --- 4. storyboard ---
     rc, payload = stage_storyboard(run_dir, blueprint_path, content_path, base_dir,

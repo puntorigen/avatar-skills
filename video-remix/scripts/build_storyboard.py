@@ -92,16 +92,27 @@ def resolve_avatars(content: dict, base_dir: Path) -> tuple[dict, str]:
 # ---------------------------------------------------------------------------
 # Scene builders
 # ---------------------------------------------------------------------------
-def _angle_image(av: dict, move: str, suffix: str, location: str | None) -> tuple[dict, str | None]:
-    """Return storyboard image/angle fields. Uses a per-scene location when given."""
+def _angle_image(av: dict, move: str, suffix: str, location: str | None,
+                 reel_location: str | None = None) -> tuple[dict, str | None]:
+    """Return storyboard image/angle fields.
+
+    - A per-scene ``location`` wins -> emit angle + that location.
+    - Else when a reel-level ``reel_location`` is active, emit angle-only so the
+      composer resolves the still inside the reel's default look.
+    - Else (no location at all) emit an explicit path to the default angles/
+      (today's behavior).
+    """
     if location and location not in ("default", ""):
         return ({"angle": move, "location": location}, None)
+    if reel_location and reel_location not in ("default", ""):
+        return ({"angle": move}, None)
     img = f"{av['rel']}/angles/{av['slug']}_{move}{suffix}.png"
     return ({"image": img}, img)
 
 
 def build_scene(beat_bp: dict, beat_ct: dict, idx: int, text: str, *,
-                avatars: dict, host_role: str, suffix: str) -> tuple[dict, dict | None]:
+                avatars: dict, host_role: str, suffix: str,
+                reel_location: str | None = None) -> tuple[dict, dict | None]:
     """Return (scene, guest_segment_or_None)."""
     sid = f"s{idx + 1}"
     btype = beat_bp.get("type", "broll")
@@ -127,7 +138,7 @@ def build_scene(beat_bp: dict, beat_ct: dict, idx: int, text: str, *,
     move = beat_bp.get("move") or "eye_level"
     if speaker == host_role or speaker not in avatars:
         av = avatars[host_role]
-        fields, _img = _angle_image(av, move, suffix, location)
+        fields, _img = _angle_image(av, move, suffix, location, reel_location)
         scene = {"id": sid, "type": "talking_head", "text": text,
                  "zoom_from_previous": beat_bp.get("zoom_from_previous", "none"),
                  "emphasis": bool(beat_bp.get("emphasis"))}
@@ -136,7 +147,7 @@ def build_scene(beat_bp: dict, beat_ct: dict, idx: int, text: str, *,
 
     # guest speaker
     av = avatars[speaker]
-    fields, img = _angle_image(av, move, suffix, location)
+    fields, img = _angle_image(av, move, suffix, location, reel_location)
     guest_img = img or f"{av['rel']}/angles/{av['slug']}_{move}{suffix}.png"
     scene = {"id": sid, "type": "guest", "text": text, "broll_clip": None,
              "motion": "none", "emphasis": bool(beat_bp.get("emphasis")),
@@ -155,9 +166,23 @@ def build_scene(beat_bp: dict, beat_ct: dict, idx: int, text: str, *,
 def build_finish(blueprint: dict, content: dict, base_dir: Path) -> dict:
     music_ct = content.get("music", {}) or {}
     caps_ct = content.get("captions", {}) or {}
+    caps_bp = blueprint.get("captions", {}) or {}
     audio = blueprint.get("audio", {}) or {}
     music_bp = audio.get("music", {}) or {}
-    tr = (blueprint.get("transitions", {}) or {}).get("style", "")
+    tr_block = blueprint.get("transitions", {}) or {}
+    tr = tr_block.get("style", "")
+    sfx_meas = tr_block.get("sfx", {}) or {}
+    fx_ct = content.get("fx", {}) or {}
+
+    # Caption STYLE from the mold (pill/box + font class + colors + position),
+    # with per-content overrides. Absent -> {} -> composer keeps its defaults.
+    caption_style = {**(caps_bp.get("style") or {}), **(caps_ct.get("style_override") or {})}
+    # Typographic emphasis: from the mold (flat block -> no highlight) unless the
+    # content overrides it.
+    if "emphasis" in caps_ct:
+        emphasis = bool(caps_ct.get("emphasis"))
+    else:
+        emphasis = C.caption_emphasis_flag(caps_bp)
 
     music_on = bool(music_ct.get("enabled", music_bp.get("present", True)))
     prompt = (music_ct.get("prompt") or "").strip() or (
@@ -170,21 +195,36 @@ def build_finish(blueprint: dict, content: dict, base_dir: Path) -> dict:
         "music_prompt": prompt,
         "music_volume": float(music_ct.get("volume", music_bp.get("base_volume", 0.12))),
         "music_structure": music_ct.get("structure", music_bp.get("structure", "flat")),
+        "music_depth": float(music_ct.get("depth", music_bp.get("depth", 0.0))),
         "max_words": int(caps_ct.get("max_words") or 6),
-        "emphasis": True,
+        "emphasis": emphasis,
         "casing": caps_ct.get("casing", "subtitle"),
         "caption_reveal": caps_ct.get("reveal", "word"),
-        "_note": "captions + music tailored from the video mold; music_structure reproduces the "
-                 "measured voice-vs-music ducking (auto = duck under the hook, lift after, resolve on close).",
-        "fx": {"enabled": True, "sfx": True, "sfx_volume": 0.18},
+        "_note": "captions + music tailored from the video mold; caption_style reproduces the "
+                 "mold's pill/box + font class + colors + position; fx.sfx/transition_style are "
+                 "measured from the mold (silent hard cuts stay silent).",
     }
+    if caption_style:
+        finish["caption_style"] = caption_style
+        if caption_style.get("y_frac") is not None:
+            finish["y_frac"] = float(caption_style["y_frac"])
     style_from = (caps_ct.get("style_from") or "").strip()
     if style_from:
         finish["style_from"] = style_from
+
+    # Transitions + inter-cut SFX: reproduce ONLY what the mold actually uses.
     tr_map = {"golden_flash": "golden_flash", "white_flash": "white_flash",
               "dip_black": "dip_black", "punch": "punch", "hard_cut": "none", "none": "none"}
-    if tr in tr_map:
-        finish["fx"]["transition_style"] = tr_map[tr]
+    tr_style = tr_map.get(tr, "none")
+    sfx_on = bool(fx_ct.get("sfx", sfx_meas.get("present", False)))
+    sfx_vol = float(fx_ct.get("sfx_volume", 0.18))
+    fx_enabled = bool(fx_ct.get("enabled", (tr_style != "none") or sfx_on))
+    finish["fx"] = {
+        "enabled": fx_enabled,
+        "sfx": sfx_on,
+        "sfx_volume": sfx_vol,
+        "transition_style": tr_style,
+    }
     return finish
 
 
@@ -228,12 +268,17 @@ def build(blueprint: dict, content: dict, *, base_dir: Path, slug: str, fmt: str
     else:
         raise SystemExit("Nothing to narrate: fill content.script or per-beat text.")
 
+    reel_location = (content.get("location", {}) or {}).get("name") or None
+    if reel_location in ("", "default"):
+        reel_location = None
+
     scenes, guest_segs, todo_ids, missing = [], [], [], []
     prev_was_host = False
     for i, beat_bp in enumerate(beats_bp):
         beat_ct = ct_by_index.get(i, {})
         scene, guest_seg = build_scene(beat_bp, beat_ct, i, texts[i],
-                                       avatars=avatars, host_role=host_role, suffix=suffix)
+                                       avatars=avatars, host_role=host_role, suffix=suffix,
+                                       reel_location=reel_location)
         if scene.get("broll_description", "").startswith(TODO_PREFIX):
             todo_ids.append(scene["id"])
         if scene["type"] == "talking_head" and scene.get("image"):
@@ -273,6 +318,12 @@ def build(blueprint: dict, content: dict, *, base_dir: Path, slug: str, fmt: str
         "scenes": scenes,
         "finish": build_finish(blueprint, content, base_dir),
     }
+    # Reel-level LOOK: the auto/derived location that matches the mold environment
+    # (set by remix.py stage 'locations'), so every talking-head scene resolves to
+    # <avatar>/locations/<loc>/angles unless a scene overrides it.
+    reel_location = (content.get("location", {}) or {}).get("name")
+    if reel_location and reel_location not in ("", "default"):
+        storyboard["location"] = reel_location
     if language:
         storyboard["_language"] = language
 

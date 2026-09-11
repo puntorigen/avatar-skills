@@ -1,5 +1,5 @@
 {
-  "_comment": "Authored from content_template.json. Fill `script` (full verbatim narration; its words tile the beats), set `avatars` (reuse avatares/<name> via `use`, or `invent` a new one — leave both null to be asked), author every B-roll beat, and tailor `music.prompt`. Concatenating every beat `text` must equal `script`. This example remixes a 2-speaker reel mold about 'contacto cero' into a new reel about focus/productivity with a host + a guest.",
+  "_comment": "Authored from content_template.json. Fill `script` (full verbatim narration; its words tile the beats), set `avatars` (reuse avatares/<name> via `use`, or `invent` a new one — leave both null to be asked), author every B-roll beat, and tailor `music.prompt`. Concatenating every beat `text` must equal `script`. The optional `location` block lets the remix auto-build ONE avatar-location matching the mold's environment (auto=true; name/brief/assets steer it, auto=false keeps the avatar's default room); `captions.style_override` merges onto the mold's derived caption style; `fx` (null) reproduces only the transition SFX the mold uses. This example remixes a 2-speaker reel mold about 'contacto cero' into a new reel about focus/productivity with a host + a guest.",
   "meta": {
     "topic": "cómo recuperar el foco en el trabajo",
     "language": "es",
@@ -36,13 +36,26 @@
     "mood": "inspiring",
     "prompt": "piano y sintetizador cálido, minimalista y motivador, sin batería marcada, bed suave que baja bajo la voz",
     "structure": "auto",
-    "volume": 0.1
+    "volume": 0.1,
+    "depth": 0.6
   },
   "captions": {
     "reveal": "word",
     "max_words": 5,
     "casing": "subtitle",
-    "style_from": ""
+    "style_from": "",
+    "style_override": {}
+  },
+  "location": {
+    "auto": true,
+    "name": "",
+    "brief": "",
+    "assets": []
+  },
+  "fx": {
+    "enabled": null,
+    "sfx": null,
+    "sfx_volume": 0.18
   },
   "script": "¿Cuántas veces hoy abriste una pestaña nueva sin recordar para qué? Cada notificación que revisas fragmenta tu atención en pedazos diminutos. Yo pasé de saltar entre veinte tareas a terminar lo que importa antes del mediodía. El truco no es más disciplina: es quitar la fricción y proteger un solo bloque de foco. Empieza hoy cerrando todo lo que no sea esta tarea.",
   "beats": [

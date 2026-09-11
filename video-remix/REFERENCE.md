@@ -46,7 +46,15 @@ content.json  (authored by you from the template)
              "cut_rhythm":"fast|medium|slow","notes":"…"},
   "captions": {"present":bool,"position":"lower_third|middle|top|bottom",
                "casing":"subtitle|upper|sentence","reveal":"word|phrase",
-               "words_per_caption":N,"color":"…","emphasis":"…","style_notes":"…"},
+               "words_per_caption":N,"color":"…","emphasis":"…","style_notes":"…",
+               "style": {"font_class":"serif|sans|null","text_color_hex":"#rrggbb","y_frac":0.85,
+                         "align":"center|left|right",
+                         "background":{"kind":"none|pill|box","color_hex":"#rrggbb",
+                                       "opacity":0.9,"radius_frac":0.3}}},  // renderer-ready (derive_caption_style)
+  "environment": {"background":"el SET en una frase","background_type":"studio|room|outdoor|…",
+                  "lighting":"key/fill/mood","mood":"…","wardrobe":"vestuario del presentador",
+                  "set_elements":["props del set a conservar"],"key_elements":["…"],
+                  "distinct_looks":["si hay >1 entorno"]},                   // aggregate_environment + vision
   "watermark": {"present":bool,"kind":"logo|handle|text|none",
                 "position":"top_left|top_right|bottom_left|bottom_right|center|none",
                 "appears":"throughout|after_intro|on_cta|intermittent",
@@ -55,7 +63,9 @@ content.json  (authored by you from the template)
   "audio": {"music": {"present":bool,"coverage":0-1,"under_speech":0-1,
                       "base_volume":0.06-0.16,"structure":"flat|auto","depth":0-1,"notes":"…"},
             "music_mood":"…","voice_music_relation":"cómo conviven voz y música"},  // Gemini
-  "transitions": {"style":"hard_cut|golden_flash|white_flash|dip_black|mixed|none","notes":"…"},
+  "transitions": {"style":"hard_cut|golden_flash|white_flash|dip_black|mixed|none","notes":"…",
+                  "sfx": {"present":bool,"coverage":0-1,"kind":"whoosh|none","level":0-1,
+                          "count":N,"notes":"…"}},                           // measure_transition_sfx (are CUTS dressed?)
   "speakers": {"count":N,"roles":["host","guest1",…],"notes":"…"},                  // Gemini
   "narrative_arc": {"type","voice","open","develop","close","beats":["…"]},          // intro→development→close
   "replication_notes": ["reglas para igualar/superar"],
@@ -79,11 +89,14 @@ content.json  (authored by you from the template)
 | `broll_camera`, `broll_hint` | broll | suggested camera move; content hint (re-authored per topic) |
 | `has_music`, `audio_profile`, `focus` | all | informational |
 
-Camera-angle mapping (analysis `camera.angle` → `avatar-camera-angles` move):
-`eye_level→eye_level`, `low_angle(_v2)→low_angle`, `high_angle→high_angle`,
-`three_quarter→three_quarter`, `dutch_tilt→dutch_tilt`,
-`negative_space→negative_space_left`, `pull_out→pull_out`, `zoom_in→push_in`,
-`none→(B-roll, no still)`; unknown/missing → `eye_level`.
+Camera-angle mapping (`_common.normalize_move` — analysis/beat token →
+`avatar-camera-angles` move). Catalog: `eye_level`, `push_in`, `pull_out`,
+`low_angle`, `high_angle`, `three_quarter`, `three_quarter_mirror`, `profile`,
+`dutch_tilt`, `negative_space_left`, `negative_space_right`, `pip`. Aliases:
+`zoom_in→push_in`, `zoom_out→pull_out`, `low_angle_v2→low_angle`,
+`negative_space→negative_space_left`, `center/centered/medium/straight_on→eye_level`;
+`none→(B-roll, no still)`; unknown/missing → `eye_level`. `normalize_moves()`
+returns the de-duplicated, catalog-valid list the reel-location stage generates.
 
 ---
 
@@ -100,8 +113,15 @@ Camera-angle mapping (analysis `camera.angle` → `avatar-camera-angles` move):
      "invent":{"description":"…","setting":"studio","style":"photoreal","language":"es"},
      "voice_sample":null}
   ],
-  "music": {"enabled":true,"mood":"inspiring","prompt":"TAILOR to topic+tone","structure":"auto","volume":0.1},
-  "captions": {"reveal":"word","max_words":6,"casing":"subtitle","style_from":""},
+  "music": {"enabled":true,"mood":"inspiring","prompt":"TAILOR to topic+tone","structure":"auto","volume":0.1,"depth":0.0},
+  "captions": {"reveal":"word","max_words":6,"casing":"subtitle","style_from":"",
+               "emphasis":true,                      // optional; omit → inherit the mold's flat/highlight behavior
+               "style_override": {}},                // optional structured overrides onto blueprint.captions.style
+  // Reel-level LOOK: remix auto-builds ONE avatar-location matching blueprint.environment
+  // (background + lighting + set elements) + the camera moves the beats use. auto=false → keep
+  // the avatar's default look. name/brief/assets steer it; `name` is filled by the locations stage.
+  "location": {"auto":true,"name":"","brief":"","assets":[]},
+  "fx": {"enabled":null,"sfx":null,"sfx_volume":0.18},  // optional; null → measured from transitions.sfx (silent cuts stay silent)
   "script": "The FULL verbatim narration …",
   "beats": [
     {"index":0,"type":"talking_head","speaker":"host","text":"…","location_hint":""},
@@ -116,9 +136,20 @@ Camera-angle mapping (analysis `camera.angle` → `avatar-camera-angles` move):
   remix splits `script` proportionally by `dur_weight` (then review).
 - **Guests.** A beat whose `speaker` is a non-host avatar becomes a `guest` scene
   (its own face + voice), woven into one master narration by `assemble_narration.py`.
-- **Locations.** Set a beat `location` slug to give that scene a different look;
-  the remix builds it with `avatar-location` (using `location_hint`/`location_brief`
-  as the brief). Omit for the avatar's default look.
+- **Locations.** Two layers: (1) a **reel-level look** — the remix auto-builds ONE
+  `avatar-location` that matches the mold's `environment` (background + lighting +
+  set elements, *not* wardrobe — the new avatar keeps its identity) and the camera
+  moves the beats use, then sets it as the reel default. Steer with the top-level
+  `location` block (`auto`/`name`/`brief`/`assets`); `auto:false` keeps the avatar's
+  own room. (2) a **per-scene look** — set a beat `location` slug to override just
+  that scene (built from `location_hint`/`location_brief`).
+- **Captions.** `captions.style_override` merges onto the mold's derived
+  `captions.style` (pill/box + font class + text/bg color + `y_frac` + align).
+  `captions.emphasis` forces word-highlight on/off; omit to inherit the mold (a
+  flat block → no per-word emphasis).
+- **Transitions / SFX.** `fx` is optional — leave null to reproduce ONLY what the
+  mold uses (`transitions.sfx`): silent hard cuts stay silent, whoosh-dressed cuts
+  get an SFX. Override `enabled`/`sfx`/`sfx_volume` to force it.
 - **Watermark.** Set `brand.logo_path` to reproduce the mold's watermark; stamp it
   onto an avatar look with `avatar-location --asset` (see that skill).
 
@@ -152,8 +183,57 @@ Mixed audio is not source-separated, so `measure_music()` reads each scene's
   non-speech RMS of the music scenes → the finish pass `music_volume`.
 - `structure` — `auto` (there is a voice to duck under → duck-under-hook / lift /
   resolve envelope) or `flat` (constant low bed). Maps to `finish.music_structure`.
+- `depth` — a duck-depth proxy (0–1) from the speech-vs-bed RMS ratio (voice much
+  louder than the bed → deeper duck; comparable → little/none). → `finish.music_depth`.
 
 If no bed is detected, the remix sets `music.enabled=false` (`--no-music`).
+
+---
+
+## Caption STYLE derivation (`derive_caption_style` / `caption_emphasis_flag`)
+
+The mold's caption prose/enums are mapped to a **renderer-ready** structure so the
+finish pass reproduces the actual look, not just reveal/casing:
+- `font_class` — `serif`/`sans` inferred from `style_notes`/`color` (else `null` →
+  composer keeps its default serif).
+- `background` — `{kind: none|pill|box, color_hex, opacity, radius_frac}` inferred
+  from box/pill/bar wording (`caja`/`pastilla`/`barra`/`box`/`pill`/…).
+- `text_color_hex` — the ink color parsed from `color` (e.g. `negro sobre pastilla
+  gris claro` → ink `#141416`, bg `#e4e6e9`); defaults to dark-on-box / white-on-none.
+- `y_frac`/`align` — from `position` (`lower_third`→0.85, `top`→0.14, `middle`→0.5).
+- `caption_emphasis_flag()` returns `False` when the mold reads as a flat/uniform
+  block (`sin énfasis`, `no highlight`) → the finish pass disables per-word highlight.
+
+Structured vision fields (`captions.font_class`/`text_color_hex`/`background`/…) win;
+the deterministic derivation fills every gap, so `--no-vision` still yields a style.
+
+---
+
+## Environment aggregation (`aggregate_environment`)
+
+Builds ONE mold-level look from the per-scene backgrounds + elements + design
+system (deterministic, so it works without vision):
+- `background`/`background_type` — the dominant set described / typed across scenes.
+- `lighting`/`mood` — from `design_system.visual_style`/`mood`.
+- `wardrobe` vs `set_elements` — elements are split (a small wardrobe lexicon routes
+  clothing to `wardrobe`, which is intentionally **not** copied into the location so
+  the new avatar keeps its identity); burned-in caption/watermark graphics are filtered.
+- `distinct_looks` — only scenes whose background *type* differs from the dominant one
+  (near-dup phrases are collapsed by keyword-signature Jaccard), so a single-look mold
+  doesn't spawn spurious per-scene locations.
+
+`remix.py`'s locations stage feeds this to `avatar-location` (background + set +
+lighting + the beats' camera moves) to build the reel's default look.
+
+---
+
+## Transition-SFX measurement (`measure_transition_sfx`)
+
+Inspects each scene's mechanical `audio.sfx_events` and counts scene boundaries whose
+incoming/outgoing scene carries an SFX within ~0.6 s of the cut. Reports
+`present`/`coverage`/`kind`/`level`/`count` so the remix dresses cuts with a whoosh
+**only when the reference actually does** — silent hard cuts stay silent
+(`finish.fx.sfx=false`). Overridable via `content.fx`.
 
 ---
 
@@ -178,7 +258,7 @@ review unless `--compose`), other = error.
 |---|---|---|
 | `avatars` | every `avatars[].use` resolves to a dir | reuse the path, or invent via `avatar-invent` (its own review = exit 2). If none specified → STOP: **ASK THE USER** invent-vs-reuse for N = speaker count |
 | `voices` | each avatar has a `voice_id` | read `<avatar>/voices/index.json`; else clone from `avatars[].voice_sample` |
-| `locations` | each beat `location` slug exists under `<avatar>/locations/` | build via `avatar-location` (its review = exit 2) |
+| `locations` | reel look + each beat `location` slug exist under `<avatar>/locations/` | build per-beat looks, then auto-derive ONE reel-level look from `blueprint.environment` (background + lighting + set elements + the beats' camera moves) via `avatar-location`; records `content.location.name` (its review = exit 2). `location.auto:false` or an empty environment → skipped |
 | `storyboard` | `<slug>.storyboard.json` present | `build_storyboard.py` (+ `<slug>.narration_plan.json` for guests) |
 | `compose` | `final.mp4` in `<host>/reels/<slug>/` | `compose_reel.py --finish` (guests: `assemble_narration.py` first, patch `broll_clip`, compose over the pre-built narration) |
 
@@ -192,15 +272,19 @@ Flags: `--compose`, `--finish`, `--dry-run`, `--format`, `--resolution`, `--fps`
 
 Output matches [avatar-reel-composer's storyboard.example.json](../avatar-reel-composer/examples/storyboard.example.json):
 - `scenes[]` preserve the mold's beat count + talking-head/B-roll/guest sequence.
-- Host talking-head scenes get `image` (default look) or `angle`+`location`
-  (per-scene look); `zoom_from_previous`, `emphasis`.
+- Host talking-head scenes get `image` (explicit default look), `angle`-only (when a
+  reel-level `location` is active → composer resolves the still inside that look), or
+  `angle`+`location` (per-scene override); plus `zoom_from_previous`, `emphasis`.
+- A reel-level `location` (from the locations stage) is emitted at the storyboard root.
 - Guest scenes are `type:"guest"` with `broll_clip:null` + `_guest_*` hints;
   `remix.py` fills `broll_clip` from `assemble_narration.out.json` before composing.
 - B-roll scenes get `broll_camera` and the authored `broll_description`/`broll_action`
   (or a `TODO` seeded from the beat hint).
-- `finish` wires captions (`caption_reveal`/`casing`/`max_words`/`style_from`),
-  music (`music_prompt`/`music_mood`/`music_volume`/`music_structure`, or
-  `music:false`) and `fx` (transition style mapped from the mold).
+- `finish` wires captions (`caption_reveal`/`casing`/`max_words`/`emphasis`/`style_from`
+  and `caption_style` = the mold's pill/box + font class + colors + `y_frac`/align),
+  music (`music_prompt`/`music_mood`/`music_volume`/`music_structure`/`music_depth`, or
+  `music:false`) and a measured `fx` (`enabled`/`sfx`/`sfx_volume`/`transition_style` —
+  silent hard cuts stay silent unless the mold or `content.fx` says otherwise).
 
 **Verbatim guarantee:** the per-beat texts (agent-authored or proportional split)
 are checked to concatenate to `script` exactly — the composer's hard rule.

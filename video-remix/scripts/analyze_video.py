@@ -100,7 +100,12 @@ SYNTH_INSTRUCTION = (
     '    "visual_style": "descripcion del look (grano, iluminacion, saturacion, tipo de encuadre)"\n'
     "  },\n"
     '  "captions": {"present":true,"position":"lower_third|middle|top|bottom","casing":"subtitle|upper|sentence",'
-    '"reveal":"word|phrase","words_per_caption":5,"color":"ej blanco con sombra","emphasis":"como se resaltan palabras clave","style_notes":"tipografia/estilo"},\n'
+    '"reveal":"word|phrase","words_per_caption":5,"color":"ej blanco con sombra","emphasis":"como se resaltan palabras clave","style_notes":"tipografia/estilo",'
+    '"font_class":"serif|sans","text_color_hex":"#rrggbb","y_frac":0.85,"align":"center|left|right",'
+    '"background":{"kind":"none|pill|box","color_hex":"#rrggbb","opacity":0.9,"radius_frac":0.3}},\n'
+    '  "environment": {"background":"fondo/entorno del set en una frase","lighting":"iluminacion (key/fill/mood, ej: key frontal suave, caida a negro)",'
+    '"wardrobe":"vestuario del presentador","key_elements":["elementos necesarios del set a conservar (lav mic, logo, ventana, escritorio...)"],'
+    '"distinct_looks":["si hay mas de un entorno/look, describe cada uno"]},\n'
     '  "watermark": {"present":false,"kind":"logo|handle|text|none","position":"top_left|top_right|bottom_left|bottom_right|center|none",'
     '"appears":"throughout|after_intro|on_cta|intermittent","disappears":"never|before_cta|between_cuts","description":"que es y como aparece/desaparece"},\n'
     '  "audio": {"music_mood":"tono de la musica de fondo (o none)","voice_music_relation":"como conviven voz y musica (ducking, bed bajo, sin musica)"},\n'
@@ -258,6 +263,18 @@ def build_content_template(blueprint: dict) -> dict:
             "max_words": int(caps.get("words_per_caption") or 6),
             "casing": caps.get("casing", "subtitle"),
             "style_from": "",           # optional subtitle_style.json path
+            # Caption STYLE (pill/box + font class + colors + position) is taken
+            # from the mold's captions.style automatically; put any overrides here.
+            "style_override": {},
+        },
+        "location": {
+            # The remix builds ONE avatar-location that matches the mold's
+            # environment (background + lighting + wardrobe + key elements) and
+            # generates the camera moves the beats use. Set auto=false to keep the
+            # avatar's default look, or name/brief to steer the generated look.
+            "auto": True,
+            "name": "",
+            "brief": (blueprint.get("environment", {}) or {}).get("background", ""),
         },
         "script": "",
         "beats": tpl_beats,
@@ -306,8 +323,29 @@ def render_md(bp: dict) -> str:
         L.append(f"- Posición: {caps.get('position')}  ·  casing: {caps.get('casing')}  ·  reveal: {caps.get('reveal')}  ·  ~{caps.get('words_per_caption')} palabras")
         L.append(f"- Color/estilo: {caps.get('color', '')} — {caps.get('style_notes', '')}")
         L.append(f"- Énfasis: {caps.get('emphasis', '')}")
+        st = caps.get("style") or {}
+        bg = st.get("background") or {}
+        L.append(f"- Estilo (estructurado): fuente={st.get('font_class') or 'serif (def)'}  ·  "
+                 f"texto={st.get('text_color_hex')}  ·  y={st.get('y_frac')}  ·  align={st.get('align')}")
+        L.append(f"- Fondo caption: {bg.get('kind', 'none')}"
+                 + (f" ({bg.get('color_hex')}, opac {bg.get('opacity')}, radio {bg.get('radius_frac')})"
+                    if bg.get('kind') not in (None, 'none') else ""))
     else:
         L.append("- Sin captions quemados detectados.")
+    L.append("")
+    L.append("## Entorno / iluminación (look)")
+    env = bp.get("environment", {}) or {}
+    if env:
+        L.append(f"- Fondo: {env.get('background', '')} (tipo: {env.get('background_type', '')})")
+        L.append(f"- Iluminación: {env.get('lighting', '')}")
+        if env.get("wardrobe"):
+            L.append(f"- Vestuario: {env.get('wardrobe')}")
+        if env.get("key_elements"):
+            L.append(f"- Elementos clave: {', '.join(env['key_elements'])}")
+        if env.get("distinct_looks"):
+            L.append(f"- Looks adicionales: {'; '.join(env['distinct_looks'])}")
+    else:
+        L.append("- (sin datos de entorno)")
     L.append("")
     L.append("## Marca / watermark")
     if wm.get("present"):
@@ -325,6 +363,11 @@ def render_md(bp: dict) -> str:
     L.append("## Transiciones")
     tr = bp.get("transitions", {})
     L.append(f"- Estilo: {tr.get('style', '')} — {tr.get('notes', '')}")
+    sfx = tr.get("sfx") or {}
+    if sfx:
+        L.append(f"- Sonidos entre cortes: {'sí' if sfx.get('present') else 'no'} "
+                 f"({sfx.get('kind', 'none')}, cobertura {sfx.get('coverage')}, "
+                 f"{sfx.get('count', 0)} corte(s)) — {sfx.get('notes', '')}")
     L.append("")
     L.append("## Presentadores / avatares necesarios")
     L.append(f"- {spk.get('count', 1)} — roles: {', '.join(spk.get('roles', ['host']))}")
@@ -484,6 +527,7 @@ def main() -> None:
                       "candidates": wm_cands},
         "audio": {"music": music, "music_mood": "", "voice_music_relation": ""},
         "transitions": {"style": "", "notes": ""},
+        "environment": {},
         "speakers": {"count": 1, "roles": ["host"], "notes": ""},
         "narrative_arc": {},
         "replication_notes": [],
@@ -491,6 +535,7 @@ def main() -> None:
         "beats": beats,
     }
 
+    synth = None
     if client is not None:
         rep_idx = sorted(set([0, len(scenes) // 4, len(scenes) // 2,
                               3 * len(scenes) // 4, len(scenes) - 1]))
@@ -531,6 +576,29 @@ def main() -> None:
             blueprint["narrative_arc"] = synth.get("narrative_arc", {})
             blueprint["rhythm"]["notes"] = synth.get("rhythm_notes", "")
             blueprint["replication_notes"] = synth.get("replication_notes", [])
+
+    # --- Structured, renderer-ready fidelity (works with OR without vision) ----
+    # These make the mold reproducible end-to-end by the remix/composer:
+    #   1) transitions.sfx  — are the CUTS dressed with sounds? (mechanical)
+    #   2) captions.style   — pill/box + font class + text/bg color + position
+    #   3) environment      — one look (background/lighting/wardrobe/key elements)
+    # Vision fields (when present) win; the mechanical/deterministic aggregation
+    # fills every gap so old-style callers still get a complete block.
+    blueprint["transitions"]["sfx"] = C.measure_transition_sfx(scenes)
+
+    caps = blueprint.get("captions", {}) or {}
+    synth_style = {k: caps.pop(k)
+                   for k in ("font_class", "text_color_hex", "background", "y_frac", "align")
+                   if k in caps}
+    caps["style"] = {**C.derive_caption_style(caps),
+                     **{k: v for k, v in synth_style.items() if v not in (None, "", {})}}
+    blueprint["captions"] = caps
+
+    env_synth = ((synth or {}).get("environment") or {}) if synth else {}
+    env_mech = C.aggregate_environment(scenes, blueprint.get("design_system", {}))
+    blueprint["environment"] = {**env_mech,
+                                **{k: v for k, v in env_synth.items()
+                                   if v not in (None, "", [], {})}}
 
     # Re-tag beat roles from the arc-informed pass would go here; keep the vision role_hint.
     (out_dir / "blueprint.json").write_text(

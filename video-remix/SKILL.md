@@ -128,8 +128,12 @@ is blocking — act, then re-run; **0** = progressed / stopped for review):
    existing ones (N = the mold's speaker count), edit `content.json`, re-run.
 2. **voices** — records each avatar's cloned `voice_id` (invented avatars already
    have one; else set `avatars[].voice_sample` to clone with `voice-clone`).
-3. **locations** — builds the per-scene looks the mold calls for (any beat with a
-   non-default `location` slug) via `avatar-location`.
+3. **locations** — reproduces the reference's LOOK. It auto-builds ONE
+   `avatar-location` that matches the mold's `environment` (background + lighting +
+   set elements, NOT wardrobe — the new avatar keeps its own identity) and
+   generates exactly the camera moves the beats use, then sets it as the reel's
+   default look. Steer/disable it with `content.location` (`auto`/`name`/`brief`/
+   `assets`). Per-beat `location` slugs still build their own extra looks.
 4. **storyboard** — `build_storyboard.py` → an `avatar-reel-composer` storyboard in
    the mold's ratio, with per-scene angles, motion/emphasis, captions, the music +
    ducking envelope and transitions (+ a narration plan for multi-speaker molds).
@@ -150,12 +154,21 @@ the composer's narrate+align only, `--format` to override the ratio,
 - **per-scene camera angle** → the avatar's matching camera-angle still;
   **`zoom_from_previous`** → Ken Burns motion; **emphasis** → a tighter push-in.
 - **gaze** / **mannerisms** → the invented avatar's `talking_profile` delivery.
-- **caption system** → `finish` captions (reveal/casing/words-per-caption/style).
+- **environment / lighting** (`blueprint.environment`) → the auto-built reel
+  `avatar-location` (background + lighting + key set elements) so the new avatar
+  performs in the reference's SET, not the avatar's default room.
+- **caption system** → `finish.caption_style` reproduces the mold's structured
+  look: font class (serif/**sans**), a pill/box background (`kind`/`color_hex`/
+  `opacity`/`radius_frac`), text color, vertical position (`y_frac`) and alignment
+  — plus reveal/casing/words-per-caption. Real figures like `98%` survive; flat
+  molds render no per-word emphasis.
 - **watermark system** → a brand logo `location`/overlay when `brand.logo_path` is
   set (stamped via `avatar-location --asset`); recorded in the mold for placement.
 - **music + ducking** → `finish.music_*`: the mood/prompt and a `flat` or `auto`
-  volume envelope that reproduces the measured voice-vs-music ducking (or no music).
-- **transitions** → the polish pass flash/SFX (`golden_flash`/`white_flash`/…).
+  envelope; `auto` sidechain-ducks the bed under the voice at the measured depth.
+- **transitions** → measured into `blueprint.transitions` (style + whether the
+  CUTS carry SFX). The polish pass only adds a flash/SFX the original actually
+  uses — silent hard cuts stay silent (`fx.enabled=false`).
 - **#speakers** → how many avatars to resolve; extra presenters become `guest`
   scenes woven into one master narration.
 
