@@ -113,6 +113,16 @@ git-ignored `config.json` in the skill (or a sibling skill), written by
   no reflow). The default caption mode of the `avatar-reel-composer` finishing pass.
 - **reel-restyle** — distill one avatar's reel style into a template and re-apply
   it to a different avatar.
+- **video-remix** — the `pdf-remix`/`reel-discovery`-for-video: deconstruct any
+  reference reel into a reusable **mold** (format/ratio, per-scene layout, gaze,
+  palette + color combos, elements, action types, caption style, brand
+  watermark/logo placement + timing, transitions, intro→development→close arc,
+  music + voice-vs-music ducking, and how many presenters speak) with Gemini
+  vision, then regenerate a brand-new on-topic reel that follows it — inventing or
+  reusing one or more avatars, building the locations the scenes call for, cloning
+  voices, scoring music with the same ducking, and composing/captioning/polishing
+  in the mold's ratio. A generalized `reel-restyle` (arbitrary reference, richer
+  mold, multi-avatar) that orchestrates the skills below.
 - **cuento-reel** — narrated "story" reels where invented avatars act as
   characters over a narrator voice.
 - **avatar-ambient-sfx** — add a spatial ambient SFX layer to a finished reel.

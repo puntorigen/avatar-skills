@@ -19,6 +19,10 @@ credentials*.json
 # Generated onboarding script series (created under ./onboarding/ by onboarding-script)
 /onboarding/
 
+# Analyze/remix research runs (blueprints, previews, generated media) — never commit
+# e.g. pdf-remix/runs/, video-remix/runs/
+/*/runs/
+
 # broll-browser-recorder: cached practice playbooks + default demo output dir
 /broll-browser-recorder/cache/
 /broll_demo/

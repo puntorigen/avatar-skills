@@ -1,0 +1,7 @@
+# video-remix dependencies (the ANALYZE phase — Gemini vision + frame/color/watermark work).
+# The REMIX phase delegates to sibling skills; install their requirements too (see SKILL.md):
+#   video-scene-analysis, avatar-invent, avatar-location, voice-clone, avatar-reel-composer.
+google-genai>=0.3.0
+Pillow>=10.0.0
+numpy>=1.24.0
+# ffmpeg / ffprobe must be on PATH (used for geometry + by video-scene-analysis).

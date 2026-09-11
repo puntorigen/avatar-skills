@@ -1,0 +1,90 @@
+{
+  "_comment": "Authored from content_template.json. Fill `script` (full verbatim narration; its words tile the beats), set `avatars` (reuse avatares/<name> via `use`, or `invent` a new one — leave both null to be asked), author every B-roll beat, and tailor `music.prompt`. Concatenating every beat `text` must equal `script`. This example remixes a 2-speaker reel mold about 'contacto cero' into a new reel about focus/productivity with a host + a guest.",
+  "meta": {
+    "topic": "cómo recuperar el foco en el trabajo",
+    "language": "es",
+    "format": "reel",
+    "slug": "recupera-el-foco"
+  },
+  "brand": {
+    "name": "Acme Studio",
+    "handle": "@acme.studio",
+    "logo_path": "",
+    "palette_override": {}
+  },
+  "avatars": [
+    {
+      "role": "host",
+      "use": "avatares/nora",
+      "voice_id": null
+    },
+    {
+      "role": "guest1",
+      "use": null,
+      "invent": {
+        "description": "hombre chileno de unos 35 años, cercano y directo, coach de productividad",
+        "setting": "office",
+        "style": "photoreal",
+        "language": "es"
+      },
+      "voice_id": null,
+      "voice_sample": null
+    }
+  ],
+  "music": {
+    "enabled": true,
+    "mood": "inspiring",
+    "prompt": "piano y sintetizador cálido, minimalista y motivador, sin batería marcada, bed suave que baja bajo la voz",
+    "structure": "auto",
+    "volume": 0.1
+  },
+  "captions": {
+    "reveal": "word",
+    "max_words": 5,
+    "casing": "subtitle",
+    "style_from": ""
+  },
+  "script": "¿Cuántas veces hoy abriste una pestaña nueva sin recordar para qué? Cada notificación que revisas fragmenta tu atención en pedazos diminutos. Yo pasé de saltar entre veinte tareas a terminar lo que importa antes del mediodía. El truco no es más disciplina: es quitar la fricción y proteger un solo bloque de foco. Empieza hoy cerrando todo lo que no sea esta tarea.",
+  "beats": [
+    {
+      "index": 0,
+      "role": "hook",
+      "type": "talking_head",
+      "speaker": "host",
+      "text": "¿Cuántas veces hoy abriste una pestaña nueva sin recordar para qué?",
+      "location_hint": "escritorio de oficina luminoso"
+    },
+    {
+      "index": 1,
+      "role": "body",
+      "type": "broll",
+      "text": "Cada notificación que revisas fragmenta tu atención en pedazos diminutos.",
+      "broll_description": "primer plano de una pantalla de laptop llenándose de notificaciones y pestañas abiertas, luz de oficina, fondo desenfocado",
+      "broll_action": "el cursor salta nerviosamente entre ventanas y aparecen banners de notificación uno tras otro; movimiento rápido y realista"
+    },
+    {
+      "index": 2,
+      "role": "point",
+      "type": "talking_head",
+      "speaker": "guest1",
+      "text": "Yo pasé de saltar entre veinte tareas a terminar lo que importa antes del mediodía.",
+      "location": "office_day"
+    },
+    {
+      "index": 3,
+      "role": "body",
+      "type": "talking_head",
+      "speaker": "host",
+      "text": "El truco no es más disciplina: es quitar la fricción y proteger un solo bloque de foco.",
+      "location_hint": "escritorio de oficina luminoso"
+    },
+    {
+      "index": 4,
+      "role": "close",
+      "type": "broll",
+      "text": "Empieza hoy cerrando todo lo que no sea esta tarea.",
+      "broll_description": "una persona cierra con calma todas las pestañas menos una y respira; plano medio, luz cálida de final de la tarde, atmósfera serena",
+      "broll_action": "cierra ventanas una a una, se recuesta un poco y sonríe levemente; gestos mínimos y satisfechos, sin hablar"
+    }
+  ]
+}
